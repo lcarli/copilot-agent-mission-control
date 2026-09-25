@@ -1210,7 +1210,7 @@ A task is complete only when:
 - [x] **TASK-604 — Implement shelter simulator.** Provide capacity, resources, status, and controlled changes.
 - [x] **TASK-605 — Implement transport simulator.** Provide closures, routes, travel constraints, and updates.
 - [x] **TASK-606 — Implement incident intake simulator.** Provide multilingual reports, duplicates, missing data, and contradictions.
-- [ ] **TASK-607 — Implement resource inventory simulator.** Provide constrained generators, vehicles, supplies, and teams.
+- [x] **TASK-607 — Implement resource inventory simulator.** Provide constrained generators, vehicles, supplies, and teams.
 - [ ] **TASK-610 — Build Mission 1 content and validator.** Deliver Signal in the Storm in all supported languages.
 - [ ] **TASK-611 — Build Mission 2 content and validator.** Deliver Ground Truth in all supported languages.
 - [ ] **TASK-612 — Build Mission 3 content and validator.** Deliver Connected City in all supported languages.

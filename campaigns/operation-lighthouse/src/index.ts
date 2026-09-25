@@ -90,3 +90,15 @@ export type {
   IncidentReport,
   IncidentSeverity,
 } from './simulators/incidents.js';
+export {
+  ResourceInventorySimulator,
+  resourceIds,
+} from './simulators/resources.js';
+export type {
+  ResourceAllocation,
+  ResourceAllocationRequest,
+  ResourceId,
+  ResourceInventoryItem,
+  ResourceKind,
+  ResourceQuery,
+} from './simulators/resources.js';
