@@ -1,0 +1,31 @@
+name: Infrastructure validation
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/infra-validation.yml'
+      - 'infra/**'
+      - 'scripts/deploy.ps1'
+      - 'scripts/destroy.ps1'
+      - 'scripts/validate-infra.ps1'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.27.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: az bicep install
+      - run: pnpm validate:infra -- -Offline
