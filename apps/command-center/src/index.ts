@@ -27,6 +27,13 @@ export {
   type MissionControlStatus,
 } from './MissionControlPanel.js';
 export {
+  UnitScoringView,
+  type UnitAchievementSummary,
+  type UnitMissionScoreSummary,
+  type UnitScoreSummary,
+  type UnitScoringViewProps,
+} from './UnitScoringView.js';
+export {
   defaultSetupAdapter,
   generateEventCode,
   validateSetupDraft,
