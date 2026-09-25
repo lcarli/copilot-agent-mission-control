@@ -7,6 +7,7 @@ import {
 } from './config.js';
 import { runParticipantDiagnostics } from './diagnostics.js';
 import type { ParticipantRegistrationClient } from './registration.js';
+import { runParticipantPreflight } from './preflight.js';
 import type { ParticipantMissionWorkflow } from './workflow.js';
 import { createCliLocalizer } from './translations.js';
 
@@ -92,6 +93,33 @@ export function createParticipantProgram(
       writeOutput(
         t(status.authenticated ? 'auth.available' : 'auth.unavailable'),
       );
+    });
+
+  program
+    .command('preflight')
+    .description('Validate participant prerequisites before event day')
+    .action(async () => {
+      const config = await dependencies.configRepository.load();
+      const t = createCliLocalizer(
+        config?.locale ?? dependencies.environmentLocale,
+      );
+      const results = await runParticipantPreflight({
+        auth: dependencies.auth,
+        configRepository: dependencies.configRepository,
+        ...(dependencies.fetch === undefined
+          ? {}
+          : { fetch: dependencies.fetch }),
+      });
+      for (const result of results) {
+        writeOutput(
+          `${result.status.toUpperCase()} ${t(
+            `preflight.${result.check}`,
+          )}: ${result.detail}`,
+        );
+      }
+      if (results.some(({ status }) => status === 'fail')) {
+        setExitCode(1);
+      }
     });
 
   const mission = program

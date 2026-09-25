@@ -1199,7 +1199,7 @@ A task is complete only when:
 - [x] **TASK-502 — Implement mission workflow commands.** Start, test, validate, submit, retry, and request hints.
 - [x] **TASK-503 — Create Visual Studio Code tasks.** Provide discoverable commands without requiring CLI memorization.
 - [x] **TASK-504 — Create progressive starter structure.** Support decreasing scaffolding across missions.
-- [ ] **TASK-505 — Create participant preflight script.** Validate prerequisites before event day.
+- [x] **TASK-505 — Create participant preflight script.** Validate prerequisites before event day.
 
 ### Phase 6 — Operation Lighthouse Campaign
 

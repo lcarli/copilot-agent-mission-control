@@ -68,10 +68,12 @@ export async function runParticipantDiagnostics({
   }
 
   try {
-    const response = await fetchImplementation(`${config.apiUrl}/health`, {
-      headers: auth.authorizationHeader(),
-      signal: AbortSignal.timeout(5_000),
-    });
+    const response = await fetchImplementation(
+      `${config.apiUrl}/api/v1/health/ready`,
+      {
+        signal: AbortSignal.timeout(5_000),
+      },
+    );
     results.push({
       check: 'api',
       detail: `HTTP ${String(response.status)}`,

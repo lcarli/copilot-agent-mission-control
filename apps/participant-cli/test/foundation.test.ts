@@ -105,9 +105,18 @@ describe('participant CLI foundation', () => {
         }),
       save: () => Promise.resolve(),
     };
-    const fetch = vi.fn<typeof globalThis.fetch>(() =>
-      Promise.resolve(new Response(undefined, { status: 200 })),
-    );
+    let requestedUrl = '';
+    let requestedSignal: AbortSignal | undefined;
+    const fetch = vi.fn<typeof globalThis.fetch>((input, init) => {
+      requestedUrl =
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
+      requestedSignal = init?.signal ?? undefined;
+      return Promise.resolve(new Response(undefined, { status: 200 }));
+    });
 
     const results = await runParticipantDiagnostics({
       auth,
@@ -122,12 +131,10 @@ describe('participant CLI foundation', () => {
       'pass',
       'pass',
     ]);
-    expect(fetch).toHaveBeenCalledWith(
-      'https://mission.example.test/health',
-      expect.objectContaining({
-        headers: { authorization: `Bearer ${token}` },
-      }),
+    expect(requestedUrl).toBe(
+      'https://mission.example.test/api/v1/health/ready',
     );
+    expect(requestedSignal).toBeInstanceOf(AbortSignal);
     expect(JSON.stringify(results)).not.toContain(token);
     expect(createCliLocalizer('fr')('diagnostic.api')).toBe('Connectivité API');
   });
