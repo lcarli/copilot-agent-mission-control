@@ -14,7 +14,8 @@
     }
   },
   "dependencies": {
-    "@mission-control/localization": "workspace:*"
+    "@mission-control/localization": "workspace:*",
+    "@mission-control/validation-worker": "workspace:*"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/validate-starters.mjs",

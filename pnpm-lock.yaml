@@ -274,6 +274,9 @@ importers:
       '@mission-control/localization':
         specifier: workspace:*
         version: link:../../packages/localization
+      '@mission-control/validation-worker':
+        specifier: workspace:*
+        version: link:../../packages/validation-worker
 
   packages/auth:
     dependencies:
