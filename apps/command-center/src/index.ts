@@ -60,3 +60,15 @@ export {
   type PreflightCheck,
   type ScoringMode,
 } from './setup.js';
+export {
+  DashboardRealtimeController,
+  createBrowserCursorStore,
+  type DashboardConnectionStatus,
+  type DashboardCursorStore,
+  type DashboardPollingScheduler,
+  type DashboardProjectionSnapshot,
+  type DashboardRealtimeAdapter,
+  type DashboardRealtimeControllerOptions,
+  type DashboardRealtimeMessage,
+  type DashboardReplay,
+} from './realtime.js';

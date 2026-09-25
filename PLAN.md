@@ -1190,7 +1190,7 @@ A task is complete only when:
 - [x] **TASK-405 — Implement unit progress and scoring views.** Show progress, validation status, achievements, and rankings.
 - [x] **TASK-406 — Implement specialist topology view.** Visualize agents, tools, handoffs, reviews, and disagreements.
 - [x] **TASK-407 — Implement public presentation mode.** Create a redacted, large-screen, multilingual display.
-- [ ] **TASK-408 — Implement reconnect and state replay.** Recover dashboard state after disconnect or restart.
+- [x] **TASK-408 — Implement reconnect and state replay.** Recover dashboard state after disconnect or restart.
 
 ### Phase 5 — Participant Toolkit
 
