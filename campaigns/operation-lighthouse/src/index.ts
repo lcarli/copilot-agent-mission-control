@@ -76,3 +76,10 @@ export type {
   ShelterResources,
   ShelterState,
 } from './simulators/shelter.js';
+export { TransportSimulator } from './simulators/transport.js';
+export type {
+  JourneyPlan,
+  RouteCondition,
+  RouteConditionUpdate,
+  TransportMode,
+} from './simulators/transport.js';
