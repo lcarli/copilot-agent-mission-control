@@ -150,3 +150,22 @@ resolves its digest, and promotes that immutable digest to both Container Apps.
 It packages the selected campaign directory, uploads the archive and SHA-256
 sidecar under a checksum-addressed blob path, and prints only non-sensitive
 deployment outputs.
+
+## Safe environment destruction
+
+Preview the exact cleanup scope with:
+
+```powershell
+pnpm destroy:azure -- -ResourceGroupName rg-camc-dev -EnvironmentName dev -PreviewOnly
+```
+
+Remove `-PreviewOnly` only after reviewing the inventory. The script requires
+the full resource-group name, verifies the subscription, location, and Bicep
+ownership tags, lists every resource, and stops if any deletion lock exists.
+It then requires typing `delete <resource-group-name>` exactly; there is no
+force or confirmation-bypass option.
+
+Cleanup issues only one exact `az group delete` operation and polls until Azure
+reports that group absent. It never enumerates other resource groups and never
+purges soft-deleted Key Vault data. Purge-protected vaults remain recoverable
+until their configured retention period expires.
