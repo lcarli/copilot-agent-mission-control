@@ -34,6 +34,14 @@ export {
   type UnitScoringViewProps,
 } from './UnitScoringView.js';
 export {
+  SpecialistTopologyView,
+  type SpecialistAgentNode,
+  type SpecialistDisagreement,
+  type SpecialistHandoff,
+  type SpecialistReview,
+  type SpecialistTopologyViewProps,
+} from './SpecialistTopologyView.js';
+export {
   defaultSetupAdapter,
   generateEventCode,
   validateSetupDraft,
