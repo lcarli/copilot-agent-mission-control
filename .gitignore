@@ -17,3 +17,5 @@ deployment-summary*.json
 .azure/validate-status.json
 infra/main.json
 infra/main.parameters.json
+infra/deploy.json
+infra/deploy.parameters.json

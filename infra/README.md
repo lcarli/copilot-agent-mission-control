@@ -8,7 +8,9 @@ resource names, and common tags so capability modules remain consistent.
 
 | File | Responsibility |
 |------|----------------|
-| `main.bicep` | Orchestration entry point and shared deployment contract |
+| `deploy.bicep` | Subscription entry point that creates the environment resource group |
+| `deploy.bicepparam` | Safe subscription-scoped development parameter example |
+| `main.bicep` | Resource-group orchestration and shared deployment contract |
 | `main.bicepparam` | Safe development parameter example |
 | `modules/naming.bicep` | Deterministic names for resources added by later tasks |
 | `modules/tags.bicep` | Required tags merged with caller-supplied tags |
@@ -27,12 +29,13 @@ Build the template locally with:
 ```powershell
 az bicep build --file infra/main.bicep
 az bicep build-params --file infra/main.bicepparam
+az bicep build-params --file infra/deploy.bicepparam
 ```
 
 The generated ARM JSON files are build artifacts and must not be committed.
 TASK-201 through TASK-205 add capability modules to this orchestration entry
-point. Deployment and cleanup automation are intentionally deferred to
-TASK-206 and TASK-207.
+point. `scripts/deploy.ps1` implements TASK-206 deployment automation; cleanup
+automation remains deferred to TASK-207.
 
 ## Monitoring
 
@@ -117,3 +120,33 @@ Until the API and dashboard HTTP runtimes are implemented, both apps run the
 Microsoft Container Apps hello-world bootstrap image on port 80. TASK-206
 replaces these references after publishing immutable images. The root `runtime`
 output exposes the registry login server and both HTTPS application URLs.
+
+## One-command deployment
+
+Run the complete preflight, what-if, deployment, image promotion, campaign
+seeding, and output summary with:
+
+```powershell
+pnpm deploy:azure -- -Owner <owner>
+```
+
+The script defaults to the approved development subscription and Canada East.
+Override any script parameter after `--`, including `-SubscriptionId`,
+`-Location`, `-EnvironmentName`, and `-ResourceGroupName`.
+Development deployments leave Key Vault purge protection disabled so TASK-207
+can remove disposable environments; pass
+`-KeyVaultPurgeProtectionEnabled $true` for retained environments.
+
+Before changing Azure, the script validates the subscription-scoped template,
+prints the ARM what-if, and requires typing `deploy`. `-Force` is intended only
+for already-approved non-interactive automation; `-PreviewOnly` stops after
+what-if without changing resources. The signed-in principal
+receives Storage Blob Data Contributor at the private `campaigns` container so
+it can upload the selected archive with Entra authentication.
+
+Because the API and dashboard runtimes are not implemented yet, the script
+imports the reviewed Microsoft bootstrap image into ACR under a commit-SHA tag,
+resolves its digest, and promotes that immutable digest to both Container Apps.
+It packages the selected campaign directory, uploads the archive and SHA-256
+sidecar under a checksum-addressed blob path, and prints only non-sensitive
+deployment outputs.

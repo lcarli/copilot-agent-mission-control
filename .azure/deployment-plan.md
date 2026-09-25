@@ -6,67 +6,59 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-205 with ACR, a Consumption Container Apps
-Environment, and externally accessible API/dashboard Container Apps.
+**Goal:** Implement TASK-206 one-command deployment.
 
-**Path:** Add Components
+**Path:** Add deployment automation to the existing standalone Bicep platform.
 
 ## 2. Requirements
 
-- Azure Container Registry with admin credentials and anonymous pull disabled.
-- One shared Container Apps Environment connected to Log Analytics.
-- Separate API/dashboard user-assigned identities and ACR pull assignments.
-- One minimum replica per app to avoid workshop cold starts; maximum three.
-- Bootstrap images until TASK-206 publishes immutable application images.
-- Subscription `ME-MngEnvMCAP266581-lramoscostah-3`, region `eastus2`.
+- Preflight Azure CLI, authentication, subscription, providers, and local tools.
+- Bicep build and what-if before any deployment.
+- Explicit confirmation before Azure resource creation or modification.
+- Deploy the resource-group-scoped platform.
+- Publish bootstrap application images to ACR without registry credentials.
+- Seed versioned campaign packages through Entra-authenticated Blob access.
+- Update Container Apps to immutable image digests.
+- Print non-sensitive resource and application outputs.
+- Target subscription `4e4f76f7-bfb7-4163-84bd-2a19561451b5` in `canadaeast`.
 
 ## 3. Components Detected
 
-The API and Command Center are currently TypeScript package shells rather than
-HTTP applications. TASK-205 therefore provisions functional bootstrap
-containers. TASK-300 and TASK-400 implement the final servers; TASK-206 builds,
-pushes, and switches to immutable image digests.
+- Resource-group-scoped Bicep platform with 20 planned resources.
+- API and Command Center package shells using the public Container Apps
+  bootstrap image until their application phases.
+- Operation Lighthouse campaign workspace at version `0.0.0`; campaign content
+  is intentionally minimal until Phase 6.
+- No existing deployment scripts or `azure.yaml`.
 
 ## 4. Recipe Selection
 
-**Selected:** Standalone Bicep.
+**Selected:** Standalone Bicep plus PowerShell deployment orchestration.
 
 ## 5. Architecture
 
-| Resource | Configuration |
-|----------|---------------|
-| ACR | Basic, admin disabled, anonymous pull disabled, public endpoint |
-| Container Apps Environment | Consumption, shared Log Analytics destination |
-| API Container App | External HTTPS ingress, single revision, 1-3 replicas |
-| Dashboard Container App | External HTTPS ingress, single revision, 1-3 replicas |
-| Identities | Existing user-assigned API/dashboard identities |
-| Registry RBAC | Each workload identity receives AcrPull at ACR scope |
+| Component | Decision |
+|-----------|----------|
+| Subscription entrypoint | Add subscription-scoped `infra/deploy.bicep` to create the resource group and invoke `main.bicep` |
+| Preflight | Verify PowerShell, Azure CLI, Bicep, tar, Git, authentication, subscription, providers, and campaign path |
+| Preview | Run subscription-scope ARM validation and what-if before deployment |
+| Confirmation | Require explicit interactive confirmation unless `-Force` is supplied |
+| Images | Import the reviewed Microsoft bootstrap image into ACR under commit-SHA tags, resolve digests, then redeploy the apps by digest |
+| Campaign | Create a reproducible `.tgz`, compute SHA-256, upload archive and checksum with Entra authentication |
+| Seeder RBAC | Grant the invoking principal Storage Blob Data Contributor only at the campaigns container scope |
+| Summary | Print deployment ID, ACR, app URLs, image digests, campaign blob, and checksum; never print secrets |
 
-The bootstrap image is `mcr.microsoft.com/azuredocs/containerapps-helloworld`.
-Both apps use port 80 and root-path startup/readiness/liveness probes until
-their final runtimes are implemented.
+Canada East is advertised for Container Apps, ACR, SignalR, Cosmos DB, and
+Application Insights. The deployment remains passwordless: ACR import uses the
+management plane, image pulls use managed identities, and campaign upload uses
+the signed-in Entra principal.
 
-## 6. Provisioning Limit Checklist
-
-Quota CLI exposed no relevant entries. Azure Resource Graph found zero ACR,
-Container Apps Environments, or Container Apps in East US 2. Both providers
-are registered.
-
-| Resource | Deploy | Limit assessment |
-|----------|-------:|------------------|
-| Container Apps Environment | 1 | Below regional managed-environment limits |
-| Container Apps | 2 | Below environment/application limits |
-| ACR Basic registry | 1 | Below subscription/region limits |
-| AcrPull role assignments | 2 | Within ARM limits |
-
-## Execution Checklist
+## 6. Execution Checklist
 
 - [x] Complete planning and approval
-- [x] Generate container runtime module
-- [x] Add registry and runtime RBAC
-- [x] Configure API and dashboard applications
-- [x] Defer Dockerfiles until application runtimes exist
-- [x] Document runtime operations
+- [x] Generate deployment automation
+- [x] Add image publishing and campaign seeding
+- [x] Add output summary and documentation
 - [x] Run local verification
 - [x] Set `Ready for Validation`
 - [x] Complete azure-validate workflow
@@ -79,7 +71,8 @@ are registered.
 
 | Check | Command | Result | Timestamp |
 |-------|---------|--------|-----------|
-| Bicep | `az bicep lint/build/build-params` | Passed | 2026-09-25 |
+| Deployment preview | `scripts/deploy.ps1 -PreviewOnly` | 21 creates, 5 unsupported analyses, no changes applied | 2026-09-25 |
+| Bicep | `az bicep lint/build` | Passed | 2026-09-25 |
 | Formatting | `pnpm format:check` | Passed | 2026-09-25 |
 | Peer dependencies | `pnpm peers check` | Passed | 2026-09-25 |
 | Lint | `pnpm lint` | Passed | 2026-09-25 |
@@ -87,36 +80,38 @@ are registered.
 | Tests | `pnpm test` | Passed | 2026-09-25 |
 | Build | `pnpm build` | Passed | 2026-09-25 |
 | Diff hygiene | `git diff --check` | Passed | 2026-09-25 |
-| ARM validation | `validate-deployment.ps1` | Passed | 2026-09-25 |
-| ARM what-if | `validate-deployment.ps1` | 20 creates, 0 modifies, 0 deletes | 2026-09-25 |
+| Official ARM validation | `validate-deployment.ps1 -Scope sub` | Passed | 2026-09-25 |
+| Official ARM what-if | `validate-deployment.ps1 -Scope sub` | 21 creates, 0 modifies, 0 deletes | 2026-09-25 |
 | Azure Policy | `az policy assignment list` | No conflicting assignments | 2026-09-25 |
 
 ## 8. Role Assignment Verification
 
 - **Status:** Verified
-- **API identity:** Key Vault Secrets User at vault scope, Cosmos DB Built-in
-  Data Contributor at account scope, Storage Blob Data Contributor at campaign
-  container scope, SignalR App Server at service scope, and AcrPull at registry
-  scope.
-- **Dashboard identity:** AcrPull at registry scope. The bootstrap dashboard
-  currently performs no Azure data-plane operations.
-- **Scope review:** All assignments target their specific service resource; no
-  subscription-level or resource-group-level workload grants are used.
+- **Campaign seeder:** Storage Blob Data Contributor at the `campaigns`
+  container only; no account, resource-group, or subscription-wide data role.
+- **Workload identities:** Existing API roles remain service-specific; API and
+  dashboard retain AcrPull only at the registry.
+- **Authentication:** ACR import uses the management plane, Blob upload uses
+  the signed-in Entra principal, and no registry/storage credentials are
+  generated or printed.
 - **Issues:** None.
 
 ## 9. Files to Generate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `.azure/deployment-plan.md` | TASK-205 source of truth | Complete |
-| `infra/modules/container-runtime.bicep` | ACR, environment, apps, and RBAC | Complete |
-| `infra/main.bicep` | Runtime composition and outputs | Complete |
-| `infra/main.bicepparam` | Bootstrap image settings | Complete |
-| `infra/README.md` | Runtime deployment contract | Complete |
+| `infra/deploy.bicep` | Subscription-scope resource group and platform entrypoint | Complete |
+| `infra/deploy.bicepparam` | Safe development deployment parameters | Complete |
+| `infra/modules/data-storage.bicep` | Optional campaign-seeder role assignment | Complete |
+| `infra/main.bicep` | Pass campaign seeder identity | Complete |
+| `scripts/deploy.ps1` | One-command orchestration | Complete |
+| `package.json` | Repository deployment command | Complete |
+| `infra/README.md` | Deployment and promotion documentation | Complete |
+| `PLAN.md` | Complete TASK-206 | Complete |
 
 ## 10. Next Steps
 
-> Current: Validated; ready for TASK-205 publication
+> Current: Validated; ready for TASK-206 publication
 
-1. Implement and validate the container runtime.
-2. Publish and merge TASK-205.
+1. Complete the official azure-validate workflow.
+2. Publish TASK-206.

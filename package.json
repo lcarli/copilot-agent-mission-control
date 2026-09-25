@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "pnpm exec turbo run build",
+    "deploy:azure": "pwsh -NoProfile -File scripts/deploy.ps1",
     "dev": "pnpm exec turbo run dev --parallel",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
