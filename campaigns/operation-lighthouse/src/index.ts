@@ -83,3 +83,10 @@ export type {
   RouteConditionUpdate,
   TransportMode,
 } from './simulators/transport.js';
+export { IncidentIntakeSimulator } from './simulators/incidents.js';
+export type {
+  IncidentCategory,
+  IncidentQuery,
+  IncidentReport,
+  IncidentSeverity,
+} from './simulators/incidents.js';
