@@ -6,6 +6,7 @@ import {
   type ParticipantConfigRepository,
 } from './config.js';
 import { runParticipantDiagnostics } from './diagnostics.js';
+import type { ParticipantRegistrationClient } from './registration.js';
 import { createCliLocalizer } from './translations.js';
 
 export interface ParticipantCliDependencies {
@@ -13,6 +14,7 @@ export interface ParticipantCliDependencies {
   readonly configRepository: ParticipantConfigRepository;
   readonly environmentLocale?: string;
   readonly fetch?: typeof globalThis.fetch;
+  readonly registrationClient?: ParticipantRegistrationClient;
   readonly setExitCode?: (code: number) => void;
   readonly writeError?: (message: string) => void;
   readonly writeOutput?: (message: string) => void;
@@ -88,6 +90,60 @@ export function createParticipantProgram(
       writeOutput(
         t(status.authenticated ? 'auth.available' : 'auth.unavailable'),
       );
+    });
+
+  program
+    .command('join')
+    .description('Join an event and create a participant unit')
+    .requiredOption('--event-code <code>')
+    .requiredOption('--name <display-name>')
+    .option('--locale <locale>')
+    .action(
+      async (options: { eventCode: string; locale?: string; name: string }) => {
+        if (dependencies.registrationClient === undefined) {
+          throw new Error('registration-client-unavailable');
+        }
+        const config = await dependencies.configRepository.load();
+        const locale = options.locale ?? config?.locale;
+        const validated = validateParticipantConfig({
+          apiUrl: config?.apiUrl,
+          locale,
+          schemaVersion: 1,
+        });
+        const joined = await dependencies.registrationClient.join({
+          displayName: options.name,
+          eventCode: options.eventCode,
+          locale: validated.locale,
+        });
+        const t = createCliLocalizer(validated.locale);
+        writeOutput(
+          `${t('registration.joined')} ${joined.unitId} · ${joined.eventSessionId}`,
+        );
+      },
+    );
+
+  program
+    .command('connectivity')
+    .description('Verify required Mission Control endpoints')
+    .action(async () => {
+      if (dependencies.registrationClient === undefined) {
+        throw new Error('registration-client-unavailable');
+      }
+      const config = await dependencies.configRepository.load();
+      const t = createCliLocalizer(
+        config?.locale ?? dependencies.environmentLocale,
+      );
+      const checks = await dependencies.registrationClient.checkConnectivity();
+      for (const check of checks) {
+        writeOutput(
+          `${check.status.toUpperCase()} ${t(
+            `connectivity.${check.endpoint}`,
+          )}${check.statusCode === undefined ? '' : ` · HTTP ${String(check.statusCode)}`}`,
+        );
+      }
+      if (checks.some(({ status }) => status === 'fail')) {
+        setExitCode(1);
+      }
     });
 
   program

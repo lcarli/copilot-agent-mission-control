@@ -14,6 +14,12 @@ const messages = {
     'diagnostic.authentication': 'Authentication',
     'diagnostic.configuration': 'Configuration',
     'diagnostic.runtime': 'Node.js runtime',
+    'registration.joined': 'Joined event as unit',
+    'connectivity.liveness': 'API liveness',
+    'connectivity.readiness': 'API readiness',
+    'connectivity.event-session': 'Event access',
+    'connectivity.unit': 'Unit access',
+    'connectivity.missions': 'Mission access',
   },
   fr: {
     'auth.available': 'Le jeton participant est disponible.',
@@ -24,6 +30,12 @@ const messages = {
     'diagnostic.authentication': 'Authentification',
     'diagnostic.configuration': 'Configuration',
     'diagnostic.runtime': 'Environnement Node.js',
+    'registration.joined': 'Événement rejoint avec l’unité',
+    'connectivity.liveness': 'Disponibilité de l’API',
+    'connectivity.readiness': 'Préparation de l’API',
+    'connectivity.event-session': 'Accès à l’événement',
+    'connectivity.unit': 'Accès à l’unité',
+    'connectivity.missions': 'Accès aux missions',
   },
   'pt-BR': {
     'auth.available': 'O token do participante está disponível.',
@@ -34,6 +46,12 @@ const messages = {
     'diagnostic.authentication': 'Autenticação',
     'diagnostic.configuration': 'Configuração',
     'diagnostic.runtime': 'Ambiente Node.js',
+    'registration.joined': 'Evento acessado com a unidade',
+    'connectivity.liveness': 'Disponibilidade da API',
+    'connectivity.readiness': 'Prontidão da API',
+    'connectivity.event-session': 'Acesso ao evento',
+    'connectivity.unit': 'Acesso à unidade',
+    'connectivity.missions': 'Acesso às missões',
   },
 } satisfies Record<'en' | 'fr' | 'pt-BR', Record<string, string>>;
 
