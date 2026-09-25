@@ -14,6 +14,9 @@ param tags object
 @description('Principal ID of the Mission Control API managed identity.')
 param apiPrincipalId string
 
+@description('Optional principal ID allowed to seed campaign packages.')
+param campaignSeederPrincipalId string = ''
+
 @description('Storage redundancy SKU.')
 @allowed([
   'Standard_LRS'
@@ -198,6 +201,18 @@ resource campaignBlobContributor 'Microsoft.Authorization/roleAssignments@2022-0
   properties: {
     principalId: apiPrincipalId
     principalType: 'ServicePrincipal'
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      storageBlobDataContributorRoleId
+    )
+  }
+}
+
+resource campaignSeederBlobContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(campaignSeederPrincipalId)) {
+  name: guid(campaignContainer.id, campaignSeederPrincipalId, storageBlobDataContributorRoleId)
+  scope: campaignContainer
+  properties: {
+    principalId: campaignSeederPrincipalId
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
       storageBlobDataContributorRoleId

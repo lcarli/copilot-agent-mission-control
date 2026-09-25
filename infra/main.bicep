@@ -58,6 +58,9 @@ param apiImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:la
 @description('Bootstrap or immutable dashboard image reference.')
 param dashboardImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
+@description('Principal allowed to seed immutable campaign packages.')
+param campaignSeederPrincipalId string = ''
+
 module naming './modules/naming.bicep' = {
   name: 'mission-control-naming'
   params: {
@@ -82,6 +85,7 @@ module dataStorage './modules/data-storage.bicep' = {
   params: {
     apiPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
     blobDeleteRetentionInDays: blobDeleteRetentionInDays
+    campaignSeederPrincipalId: campaignSeederPrincipalId
     location: location
     names: naming.outputs.names
     storageSku: storageSku
