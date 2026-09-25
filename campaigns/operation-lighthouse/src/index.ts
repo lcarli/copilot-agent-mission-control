@@ -36,3 +36,20 @@ export {
   validatePortAzureWorld,
 } from './validation.js';
 export type { WorldModelIssue, WorldModelValidation } from './validation.js';
+export {
+  campaignNarrative,
+  campaignNarrativeCatalogs,
+  characterIds,
+  glossaryTermIds,
+  narrativeBeatIds,
+} from './narrative.js';
+export type {
+  CampaignCharacter,
+  CampaignNarrative,
+  CharacterId,
+  GlossaryTerm,
+  GlossaryTermId,
+  LocalizationGuideline,
+  NarrativeBeat,
+  NarrativeBeatId,
+} from './narrative.js';
