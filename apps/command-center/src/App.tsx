@@ -9,10 +9,11 @@ import { catalogs } from './messages.js';
 import { InstructorSetupFlow } from './InstructorSetupFlow.js';
 import { LiveCityMap } from './LiveCityMap.js';
 import { LobbyConnectivityView } from './LobbyConnectivityView.js';
+import { MissionControlPanel } from './MissionControlPanel.js';
 
 export interface CommandCenterAppProps {
   readonly initialLocale?: SupportedLocale;
-  readonly initialView?: 'setup' | 'dashboard' | 'lobby';
+  readonly initialView?: 'setup' | 'dashboard' | 'lobby' | 'missions';
 }
 
 type ThemeChoice = 'auto' | 'light' | 'dark';
@@ -36,7 +37,9 @@ export function CommandCenterApp({
       ? 'setup'
       : initialView === 'lobby'
         ? 'units'
-        : 'overview',
+        : initialView === 'missions'
+          ? 'missions'
+          : 'overview',
   );
   const localizer = useMemo(
     () => createLocalizer({ catalogs, defaultLocale: 'en' }),
@@ -121,6 +124,8 @@ export function CommandCenterApp({
             <InstructorSetupFlow locale={locale} translate={t} />
           ) : activePage === 'units' || activePage === 'health' ? (
             <LobbyConnectivityView translate={t} />
+          ) : activePage === 'missions' ? (
+            <MissionControlPanel translate={t} />
           ) : (
             <>
               <section
