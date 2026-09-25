@@ -8,6 +8,10 @@ export interface ParticipantTokenSource {
   read(): string | undefined;
 }
 
+export interface MutableParticipantTokenSource extends ParticipantTokenSource {
+  write(token: string): void;
+}
+
 export class ParticipantAuthenticationError extends Error {
   constructor(
     readonly code: 'token-missing' | 'token-invalid' | 'token-expired',
@@ -88,5 +92,17 @@ export function createEnvironmentTokenSource(
 ): ParticipantTokenSource {
   return {
     read: () => environment.MISSION_CONTROL_UNIT_TOKEN,
+  };
+}
+
+export function createMutableTokenSource(
+  initialToken?: string,
+): MutableParticipantTokenSource {
+  let token = initialToken;
+  return {
+    read: () => token,
+    write: (value) => {
+      token = value;
+    },
   };
 }
