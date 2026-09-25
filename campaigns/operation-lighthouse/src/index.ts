@@ -53,3 +53,13 @@ export type {
   NarrativeBeat,
   NarrativeBeatId,
 } from './narrative.js';
+export { cloneFrozen } from './simulators/shared.js';
+export type { SimulatorError, SimulatorResult } from './simulators/shared.js';
+export { WeatherSimulator, weatherScenarioIds } from './simulators/weather.js';
+export type {
+  WeatherAlert,
+  WeatherForecast,
+  WeatherForecastPeriod,
+  WeatherObservation,
+  WeatherScenarioId,
+} from './simulators/weather.js';
