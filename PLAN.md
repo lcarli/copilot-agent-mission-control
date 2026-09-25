@@ -1203,7 +1203,7 @@ A task is complete only when:
 
 ### Phase 6 — Operation Lighthouse Campaign
 
-- [ ] **TASK-600 — Create Port Azure world model.** Define districts, services, shelters, routes, grid sectors, and recovery state.
+- [x] **TASK-600 — Create Port Azure world model.** Define districts, services, shelters, routes, grid sectors, and recovery state.
 - [ ] **TASK-601 — Create campaign narrative and glossary.** Finalize characters, terminology, timeline, and localization guidance.
 - [ ] **TASK-602 — Implement weather simulator.** Provide deterministic observations, forecasts, and failures.
 - [ ] **TASK-603 — Implement grid simulator.** Provide sector health, outages, and restoration constraints.

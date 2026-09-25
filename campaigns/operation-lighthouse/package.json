@@ -2,8 +2,21 @@
   "name": "@mission-control/campaign-operation-lighthouse",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "starters"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
-    "build": "node scripts/validate-starters.mjs",
-    "test": "node scripts/validate-starters.mjs"
+    "build": "tsc -p tsconfig.build.json && node scripts/validate-starters.mjs",
+    "lint": "eslint src test",
+    "test": "vitest run && node scripts/validate-starters.mjs",
+    "typecheck": "tsc -p tsconfig.json"
   }
 }
