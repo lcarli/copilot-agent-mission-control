@@ -16,6 +16,7 @@ resource names, and common tags so capability modules remain consistent.
 | `modules/identity-secrets.bicep` | Workload identities, Key Vault, and vault-scoped RBAC |
 | `modules/data-storage.bicep` | Passwordless Cosmos DB and private campaign Blob Storage |
 | `modules/realtime.bicep` | Passwordless Azure SignalR Service, diagnostics, and API RBAC |
+| `modules/container-runtime.bicep` | ACR, Container Apps Environment, workloads, and AcrPull |
 
 `workloadName` and `environmentName` should contain lowercase letters, numbers,
 and hyphens. Keep them short because services such as Key Vault and Storage
@@ -104,3 +105,15 @@ collecting message content unnecessarily.
 
 The `realtime` root output exposes the service ID, name, hostname, and HTTPS URI.
 It does not expose SignalR keys or connection strings.
+
+## Container runtime
+
+The runtime module creates a Basic Azure Container Registry, one Consumption
+Container Apps Environment, and externally accessible API and dashboard apps.
+Both apps use their dedicated user-assigned identities and receive `AcrPull`
+only at registry scope. ACR admin credentials and anonymous pull are disabled.
+
+Until the API and dashboard HTTP runtimes are implemented, both apps run the
+Microsoft Container Apps hello-world bootstrap image on port 80. TASK-206
+replaces these references after publishing immutable images. The root `runtime`
+output exposes the registry login server and both HTTPS application URLs.

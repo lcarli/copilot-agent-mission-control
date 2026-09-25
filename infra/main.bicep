@@ -52,6 +52,12 @@ param storageSku string = 'Standard_LRS'
 @maxValue(365)
 param blobDeleteRetentionInDays int = 7
 
+@description('Bootstrap or immutable API image reference.')
+param apiImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+
+@description('Bootstrap or immutable dashboard image reference.')
+param dashboardImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+
 module naming './modules/naming.bicep' = {
   name: 'mission-control-naming'
   params: {
@@ -101,6 +107,33 @@ module monitoring './modules/monitoring.bicep' = {
     location: location
     names: naming.outputs.names
     retentionInDays: logRetentionInDays
+    tags: tagging.outputs.tags
+  }
+}
+
+module containerRuntime './modules/container-runtime.bicep' = {
+  name: 'mission-control-container-runtime'
+  params: {
+    apiIdentityClientId: identitySecrets.outputs.apiIdentityClientId
+    apiIdentityId: identitySecrets.outputs.apiIdentityId
+    apiIdentityPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
+    apiImage: apiImage
+    applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
+    campaignContainerName: dataStorage.outputs.campaignContainerName
+    cosmosDatabaseName: dataStorage.outputs.cosmosDatabaseName
+    cosmosEndpoint: dataStorage.outputs.cosmosEndpoint
+    dashboardIdentityClientId: identitySecrets.outputs.dashboardIdentityClientId
+    dashboardIdentityId: identitySecrets.outputs.dashboardIdentityId
+    dashboardIdentityPrincipalId: identitySecrets.outputs.dashboardIdentityPrincipalId
+    dashboardImage: dashboardImage
+    eventsContainerName: dataStorage.outputs.eventsContainerName
+    keyVaultUri: identitySecrets.outputs.keyVaultUri
+    location: location
+    logAnalyticsWorkspaceName: naming.outputs.names.logAnalyticsWorkspace
+    names: naming.outputs.names
+    signalRServiceUri: realtime.outputs.serviceUri
+    stateContainerName: dataStorage.outputs.stateContainerName
+    storageAccountName: dataStorage.outputs.storageAccountName
     tags: tagging.outputs.tags
   }
 }
@@ -161,5 +194,12 @@ output realtime object = {
   id: realtime.outputs.id
   name: realtime.outputs.name
   serviceUri: realtime.outputs.serviceUri
+}
+output runtime object = {
+  apiUrl: 'https://${containerRuntime.outputs.apiFqdn}'
+  containerAppsEnvironmentId: containerRuntime.outputs.environmentId
+  dashboardUrl: 'https://${containerRuntime.outputs.dashboardFqdn}'
+  registryId: containerRuntime.outputs.registryId
+  registryLoginServer: containerRuntime.outputs.registryLoginServer
 }
 output tags object = tagging.outputs.tags

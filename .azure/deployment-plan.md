@@ -6,102 +6,117 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-204 with passwordless Azure SignalR Service and
-centralized diagnostics.
+**Goal:** Implement TASK-205 with ACR, a Consumption Container Apps
+Environment, and externally accessible API/dashboard Container Apps.
 
 **Path:** Add Components
 
 ## 2. Requirements
 
-- Up to 50 participants plus instructor/dashboard connections.
-- Default service mode with the Mission Control API as the hub server.
-- Microsoft Entra authentication only; no SignalR access keys.
-- Existing Log Analytics workspace receives connectivity and HTTP logs.
-- Subscription: `ME-MngEnvMCAP266581-lramoscostah-3`; location `eastus2`.
-
-`Microsoft.SignalRService` is not yet registered in the subscription. Provider
-registration is required for validation and is also added to TASK-206 preflight.
+- Azure Container Registry with admin credentials and anonymous pull disabled.
+- One shared Container Apps Environment connected to Log Analytics.
+- Separate API/dashboard user-assigned identities and ACR pull assignments.
+- One minimum replica per app to avoid workshop cold starts; maximum three.
+- Bootstrap images until TASK-206 publishes immutable application images.
+- Subscription `ME-MngEnvMCAP266581-lramoscostah-3`, region `eastus2`.
 
 ## 3. Components Detected
 
-| Component | Integration |
-|-----------|-------------|
-| Mission Control API identity | SignalR App Server role |
-| Command Center | SignalR client through API negotiation |
-| Log Analytics | SignalR diagnostics destination |
+The API and Command Center are currently TypeScript package shells rather than
+HTTP applications. TASK-205 therefore provisions functional bootstrap
+containers. TASK-300 and TASK-400 implement the final servers; TASK-206 builds,
+pushes, and switches to immutable image digests.
 
 ## 4. Recipe Selection
 
-**Selected:** Bicep.
+**Selected:** Standalone Bicep.
 
 ## 5. Architecture
 
-| Setting | Value |
-|---------|-------|
-| Resource | Azure SignalR Service |
-| SKU | `Standard_S1`, capacity 1 (1,000 connections) |
-| Service mode | Default |
-| Authentication | Microsoft Entra only (`disableLocalAuth: true`) |
-| RBAC | API identity -> SignalR App Server at service scope |
-| Logging | Connectivity and HTTP request diagnostics to Log Analytics |
-| Network | Public client/server connectivity; no private-network roadmap task |
+| Resource | Configuration |
+|----------|---------------|
+| ACR | Basic, admin disabled, anonymous pull disabled, public endpoint |
+| Container Apps Environment | Consumption, shared Log Analytics destination |
+| API Container App | External HTTPS ingress, single revision, 1-3 replicas |
+| Dashboard Container App | External HTTPS ingress, single revision, 1-3 replicas |
+| Identities | Existing user-assigned API/dashboard identities |
+| Registry RBAC | Each workload identity receives AcrPull at ACR scope |
 
-No access keys or connection strings are emitted. Applications receive the
-service hostname and use managed identity for server authorization.
+The bootstrap image is `mcr.microsoft.com/azuredocs/containerapps-helloworld`.
+Both apps use port 80 and root-path startup/readiness/liveness probes until
+their final runtimes are implemented.
 
 ## 6. Provisioning Limit Checklist
 
-Quota CLI returned no SignalR quota entries. There are zero SignalR resources in
-East US 2. One Standard unit supports 1,000 concurrent connections, exceeding
-the 50-participant requirement.
+Quota CLI exposed no relevant entries. Azure Resource Graph found zero ACR,
+Container Apps Environments, or Container Apps in East US 2. Both providers
+are registered.
 
-| Resource | Deploy | Capacity |
-|----------|-------:|----------|
-| SignalR Standard units | 1 | 1,000 connections |
-| Diagnostic settings | 1 | Below five-per-resource limit |
-| Role assignments | 1 | Within ARM limits |
+| Resource | Deploy | Limit assessment |
+|----------|-------:|------------------|
+| Container Apps Environment | 1 | Below regional managed-environment limits |
+| Container Apps | 2 | Below environment/application limits |
+| ACR Basic registry | 1 | Below subscription/region limits |
+| AcrPull role assignments | 2 | Within ARM limits |
 
-## 7. Execution Checklist
+## Execution Checklist
 
 - [x] Complete planning and approval
-- [x] Register provider for validation
-- [x] Generate SignalR module and RBAC
-- [x] Wire configuration and outputs
-- [x] Document real-time contract
+- [x] Generate container runtime module
+- [x] Add registry and runtime RBAC
+- [x] Configure API and dashboard applications
+- [x] Defer Dockerfiles until application runtimes exist
+- [x] Document runtime operations
 - [x] Run local verification
 - [x] Set `Ready for Validation`
-- [x] Invoke azure-validate
+- [x] Complete azure-validate workflow
 - [x] All validation checks pass
-  - [x] Core validation: CLI, authentication, Bicep build, resource-group validation, and what-if
+  - [x] Core validation (CLI, authentication, Bicep build, ARM validation, and what-if)
   - [x] Bicep linting
   - [x] Azure Policy validation
-- [x] Update status to `Validated`
-- [x] Record proof
 
-## 8. Validation Proof
+## 7. Validation Proof
 
 | Check | Command | Result | Timestamp |
 |-------|---------|--------|-----------|
-| Bicep and monorepo | Bicep lint/build and full pnpm regression | Pass | 2026-09-25T12:12:43-04:00 |
-| Azure preflight | Resource-group validate and what-if | Pass: 16 creates, 0 modifies, 0 deletes | 2026-09-25T12:14:15-04:00 |
-| RBAC review | API -> SignalR App Server at SignalR scope | Pass | 2026-09-25T12:14:51-04:00 |
-| Provider/policy | Register Microsoft.SignalRService and review policies | Pass | 2026-09-25T12:12:00-04:00 |
+| Bicep | `az bicep lint/build/build-params` | Passed | 2026-09-25 |
+| Formatting | `pnpm format:check` | Passed | 2026-09-25 |
+| Peer dependencies | `pnpm peers check` | Passed | 2026-09-25 |
+| Lint | `pnpm lint` | Passed | 2026-09-25 |
+| Types | `pnpm typecheck` | Passed | 2026-09-25 |
+| Tests | `pnpm test` | Passed | 2026-09-25 |
+| Build | `pnpm build` | Passed | 2026-09-25 |
+| Diff hygiene | `git diff --check` | Passed | 2026-09-25 |
+| ARM validation | `validate-deployment.ps1` | Passed | 2026-09-25 |
+| ARM what-if | `validate-deployment.ps1` | 20 creates, 0 modifies, 0 deletes | 2026-09-25 |
+| Azure Policy | `az policy assignment list` | No conflicting assignments | 2026-09-25 |
 
-**Validated by:** azure-validate workflow
-**Validation timestamp:** 2026-09-25T12:14:51-04:00
+## 8. Role Assignment Verification
+
+- **Status:** Verified
+- **API identity:** Key Vault Secrets User at vault scope, Cosmos DB Built-in
+  Data Contributor at account scope, Storage Blob Data Contributor at campaign
+  container scope, SignalR App Server at service scope, and AcrPull at registry
+  scope.
+- **Dashboard identity:** AcrPull at registry scope. The bootstrap dashboard
+  currently performs no Azure data-plane operations.
+- **Scope review:** All assignments target their specific service resource; no
+  subscription-level or resource-group-level workload grants are used.
+- **Issues:** None.
 
 ## 9. Files to Generate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `.azure/deployment-plan.md` | TASK-204 source of truth | Complete |
-| `infra/modules/realtime.bicep` | SignalR, diagnostics, and RBAC | Complete |
-| `infra/main.bicep` | Composition and outputs | Complete |
-| `infra/README.md` | Real-time configuration contract | Complete |
+| `.azure/deployment-plan.md` | TASK-205 source of truth | Complete |
+| `infra/modules/container-runtime.bicep` | ACR, environment, apps, and RBAC | Complete |
+| `infra/main.bicep` | Runtime composition and outputs | Complete |
+| `infra/main.bicepparam` | Bootstrap image settings | Complete |
+| `infra/README.md` | Runtime deployment contract | Complete |
 
 ## 10. Next Steps
 
-> Current: TASK-204 validated; ready for commit and pull request
+> Current: Validated; ready for TASK-205 publication
 
-1. Register the provider and implement the module.
-2. Validate and publish TASK-204.
+1. Implement and validate the container runtime.
+2. Publish and merge TASK-205.
