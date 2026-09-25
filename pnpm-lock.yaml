@@ -286,6 +286,13 @@ importers:
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
 
   packages/localization:
+    dependencies:
+      '@formatjs/icu-messageformat-parser':
+        specifier: 3.5.19
+        version: 3.5.19
+      intl-messageformat:
+        specifier: 12.1.1
+        version: 12.1.1
     devDependencies:
       '@types/node':
         specifier: 24.13.5
@@ -352,6 +359,15 @@ packages:
   '@eslint/plugin-kit@0.7.3':
     resolution: {integrity: sha1-zHJozDZAWzMe+S2xvDeXHyHWb+E=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@eslint/plugin-kit/-/plugin-kit-0.7.3.tgz}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@formatjs/fast-memoize@3.1.7':
+    resolution: {integrity: sha1-X3mzdW5Ly1+u5Hs6LwEhbhISyeQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@formatjs/fast-memoize/-/fast-memoize-3.1.7.tgz}
+
+  '@formatjs/icu-messageformat-parser@3.5.19':
+    resolution: {integrity: sha512-a5PAqgd3QPUge635SxrjPLIlTErcGwm3AMyTdmZXl0IqWXTdCx9AnuioEmvEZAV2HpeFdynLPXMvHv7dXGEWWw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-3.5.19.tgz}
+
+  '@formatjs/icu-skeleton-parser@2.1.12':
+    resolution: {integrity: sha512-ca7tZMLpfHX3sUD7hP6gE/qr6Iq89EDd3ZLeRhbsB7r0UD55DGJq+tmFLzrGrnx5StahUevQmQQVtbDRHsfDHA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-2.1.12.tgz}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha1-qCcsoDsqz0kmcCIrIyC2xCG/3mA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@humanfs/core/-/core-0.19.2.tgz}
@@ -797,6 +813,9 @@ packages:
     resolution: {integrity: sha1-khi5srkoojixPcT7a21XbyMUU+o=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/imurmurhash/-/imurmurhash-0.1.4.tgz}
     engines: {node: '>=0.8.19'}
 
+  intl-messageformat@12.1.1:
+    resolution: {integrity: sha512-ZNwni2Ihmge8FZ0O+n7JQXHNAZfFGN/ovLrIxyfFK/bEsnHV2bG3W75Z24GdKmMepiq21SiMfANNPze+xjSCHA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/intl-messageformat/-/intl-messageformat-12.1.1.tgz}
+
   is-extglob@2.1.1:
     resolution: {integrity: sha1-qIwCU1eR8C7TfHahueqXc8gz+MI=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/is-extglob/-/is-extglob-2.1.1.tgz}
     engines: {node: '>=0.10.0'}
@@ -1211,6 +1230,14 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
+  '@formatjs/fast-memoize@3.1.7': {}
+
+  '@formatjs/icu-messageformat-parser@3.5.19':
+    dependencies:
+      '@formatjs/icu-skeleton-parser': 2.1.12
+
+  '@formatjs/icu-skeleton-parser@2.1.12': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -1609,6 +1636,11 @@ snapshots:
   ignore@7.0.9: {}
 
   imurmurhash@0.1.4: {}
+
+  intl-messageformat@12.1.1:
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.7
+      '@formatjs/icu-messageformat-parser': 3.5.19
 
   is-extglob@2.1.1: {}
 
