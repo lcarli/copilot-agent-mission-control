@@ -138,6 +138,13 @@
       "problemMatcher": []
     },
     {
+      "label": "Mission Control: Participant Preflight",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["preflight:participant"],
+      "problemMatcher": []
+    },
+    {
       "label": "Mission Control: Diagnose",
       "type": "process",
       "command": "node",

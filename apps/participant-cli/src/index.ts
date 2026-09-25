@@ -33,6 +33,14 @@ export {
   type ParticipantCliDependencies,
 } from './program.js';
 export {
+  SpawnCommandProbe,
+  runParticipantPreflight,
+  type CommandProbe,
+  type CommandProbeResult,
+  type ParticipantPreflightOptions,
+  type ParticipantPreflightResult,
+} from './preflight.js';
+export {
   HttpParticipantRegistrationClient,
   ParticipantRegistrationError,
   type ConnectivityCheckResult,
