@@ -1154,7 +1154,7 @@ A task is complete only when:
 - [x] **TASK-101 — Implement shared event contracts.** Add typed event envelopes, schema validation, and versioning.
 - [x] **TASK-102 — Implement campaign loader.** Load, validate, and version campaign packs.
 - [x] **TASK-103 — Implement localization foundation.** Resolve `en`, `fr`, and `pt-BR` resources with fallback and parity tests.
-- [ ] **TASK-104 — Implement authentication model.** Add event codes, short-lived unit tokens, and instructor authorization.
+- [x] **TASK-104 — Implement authentication model.** Add event codes, short-lived unit tokens, and instructor authorization.
 - [ ] **TASK-105 — Implement event and unit management.** Create, join, reconnect, close, and isolate event units.
 
 ### Phase 2 — Azure Infrastructure
