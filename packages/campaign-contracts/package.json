@@ -1,0 +1,12 @@
+{
+  "name": "@mission-control/campaign-contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "schemas"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}

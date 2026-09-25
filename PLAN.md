@@ -1150,7 +1150,7 @@ A task is complete only when:
 
 ### Phase 1 — Platform Foundation
 
-- [ ] **TASK-100 — Scaffold the monorepo.** Create application, package, campaign, test, and infrastructure workspaces.
+- [x] **TASK-100 — Scaffold the monorepo.** Create application, package, campaign, test, and infrastructure workspaces.
 - [ ] **TASK-101 — Implement shared event contracts.** Add typed event envelopes, schema validation, and versioning.
 - [ ] **TASK-102 — Implement campaign loader.** Load, validate, and version campaign packs.
 - [ ] **TASK-103 — Implement localization foundation.** Resolve `en`, `fr`, and `pt-BR` resources with fallback and parity tests.

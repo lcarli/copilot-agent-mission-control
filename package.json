@@ -1,0 +1,30 @@
+{
+  "name": "copilot-agent-mission-control",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Mission-based, multilingual workshops for building GitHub Copilot agents in VS Code.",
+  "packageManager": "pnpm@11.27.0",
+  "engines": {
+    "node": ">=24 <25",
+    "pnpm": ">=11 <12"
+  },
+  "scripts": {
+    "build": "pnpm exec turbo run build",
+    "dev": "pnpm exec turbo run dev --parallel",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "pnpm exec turbo run lint",
+    "test": "pnpm exec turbo run test",
+    "typecheck": "pnpm exec turbo run typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.13.5",
+    "eslint": "10.10.0",
+    "prettier": "3.9.8",
+    "turbo": "2.10.13",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.1"
+  }
+}
