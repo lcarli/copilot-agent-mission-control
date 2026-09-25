@@ -41,6 +41,18 @@ export {
   type JoinEventRequest,
   type ParticipantRegistrationClient,
 } from './registration.js';
+export {
+  HttpParticipantMissionWorkflow,
+  MissionWorkflowError,
+  SpawnLocalMissionTestRunner,
+  type HttpParticipantMissionWorkflowOptions,
+  type LocalMissionTestRunner,
+  type LocalTestResult,
+  type MissionEvidencePackage,
+  type MissionHintSummary,
+  type MissionSubmissionSummary,
+  type ParticipantMissionWorkflow,
+} from './workflow.js';
 export { createCliLocalizer } from './translations.js';
 
 export const workspaceName = '@mission-control/participant-cli';

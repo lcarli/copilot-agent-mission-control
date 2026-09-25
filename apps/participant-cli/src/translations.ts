@@ -20,6 +20,10 @@ const messages = {
     'connectivity.event-session': 'Event access',
     'connectivity.unit': 'Unit access',
     'connectivity.missions': 'Mission access',
+    'mission.started': 'Mission started.',
+    'mission.testsPassed': 'Local tests passed.',
+    'mission.testsFailed': 'Local tests failed.',
+    'mission.evidenceValid': 'Evidence package is valid.',
   },
   fr: {
     'auth.available': 'Le jeton participant est disponible.',
@@ -36,6 +40,10 @@ const messages = {
     'connectivity.event-session': 'Accès à l’événement',
     'connectivity.unit': 'Accès à l’unité',
     'connectivity.missions': 'Accès aux missions',
+    'mission.started': 'Mission démarrée.',
+    'mission.testsPassed': 'Tests locaux réussis.',
+    'mission.testsFailed': 'Échec des tests locaux.',
+    'mission.evidenceValid': 'Le dossier de preuve est valide.',
   },
   'pt-BR': {
     'auth.available': 'O token do participante está disponível.',
@@ -52,6 +60,10 @@ const messages = {
     'connectivity.event-session': 'Acesso ao evento',
     'connectivity.unit': 'Acesso à unidade',
     'connectivity.missions': 'Acesso às missões',
+    'mission.started': 'Missão iniciada.',
+    'mission.testsPassed': 'Testes locais aprovados.',
+    'mission.testsFailed': 'Testes locais falharam.',
+    'mission.evidenceValid': 'O pacote de evidências é válido.',
   },
 } satisfies Record<'en' | 'fr' | 'pt-BR', Record<string, string>>;
 

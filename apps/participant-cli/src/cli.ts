@@ -13,6 +13,7 @@ import {
   FileParticipantCredentialRepository,
 } from './credentials.js';
 import { HttpParticipantRegistrationClient } from './registration.js';
+import { HttpParticipantMissionWorkflow } from './workflow.js';
 
 const configRepository = new FileParticipantConfigRepository(
   defaultParticipantConfigPath(homedir()),
@@ -33,10 +34,15 @@ const registrationClient = new HttpParticipantRegistrationClient({
     tokenSource.write(token);
   },
 });
+const missionWorkflow = new HttpParticipantMissionWorkflow({
+  auth,
+  configRepository,
+});
 
 await createParticipantProgram({
   auth,
   configRepository,
+  missionWorkflow,
   registrationClient,
   ...(() => {
     const environmentLocale =
