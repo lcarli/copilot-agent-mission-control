@@ -1,6 +1,6 @@
 {
   "name": "@mission-control/localization",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -14,6 +14,10 @@
     "lint": "eslint src test",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "3.5.19",
+    "intl-messageformat": "12.1.1"
   },
   "devDependencies": {
     "@types/node": "24.13.5",
