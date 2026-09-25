@@ -77,4 +77,17 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Response Orchestrator');
     expect(markup).toContain('Coordination activity');
   });
+
+  it('renders the multilingual public presentation projection', () => {
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialLocale="fr" initialView="presentation" />,
+    );
+
+    expect(markup).toContain('Affichage public en direct');
+    expect(markup).toContain('Operation Lighthouse');
+    expect(markup).toContain('Rétablissement collectif');
+    expect(markup).toContain(
+      'les données personnelles et opérationnelles sensibles ne sont pas affichées',
+    );
+  });
 });

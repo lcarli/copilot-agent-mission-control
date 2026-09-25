@@ -27,6 +27,15 @@ export {
   type MissionControlStatus,
 } from './MissionControlPanel.js';
 export {
+  PublicPresentationView,
+  type PublicDistrictSummary,
+  type PublicMissionSummary,
+  type PublicPresentationProjection,
+  type PublicPresentationViewProps,
+  type PublicRankingSummary,
+  type PublicRecognitionSummary,
+} from './PublicPresentationView.js';
+export {
   UnitScoringView,
   type UnitAchievementSummary,
   type UnitMissionScoreSummary,
