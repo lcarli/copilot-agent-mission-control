@@ -1207,7 +1207,7 @@ A task is complete only when:
 - [x] **TASK-601 — Create campaign narrative and glossary.** Finalize characters, terminology, timeline, and localization guidance.
 - [x] **TASK-602 — Implement weather simulator.** Provide deterministic observations, forecasts, and failures.
 - [x] **TASK-603 — Implement grid simulator.** Provide sector health, outages, and restoration constraints.
-- [ ] **TASK-604 — Implement shelter simulator.** Provide capacity, resources, status, and controlled changes.
+- [x] **TASK-604 — Implement shelter simulator.** Provide capacity, resources, status, and controlled changes.
 - [ ] **TASK-605 — Implement transport simulator.** Provide closures, routes, travel constraints, and updates.
 - [ ] **TASK-606 — Implement incident intake simulator.** Provide multilingual reports, duplicates, missing data, and contradictions.
 - [ ] **TASK-607 — Implement resource inventory simulator.** Provide constrained generators, vehicles, supplies, and teams.
