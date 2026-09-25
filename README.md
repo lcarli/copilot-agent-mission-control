@@ -5,6 +5,10 @@ Mission-based, multilingual workshops for building GitHub Copilot agents in VS C
 ## Project documentation
 
 - [Product and delivery plan](PLAN.md)
+- [Contributing](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security policy](SECURITY.md)
+- [Branching and pull requests](docs/contributing/branching-and-pull-requests.md)
 - [ADR 0001: Platform stack, repository tooling, and packaging](docs/architecture/0001-platform-stack-and-packaging.md)
 - [ADR 0002: Domain and API contracts](docs/architecture/0002-domain-and-api-contracts.md)
 - [ADR 0003: Campaign pack schema contracts](docs/architecture/0003-campaign-schema-contracts.md)
