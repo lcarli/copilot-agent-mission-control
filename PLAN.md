@@ -1143,7 +1143,7 @@ A task is complete only when:
 ### Phase 0 — Product Definition
 
 - [x] **TASK-000 — Create detailed product and delivery plan.** Define the vision, campaign, architecture, localization, assets, testing, delivery workflow, and roadmap.
-- [ ] **TASK-001 — Define architecture decision record.** Select the application stack, repository tooling, local development approach, and deployment packaging.
+- [x] **TASK-001 — Define architecture decision record.** Select the application stack, repository tooling, local development approach, and deployment packaging.
 - [ ] **TASK-002 — Define domain and API contracts.** Specify events, units, sessions, missions, scoring, validation, and instructor commands.
 - [ ] **TASK-003 — Define campaign JSON/YAML schemas.** Create machine-validatable campaign, mission, asset, and localization schemas.
 - [ ] **TASK-004 — Create contribution and security guidance.** Add contributing, code of conduct, security, branching, and pull-request documentation.
