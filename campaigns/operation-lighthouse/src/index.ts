@@ -102,3 +102,17 @@ export type {
   ResourceKind,
   ResourceQuery,
 } from './simulators/resources.js';
+export {
+  isRecord,
+  isStringArray,
+  validationScores,
+  validatorOutput,
+} from './missions/shared.js';
+export type {
+  LocalizedMissionContent,
+  MissionContent,
+} from './missions/shared.js';
+export {
+  signalInTheStormContent,
+  signalInTheStormValidator,
+} from './missions/mission-1.js';
