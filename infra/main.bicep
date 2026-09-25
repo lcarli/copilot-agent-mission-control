@@ -22,6 +22,16 @@ param owner string
 @description('Additional non-sensitive tags. Required platform tags take precedence.')
 param additionalTags object = {}
 
+@description('Log Analytics retention in days.')
+@minValue(30)
+@maxValue(730)
+param logRetentionInDays int = 30
+
+@description('Log Analytics daily ingestion cap in GB.')
+@minValue(1)
+@maxValue(1000)
+param logDailyQuotaGb int = 1
+
 module naming './modules/naming.bicep' = {
   name: 'mission-control-naming'
   params: {
@@ -41,6 +51,23 @@ module tagging './modules/tags.bicep' = {
   }
 }
 
+module monitoring './modules/monitoring.bicep' = {
+  name: 'mission-control-monitoring'
+  params: {
+    dailyQuotaGb: logDailyQuotaGb
+    location: location
+    names: naming.outputs.names
+    retentionInDays: logRetentionInDays
+    tags: tagging.outputs.tags
+  }
+}
+
 output location string = location
+output monitoring object = {
+  applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
+  applicationInsightsId: monitoring.outputs.applicationInsightsId
+  logAnalyticsCustomerId: monitoring.outputs.logAnalyticsCustomerId
+  logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+}
 output names object = naming.outputs.names
 output tags object = tagging.outputs.tags
