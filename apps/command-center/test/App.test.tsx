@@ -36,4 +36,15 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Participant languages');
     expect(markup).toContain('Event setup progress');
   });
+
+  it('renders the lobby and connectivity projection', () => {
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialView="lobby" />,
+    );
+
+    expect(markup).toContain('Units and connectivity');
+    expect(markup).toContain('Harbor Team');
+    expect(markup).toContain('Platform health');
+    expect(markup).toContain('<progress');
+  });
 });

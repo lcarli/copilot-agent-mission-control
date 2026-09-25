@@ -7,10 +7,11 @@ import { useMemo, useState } from 'react';
 
 import { catalogs } from './messages.js';
 import { InstructorSetupFlow } from './InstructorSetupFlow.js';
+import { LobbyConnectivityView } from './LobbyConnectivityView.js';
 
 export interface CommandCenterAppProps {
   readonly initialLocale?: SupportedLocale;
-  readonly initialView?: 'setup' | 'dashboard';
+  readonly initialView?: 'setup' | 'dashboard' | 'lobby';
 }
 
 type ThemeChoice = 'auto' | 'light' | 'dark';
@@ -27,7 +28,15 @@ export function CommandCenterApp({
 }: CommandCenterAppProps) {
   const [locale, setLocale] = useState<SupportedLocale>(initialLocale);
   const [theme, setTheme] = useState<ThemeChoice>('auto');
-  const [activeView, setActiveView] = useState(initialView);
+  const [activePage, setActivePage] = useState<
+    'setup' | 'overview' | 'missions' | 'units' | 'health'
+  >(
+    initialView === 'setup'
+      ? 'setup'
+      : initialView === 'lobby'
+        ? 'units'
+        : 'overview',
+  );
   const localizer = useMemo(
     () => createLocalizer({ catalogs, defaultLocale: 'en' }),
     [],
@@ -91,15 +100,13 @@ export function CommandCenterApp({
         <nav className="primary-nav" aria-label="Primary">
           {['setup', 'overview', 'missions', 'units', 'health'].map((item) => (
             <button
-              aria-current={
-                (item === 'setup' && activeView === 'setup') ||
-                (item === 'overview' && activeView === 'dashboard')
-                  ? 'page'
-                  : undefined
-              }
+              aria-current={item === activePage ? 'page' : undefined}
               key={item}
               onClick={() => {
-                setActiveView(item === 'setup' ? 'setup' : 'dashboard');
+                setActivePage(
+                  item as
+                    'setup' | 'overview' | 'missions' | 'units' | 'health',
+                );
               }}
               type="button"
             >
@@ -109,8 +116,10 @@ export function CommandCenterApp({
         </nav>
 
         <main id="command-center" tabIndex={-1}>
-          {activeView === 'setup' ? (
+          {activePage === 'setup' ? (
             <InstructorSetupFlow locale={locale} translate={t} />
+          ) : activePage === 'units' || activePage === 'health' ? (
+            <LobbyConnectivityView translate={t} />
           ) : (
             <>
               <section
