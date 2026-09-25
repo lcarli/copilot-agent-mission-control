@@ -17,7 +17,7 @@ pnpm test
 | `apps/api` | Mission Control API and validation runtime |
 | `apps/command-center` | Instructor dashboard and public presentation |
 | `apps/participant-cli` | Participant workflow CLI |
-| `packages` | Shared authentication, contracts, and localization packages |
+| `packages` | Shared authentication, domain management, contracts, and localization packages |
 | `campaigns` | Versioned campaign workspaces |
 | `infra` | Azure Bicep infrastructure |
 | `tests` | Contract, end-to-end, and load test workspaces |
