@@ -6,61 +6,59 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-207 safe environment destruction.
+**Goal:** Implement TASK-208 infrastructure validation.
 
-**Path:** Add exact-scope cleanup automation to the standalone Bicep platform.
+**Path:** Add repeatable local/CI validation and optional deployed smoke tests.
 
 ## 2. Requirements
 
-- Target only one explicitly named environment resource group.
-- Verify subscription, resource group identity, and managed tags before deletion.
-- Show the exact resources and deletion blockers.
-- Require typed confirmation immediately before deletion.
-- Reject non-interactive bypass by default.
-- Poll deletion status and report soft-deleted Key Vault handling.
-- Never broaden cleanup to a subscription or wildcard scope.
+- Build and lint all Bicep entrypoints and parameter files.
+- Run static security checks for passwordless and least-privilege invariants.
+- Run Azure ARM validation and what-if without deployment.
+- Support optional smoke tests against an explicitly named deployed environment.
+- Verify app HTTPS endpoints, resource provisioning states, identity attachment,
+  passwordless settings, and campaign container privacy.
+- Produce an actionable pass/fail summary and nonzero exit code.
 - Default context: subscription `4e4f76f7-bfb7-4163-84bd-2a19561451b5`,
   region `canadaeast`.
 
 ## 3. Components Detected
 
-- Subscription-scoped deployment creates exactly one tagged environment
-  resource group.
-- Resource group tags include `managedBy=bicep`, `workload`, `environment`, and
-  `owner`.
-- Development defaults disable Key Vault purge protection, while retained
-  environments may enable it.
-- No cleanup automation exists yet.
+- Standalone subscription- and resource-group-scoped Bicep templates.
+- Passwordless controls are explicit in the compiled template: ACR admin off,
+  Storage Shared Key off, Cosmos/SignalR local auth off, private Blob container,
+  RBAC Key Vault, and HTTPS-only Container Apps ingress.
+- Deployment and guarded destruction scripts already expose stable environment
+  conventions and outputs.
+- No GitHub Actions workflows currently validate infrastructure changes.
 
 ## 4. Recipe Selection
 
-**Selected:** PowerShell plus Azure CLI against the existing Bicep contract.
+**Selected:** PowerShell validation orchestrator over Bicep and Azure CLI.
 
 ## 5. Architecture
 
-| Safeguard | Decision |
-|-----------|----------|
-| Required target | Caller must provide the full resource-group name and expected environment |
-| Subscription | Set and echo the exact subscription before inspection |
-| Ownership check | Require `managedBy=bicep`, matching `workload`, and matching `environment` tags |
-| Scope check | Resolve and display the exact resource-group resource ID; reject wildcard-like names |
-| Inventory | List every resource in the group before confirmation |
-| Blockers | Detect resource-group/resource locks and stop without deleting |
-| Key Vault | Report purge-protection state and expected soft-delete retention; never purge |
-| Confirmation | Require typing `delete <resource-group-name>`; no force/bypass option |
-| Execution | Issue only `az group delete --name <exact-name> --yes --no-wait` |
-| Status | Poll `az group exists` until false or timeout; report incomplete deletion explicitly |
-| Preview | `-PreviewOnly` performs every check but never prompts or deletes |
+| Validation layer | Decision |
+|------------------|----------|
+| Offline build | Lint/build both Bicep entrypoints and compile both parameter files in a temporary directory |
+| Static security | Assert compiled ARM invariants and reject credential/list-key outputs or broad workload role scopes |
+| Azure preflight | Unless `-Offline`, authenticate, validate the subscription deployment, and run JSON what-if |
+| Smoke mode | When `-ResourceGroupName` is supplied, require exact managed tags and verify live resource settings |
+| Endpoint smoke | Resolve deployment outputs and perform HTTPS GETs against API and dashboard URLs |
+| Campaign smoke | Verify private campaign container and at least one seeded campaign archive |
+| Summary | Emit named PASS/FAIL/SKIP rows and exit nonzero if any required check fails |
+| CI | Add an offline GitHub Actions workflow for infrastructure file changes |
 
-The script does not enumerate or delete unrelated groups, does not delete at
-subscription scope, and does not purge recoverable services.
+Smoke tests never create, update, or delete resources. They operate only on an
+explicitly named existing resource group.
 
 ## 6. Execution Checklist
 
 - [x] Complete planning and approval
-- [x] Generate exact-scope cleanup script
-- [x] Add status/blocker checks
-- [x] Document destructive safeguards
+- [x] Generate infrastructure validation script
+- [x] Add static security assertions
+- [x] Add optional deployed smoke tests
+- [x] Document local and Azure modes
 - [x] Run local verification
 - [x] Set `Ready for Validation`
 - [x] Complete azure-validate workflow
@@ -73,10 +71,9 @@ subscription scope, and does not purge recoverable services.
 
 | Check | Command | Result | Timestamp |
 |-------|---------|--------|-----------|
-| Script parser | PowerShell AST parser | Passed | 2026-09-25 |
-| Missing target | `destroy.ps1 -PreviewOnly` | Safe no-op | 2026-09-25 |
-| Unmanaged target | `destroy.ps1 -PreviewOnly` | Rejected before deletion | 2026-09-25 |
-| Bicep | `az bicep lint/build` | Passed | 2026-09-25 |
+| Offline infrastructure validation | `pnpm validate:infra -- -Offline` | 12 passed, 2 skipped | 2026-09-25 |
+| Authenticated infrastructure validation | `pnpm validate:infra` | 14 passed, 1 skipped | 2026-09-25 |
+| ARM what-if safety | `scripts/validate-infra.ps1` | 25 analyzed changes, 0 deletes | 2026-09-25 |
 | Formatting | `pnpm format:check` | Passed | 2026-09-25 |
 | Peer dependencies | `pnpm peers check` | Passed | 2026-09-25 |
 | Lint | `pnpm lint` | Passed | 2026-09-25 |
@@ -89,25 +86,26 @@ subscription scope, and does not purge recoverable services.
 
 ## 8. Role Assignment Verification
 
-- **Status:** Verified; TASK-207 adds no role assignments.
-- **Cleanup authorization:** Azure CLI uses only the signed-in principal's
-  existing management-plane permissions.
-- **Scope:** The script resolves one exact resource-group ID and does not grant,
-  elevate, or modify access.
+- **Status:** Verified; TASK-208 adds no Azure roles.
+- **Static coverage:** The validator rejects Owner and generic Contributor role
+  definition IDs in the compiled template.
+- **Live coverage:** Optional smoke mode reads existing resources with the
+  caller's current permissions and does not modify RBAC.
 - **Issues:** None.
 
 ## 9. Files to Generate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `scripts/destroy.ps1` | Guarded exact-resource-group deletion | Complete |
-| `package.json` | Repository cleanup command | Complete |
-| `infra/README.md` | Safeguards and recovery behavior | Complete |
-| `PLAN.md` | Complete TASK-207 | Complete |
+| `scripts/validate-infra.ps1` | Offline, ARM, and deployed smoke validation | Complete |
+| `.github/workflows/infra-validation.yml` | Pull-request offline infrastructure checks | Complete |
+| `package.json` | Repository infrastructure validation command | Complete |
+| `infra/README.md` | Validation modes and expected outputs | Complete |
+| `PLAN.md` | Complete TASK-208 | Complete |
 
 ## 10. Next Steps
 
-> Current: Validated; ready for TASK-207 publication
+> Current: Validated; ready for TASK-208 publication
 
 1. Complete the official azure-validate workflow.
-2. Publish TASK-207 without deleting Azure resources.
+2. Publish TASK-208.

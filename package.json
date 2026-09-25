@@ -17,7 +17,8 @@
     "format:check": "prettier --check .",
     "lint": "pnpm exec turbo run lint",
     "test": "pnpm exec turbo run test",
-    "typecheck": "pnpm exec turbo run typecheck"
+    "typecheck": "pnpm exec turbo run typecheck",
+    "validate:infra": "pwsh -NoProfile -File scripts/validate-infra.ps1"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

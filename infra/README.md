@@ -169,3 +169,23 @@ Cleanup issues only one exact `az group delete` operation and polls until Azure
 reports that group absent. It never enumerates other resource groups and never
 purges soft-deleted Key Vault data. Purge-protected vaults remain recoverable
 until their configured retention period expires.
+
+## Infrastructure validation
+
+Run deterministic local/CI checks without Azure credentials:
+
+```powershell
+pnpm validate:infra -- -Offline
+```
+
+Omit `-Offline` to add subscription-scoped ARM validation and what-if. Supply
+`-ResourceGroupName rg-camc-dev` only when validating an existing deployed
+environment; this enables read-only smoke tests for resource provisioning,
+managed identities, passwordless settings, campaign privacy/seeding, and both
+HTTPS endpoints.
+
+The validator compiles all Bicep and parameter entrypoints into a temporary
+directory, checks security invariants in the compiled ARM template, emits a
+PASS/FAIL/SKIP table, and exits nonzero on any required failure. The
+`Infrastructure validation` GitHub Actions workflow runs offline checks on
+infrastructure-related pull requests and requires no Azure credentials.

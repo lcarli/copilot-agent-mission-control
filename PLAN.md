@@ -1167,7 +1167,7 @@ A task is complete only when:
 - [x] **TASK-205 — Provision container runtime.** Add Azure Container Registry, Container Apps environment, and applications.
 - [x] **TASK-206 — Implement one-command deployment.** Add preflight, what-if, deployment, image publishing, campaign seeding, and output summary.
 - [x] **TASK-207 — Implement safe environment destruction.** Add exact-scope cleanup with confirmation and status checks.
-- [ ] **TASK-208 — Add infrastructure validation.** Build Bicep, run linting and security checks, and perform deployment smoke tests.
+- [x] **TASK-208 — Add infrastructure validation.** Build Bicep, run linting and security checks, and perform deployment smoke tests.
 
 ### Phase 3 — Mission Control Core
 
