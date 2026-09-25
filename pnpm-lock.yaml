@@ -241,6 +241,10 @@ importers:
   packages/campaign-contracts: {}
 
   packages/event-contracts:
+    dependencies:
+      '@sinclair/typebox':
+        specifier: 0.34.52
+        version: 0.34.52
     devDependencies:
       '@types/node':
         specifier: 24.13.5
@@ -463,6 +467,9 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha1-4/zuCT+7XOdl4a0Ij/TeKIn2+b4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz}
+
+  '@sinclair/typebox@0.34.52':
+    resolution: {integrity: sha1-YvimhuSrKKiUSQLirS1kgxLvEcs=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@sinclair/typebox/-/typebox-0.34.52.tgz}
 
   '@turbo/darwin-64@2.10.13':
     resolution: {integrity: sha512-m5DBcpkxmcKpEJHHFUfqf9GLUjSmw3cDnBJM9nghPW3kjCNb5OyNKmzG7/yT5x5AwzOO+HMwKN+UI4iVKL87YA==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@turbo/darwin-64/-/darwin-64-2.10.13.tgz}
@@ -1233,6 +1240,8 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
+
+  '@sinclair/typebox@0.34.52': {}
 
   '@turbo/darwin-64@2.10.13':
     optional: true
