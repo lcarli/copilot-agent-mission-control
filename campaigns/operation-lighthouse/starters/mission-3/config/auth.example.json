@@ -1,0 +1,4 @@
+{
+  "apiUrl": "https://provided-at-runtime.invalid",
+  "tokenEnvironmentVariable": "MISSION_CONTROL_UNIT_TOKEN"
+}

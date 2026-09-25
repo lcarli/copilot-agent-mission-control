@@ -1,5 +1,9 @@
 {
   "name": "@mission-control/campaign-operation-lighthouse",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "node scripts/validate-starters.mjs",
+    "test": "node scripts/validate-starters.mjs"
+  }
 }
