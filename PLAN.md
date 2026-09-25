@@ -1159,7 +1159,7 @@ A task is complete only when:
 
 ### Phase 2 — Azure Infrastructure
 
-- [ ] **TASK-200 — Create Bicep foundation.** Add resource-group-scoped orchestration, parameters, naming, and tags.
+- [x] **TASK-200 — Create Bicep foundation.** Add resource-group-scoped orchestration, parameters, naming, and tags.
 - [ ] **TASK-201 — Provision monitoring resources.** Add Log Analytics and workspace-based Application Insights.
 - [ ] **TASK-202 — Provision identity and secrets.** Add Managed Identities, Key Vault, and least-privilege RBAC.
 - [ ] **TASK-203 — Provision data and campaign storage.** Add Cosmos DB and Blob Storage.
