@@ -6,6 +6,8 @@ param location = 'eastus2'
 param owner = 'mission-control-team'
 param logRetentionInDays = 30
 param logDailyQuotaGb = 1
+param keyVaultSoftDeleteRetentionInDays = 7
+param keyVaultPurgeProtectionEnabled = false
 param additionalTags = {
   purpose: 'workshop'
 }

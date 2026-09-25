@@ -25,15 +25,16 @@ var resourceToken = take(
 )
 
 output names object = {
+  apiIdentity: 'id-${readablePrefix}-api-${resourceToken}'
   applicationInsights: 'appi-${readablePrefix}-${resourceToken}'
   containerAppsEnvironment: 'cae-${readablePrefix}-${resourceToken}'
   containerRegistry: 'cr${compactPrefix}${resourceToken}'
   cosmosAccount: 'cosmos-${readablePrefix}-${resourceToken}'
+  dashboardIdentity: 'id-${readablePrefix}-dashboard-${resourceToken}'
   dashboardContainerApp: 'ca-${take(readablePrefix, 19)}-dashboard'
   keyVault: 'kv-${compactPrefix}-${resourceToken}'
   logAnalyticsWorkspace: 'log-${readablePrefix}-${resourceToken}'
   missionControlApiContainerApp: 'ca-${readablePrefix}-api'
   signalRService: 'sigr-${readablePrefix}-${resourceToken}'
   storageAccount: 'st${compactPrefix}${resourceToken}'
-  workloadIdentity: 'id-${readablePrefix}-${resourceToken}'
 }
