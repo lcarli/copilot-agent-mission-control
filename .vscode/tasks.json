@@ -1,0 +1,188 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Mission Control: Build CLI",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "@mission-control/participant-cli", "build"],
+      "problemMatcher": "$tsc",
+      "presentation": { "reveal": "silent" }
+    },
+    {
+      "label": "Mission Control: Configure",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "config",
+        "set",
+        "--api-url",
+        "${input:missionControlApiUrl}",
+        "--locale",
+        "${input:missionControlLocale}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Join Event",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "join",
+        "--event-code",
+        "${input:missionControlEventCode}",
+        "--name",
+        "${input:missionControlUnitName}",
+        "--locale",
+        "${input:missionControlLocale}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Check Connectivity",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "connectivity"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Start Mission",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "start",
+        "${input:missionControlMissionId}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Test Mission",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "test",
+        "${input:missionControlMissionId}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Validate Evidence",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "validate",
+        "${input:missionControlMissionId}",
+        "--evidence",
+        "${input:missionControlEvidencePath}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Submit Mission",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "submit",
+        "${input:missionControlMissionId}",
+        "--evidence",
+        "${input:missionControlEvidencePath}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Retry Submission",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "retry",
+        "${input:missionControlMissionId}",
+        "--evidence",
+        "${input:missionControlEvidencePath}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Request Hint",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "mission",
+        "hint",
+        "${input:missionControlMissionId}"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    },
+    {
+      "label": "Mission Control: Diagnose",
+      "type": "process",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/apps/participant-cli/dist/cli.js",
+        "diagnose"
+      ],
+      "dependsOn": "Mission Control: Build CLI",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "missionControlApiUrl",
+      "type": "promptString",
+      "description": "Mission Control API URL",
+      "default": "http://localhost:3000"
+    },
+    {
+      "id": "missionControlLocale",
+      "type": "pickString",
+      "description": "Participant language",
+      "options": ["en", "fr", "pt-BR"],
+      "default": "en"
+    },
+    {
+      "id": "missionControlEventCode",
+      "type": "promptString",
+      "description": "Event code"
+    },
+    {
+      "id": "missionControlUnitName",
+      "type": "promptString",
+      "description": "Moderated unit display name"
+    },
+    {
+      "id": "missionControlMissionId",
+      "type": "promptString",
+      "description": "Mission ID"
+    },
+    {
+      "id": "missionControlEvidencePath",
+      "type": "promptString",
+      "description": "Evidence JSON path",
+      "default": "${workspaceFolder}/evidence.json"
+    }
+  ]
+}
