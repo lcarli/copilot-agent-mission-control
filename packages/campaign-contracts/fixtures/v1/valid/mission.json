@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "mission",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "id": "signal-in-the-storm",
+  "version": "1.0.0",
+  "prerequisiteMissions": [],
+  "recommendedDurationMinutes": 50,
+  "contentKeys": {
+    "title": "missions.signal.title",
+    "brief": "missions.signal.brief",
+    "coreObjectivesHeading": "missions.core.heading",
+    "advancedObjectivesHeading": "missions.advanced.heading",
+    "completion": "missions.signal.completion"
+  },
+  "objectives": {
+    "core": [
+      {
+        "id": "classify-incident",
+        "descriptionKey": "missions.signal.objectives.classify"
+      }
+    ],
+    "advanced": [
+      {
+        "id": "detect-duplicates",
+        "descriptionKey": "missions.signal.objectives.duplicates"
+      }
+    ]
+  },
+  "requiredEventTypes": [
+    "mission.submitted"
+  ],
+  "availableTools": [
+    {
+      "id": "incident-intake",
+      "operations": [
+        "get-report"
+      ],
+      "required": false
+    }
+  ],
+  "submissionSchema": "schemas/submissions/signal-in-the-storm.schema.json",
+  "validator": {
+    "id": "signal-in-the-storm-validator",
+    "version": "1.0.0",
+    "timeoutMs": 10000
+  },
+  "hints": [
+    {
+      "level": 1,
+      "contentKey": "missions.signal.hints.level1"
+    },
+    {
+      "level": 2,
+      "contentKey": "missions.signal.hints.level2"
+    },
+    {
+      "level": 3,
+      "contentKey": "missions.signal.hints.level3"
+    }
+  ],
+  "scoring": {
+    "maximumPoints": 1000,
+    "dimensionWeights": {
+      "requiredOutcome": 4000,
+      "evidenceAndGrounding": 2000,
+      "reliability": 1500,
+      "explainability": 1500,
+      "efficiency": 1000
+    },
+    "hintBonusAdjustments": {
+      "level1": 0,
+      "level2": -25,
+      "level3": -50
+    }
+  },
+  "dashboardEffects": [
+    {
+      "id": "add-incident-marker",
+      "triggerEventType": "mission.completed",
+      "effectType": "map-marker"
+    }
+  ],
+  "instructorModifiers": [
+    {
+      "id": "incident-surge",
+      "titleKey": "modifiers.incidentSurge.title",
+      "descriptionKey": "modifiers.incidentSurge.description",
+      "parametersSchema": "schemas/modifiers/incident-surge.schema.json"
+    }
+  ],
+  "failureBehavior": {
+    "allowRetry": true,
+    "maximumAttempts": null,
+    "pauseOnSimulatorFailure": true,
+    "blockedOutcomeAllowed": true
+  }
+}

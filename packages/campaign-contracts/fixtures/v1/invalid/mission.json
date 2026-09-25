@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "mission",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "id": "signal-in-the-storm",
+  "version": "1.0.0",
+  "prerequisiteMissions": [],
+  "recommendedDurationMinutes": 0,
+  "contentKeys": {},
+  "objectives": {
+    "core": [],
+    "advanced": []
+  },
+  "requiredEventTypes": [
+    "invalid"
+  ],
+  "availableTools": [],
+  "submissionSchema": "../outside.schema.json",
+  "validator": {
+    "id": "validator",
+    "version": "1.0.0",
+    "timeoutMs": 1
+  },
+  "hints": [],
+  "scoring": {
+    "maximumPoints": 0,
+    "dimensionWeights": {},
+    "hintBonusAdjustments": {}
+  },
+  "dashboardEffects": [],
+  "instructorModifiers": [],
+  "failureBehavior": {
+    "allowRetry": true,
+    "maximumAttempts": 0,
+    "pauseOnSimulatorFailure": true,
+    "blockedOutcomeAllowed": true
+  }
+}

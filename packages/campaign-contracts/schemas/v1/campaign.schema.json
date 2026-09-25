@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/campaign.schema.json",
+  "title": "Campaign manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "id",
+    "version",
+    "titleKey",
+    "synopsisKey",
+    "defaultLocale",
+    "supportedLocales",
+    "minimumPlatformVersion",
+    "capacity",
+    "missions",
+    "missionFiles",
+    "assetManifest",
+    "localizationFiles"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/schemaVersion"
+    },
+    "kind": {
+      "const": "campaign"
+    },
+    "id": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+    },
+    "version": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+    },
+    "titleKey": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+    },
+    "synopsisKey": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+    },
+    "defaultLocale": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/locale"
+    },
+    "supportedLocales": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/locale"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "const": "en"
+          }
+        },
+        {
+          "contains": {
+            "const": "fr"
+          }
+        },
+        {
+          "contains": {
+            "const": "pt-BR"
+          }
+        }
+      ]
+    },
+    "minimumPlatformVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+    },
+    "compatiblePlatformVersions": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersionRange"
+    },
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recommendedParticipants",
+        "maximumParticipants"
+      ],
+      "properties": {
+        "recommendedParticipants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "maximumParticipants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      }
+    },
+    "missions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+      }
+    },
+    "missionFiles": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+      },
+      "additionalProperties": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+      }
+    },
+    "assetManifest": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+    },
+    "localizationFiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "fr",
+        "pt-BR"
+      ],
+      "properties": {
+        "en": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+        },
+        "fr": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+        },
+        "pt-BR": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+        }
+      }
+    }
+  }
+}

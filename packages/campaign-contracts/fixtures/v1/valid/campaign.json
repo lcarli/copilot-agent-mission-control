@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "campaign",
+  "id": "operation-lighthouse",
+  "version": "1.0.0",
+  "titleKey": "campaign.title",
+  "synopsisKey": "campaign.synopsis",
+  "defaultLocale": "en",
+  "supportedLocales": [
+    "en",
+    "fr",
+    "pt-BR"
+  ],
+  "minimumPlatformVersion": "0.1.0",
+  "compatiblePlatformVersions": ">=0.1.0 <2.0.0",
+  "capacity": {
+    "recommendedParticipants": 50,
+    "maximumParticipants": 50
+  },
+  "missions": [
+    "signal-in-the-storm"
+  ],
+  "missionFiles": {
+    "signal-in-the-storm": "missions/signal-in-the-storm.yaml"
+  },
+  "assetManifest": "assets/manifest.yaml",
+  "localizationFiles": {
+    "en": "locales/en.json",
+    "fr": "locales/fr.json",
+    "pt-BR": "locales/pt-BR.json"
+  }
+}

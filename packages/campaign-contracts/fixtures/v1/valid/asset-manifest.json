@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "asset-manifest",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "assets": [
+    {
+      "assetId": "OL-OPENING-VIDEO-001",
+      "scene": "opening",
+      "narrativePurposeKey": "assets.opening.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        }
+      ],
+      "languageRequirements": [
+        "en",
+        "fr",
+        "pt-BR"
+      ],
+      "targetDurationSeconds": 60,
+      "continuityReferences": [],
+      "generationPrompt": "A cinematic but realistic view of fictional Port Azure as a severe coastal storm approaches, with no visible text or real-world logos.",
+      "negativePrompt": "Generated text, real logos, watermarks, unsafe emergency behavior.",
+      "scriptKeys": {
+        "en": "assets.opening.script",
+        "fr": "assets.opening.script",
+        "pt-BR": "assets.opening.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        {
+          "locale": "en",
+          "format": "vtt"
+        },
+        {
+          "locale": "fr",
+          "format": "vtt"
+        },
+        {
+          "locale": "pt-BR",
+          "format": "vtt"
+        }
+      ],
+      "accessibilityRequirements": [
+        "assets.opening.accessibility"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 104857600,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending",
+        "model": "pending",
+        "generatedAt": "2026-09-25T14:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    }
+  ]
+}
