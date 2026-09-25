@@ -1,6 +1,27 @@
 # copilot-agent-mission-control
-
 Mission-based, multilingual workshops for building GitHub Copilot agents in VS Code.
+
+## Workspace
+
+This repository is a pnpm and Turborepo monorepo targeting Node.js 24.
+
+```powershell
+corepack enable
+pnpm install
+pnpm build
+pnpm test
+```
+
+| Path | Purpose |
+|---|---|
+| `apps/api` | Mission Control API and validation runtime |
+| `apps/command-center` | Instructor dashboard and public presentation |
+| `apps/participant-cli` | Participant workflow CLI |
+| `packages` | Shared contracts and localization packages |
+| `campaigns` | Versioned campaign workspaces |
+| `infra` | Azure Bicep infrastructure |
+| `tests` | Contract, end-to-end, and load test workspaces |
+| `scripts` | Operational PowerShell automation |
 
 ## Project documentation
 
