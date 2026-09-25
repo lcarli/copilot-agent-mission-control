@@ -32,6 +32,14 @@ param logRetentionInDays int = 30
 @maxValue(1000)
 param logDailyQuotaGb int = 1
 
+@description('Number of days soft-deleted Key Vault objects are retained.')
+@minValue(7)
+@maxValue(90)
+param keyVaultSoftDeleteRetentionInDays int = 7
+
+@description('Protect the Key Vault from purge during the soft-delete retention period.')
+param keyVaultPurgeProtectionEnabled bool = true
+
 module naming './modules/naming.bicep' = {
   name: 'mission-control-naming'
   params: {
@@ -51,6 +59,17 @@ module tagging './modules/tags.bicep' = {
   }
 }
 
+module identitySecrets './modules/identity-secrets.bicep' = {
+  name: 'mission-control-identity-secrets'
+  params: {
+    location: location
+    names: naming.outputs.names
+    purgeProtectionEnabled: keyVaultPurgeProtectionEnabled
+    softDeleteRetentionInDays: keyVaultSoftDeleteRetentionInDays
+    tags: tagging.outputs.tags
+  }
+}
+
 module monitoring './modules/monitoring.bicep' = {
   name: 'mission-control-monitoring'
   params: {
@@ -62,6 +81,23 @@ module monitoring './modules/monitoring.bicep' = {
   }
 }
 
+output identity object = {
+  api: {
+    clientId: identitySecrets.outputs.apiIdentityClientId
+    principalId: identitySecrets.outputs.apiIdentityPrincipalId
+    resourceId: identitySecrets.outputs.apiIdentityId
+  }
+  dashboard: {
+    clientId: identitySecrets.outputs.dashboardIdentityClientId
+    principalId: identitySecrets.outputs.dashboardIdentityPrincipalId
+    resourceId: identitySecrets.outputs.dashboardIdentityId
+  }
+}
+output keyVault object = {
+  id: identitySecrets.outputs.keyVaultId
+  name: identitySecrets.outputs.keyVaultName
+  uri: identitySecrets.outputs.keyVaultUri
+}
 output location string = location
 output monitoring object = {
   applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
