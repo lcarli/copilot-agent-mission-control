@@ -6,9 +6,11 @@ import {
 import { useMemo, useState } from 'react';
 
 import { catalogs } from './messages.js';
+import { InstructorSetupFlow } from './InstructorSetupFlow.js';
 
 export interface CommandCenterAppProps {
   readonly initialLocale?: SupportedLocale;
+  readonly initialView?: 'setup' | 'dashboard';
 }
 
 type ThemeChoice = 'auto' | 'light' | 'dark';
@@ -21,9 +23,11 @@ const metricCards = [
 
 export function CommandCenterApp({
   initialLocale = 'en',
+  initialView = 'setup',
 }: CommandCenterAppProps) {
   const [locale, setLocale] = useState<SupportedLocale>(initialLocale);
   const [theme, setTheme] = useState<ThemeChoice>('auto');
+  const [activeView, setActiveView] = useState(initialView);
   const localizer = useMemo(
     () => createLocalizer({ catalogs, defaultLocale: 'en' }),
     [],
@@ -85,85 +89,102 @@ export function CommandCenterApp({
         </header>
 
         <nav className="primary-nav" aria-label="Primary">
-          {['overview', 'missions', 'units', 'health'].map((item, index) => (
-            <a
-              aria-current={index === 0 ? 'page' : undefined}
-              href={`#${item}`}
+          {['setup', 'overview', 'missions', 'units', 'health'].map((item) => (
+            <button
+              aria-current={
+                (item === 'setup' && activeView === 'setup') ||
+                (item === 'overview' && activeView === 'dashboard')
+                  ? 'page'
+                  : undefined
+              }
               key={item}
+              onClick={() => {
+                setActiveView(item === 'setup' ? 'setup' : 'dashboard');
+              }}
+              type="button"
             >
               {t(`nav.${item}`)}
-            </a>
+            </button>
           ))}
         </nav>
 
         <main id="command-center" tabIndex={-1}>
-          <section className="status-strip" aria-label={t('shell.eventStatus')}>
-            <div>
-              <span className="status-dot" aria-hidden="true" />
-              <span>{t('shell.eventStatus')}</span>
-              <strong>{t('shell.active')}</strong>
-            </div>
-            <time dateTime="2026-09-25T14:05:00Z">14:05 UTC</time>
-          </section>
-
-          <section className="metric-grid" aria-label="Event summary">
-            {metricCards.map(([label, value]) => (
-              <article className="metric-card" key={label}>
-                <p>{t(label)}</p>
-                <strong>{value}</strong>
-              </article>
-            ))}
-          </section>
-
-          <div className="workspace-grid">
-            <section className="panel map-panel" id="overview">
-              <div className="panel-heading">
-                <div>
-                  <p className="eyebrow">{t('nav.overview')}</p>
-                  <h2>{t('shell.cityOverview')}</h2>
-                </div>
-                <span className="live-indicator">LIVE</span>
-              </div>
-              <div
-                className="empty-visual"
-                role="img"
-                aria-label={t('shell.cityDescription')}
+          {activeView === 'setup' ? (
+            <InstructorSetupFlow locale={locale} translate={t} />
+          ) : (
+            <>
+              <section
+                className="status-strip"
+                aria-label={t('shell.eventStatus')}
               >
-                <span aria-hidden="true">◎</span>
-                <p>{t('shell.cityDescription')}</p>
-              </div>
-            </section>
+                <div>
+                  <span className="status-dot" aria-hidden="true" />
+                  <span>{t('shell.eventStatus')}</span>
+                  <strong>{t('shell.active')}</strong>
+                </div>
+                <time dateTime="2026-09-25T14:05:00Z">14:05 UTC</time>
+              </section>
 
-            <aside
-              className="panel activity-panel"
-              aria-labelledby="activity-title"
-            >
-              <div className="panel-heading">
-                <h2 id="activity-title">{t('shell.activity')}</h2>
-              </div>
-              <div className="empty-state" aria-live="polite">
-                <p>{t('shell.activityDescription')}</p>
-              </div>
-            </aside>
+              <section className="metric-grid" aria-label="Event summary">
+                {metricCards.map(([label, value]) => (
+                  <article className="metric-card" key={label}>
+                    <p>{t(label)}</p>
+                    <strong>{value}</strong>
+                  </article>
+                ))}
+              </section>
 
-            <section className="panel" id="units">
-              <div className="panel-heading">
-                <h2>{t('shell.units')}</h2>
-              </div>
-              <div className="empty-state">
-                <p>{t('shell.unitsDescription')}</p>
-              </div>
-            </section>
+              <div className="workspace-grid">
+                <section className="panel map-panel" id="overview">
+                  <div className="panel-heading">
+                    <div>
+                      <p className="eyebrow">{t('nav.overview')}</p>
+                      <h2>{t('shell.cityOverview')}</h2>
+                    </div>
+                    <span className="live-indicator">LIVE</span>
+                  </div>
+                  <div
+                    className="empty-visual"
+                    role="img"
+                    aria-label={t('shell.cityDescription')}
+                  >
+                    <span aria-hidden="true">◎</span>
+                    <p>{t('shell.cityDescription')}</p>
+                  </div>
+                </section>
 
-            <section className="panel" id="missions">
-              <div className="panel-heading">
-                <h2>{t('shell.controls')}</h2>
+                <aside
+                  className="panel activity-panel"
+                  aria-labelledby="activity-title"
+                >
+                  <div className="panel-heading">
+                    <h2 id="activity-title">{t('shell.activity')}</h2>
+                  </div>
+                  <div className="empty-state" aria-live="polite">
+                    <p>{t('shell.activityDescription')}</p>
+                  </div>
+                </aside>
+
+                <section className="panel" id="units">
+                  <div className="panel-heading">
+                    <h2>{t('shell.units')}</h2>
+                  </div>
+                  <div className="empty-state">
+                    <p>{t('shell.unitsDescription')}</p>
+                  </div>
+                </section>
+
+                <section className="panel" id="missions">
+                  <div className="panel-heading">
+                    <h2>{t('shell.controls')}</h2>
+                  </div>
+                  <div className="empty-state">
+                    <p>{t('shell.controlsDescription')}</p>
+                  </div>
+                </section>
               </div>
-              <div className="empty-state">
-                <p>{t('shell.controlsDescription')}</p>
-              </div>
-            </section>
-          </div>
+            </>
+          )}
         </main>
       </div>
     </>
