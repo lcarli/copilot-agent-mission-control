@@ -1172,7 +1172,7 @@ A task is complete only when:
 ### Phase 3 — Mission Control Core
 
 - [x] **TASK-300 — Implement Mission Control API foundation.** Add health, configuration, errors, correlation, and API versioning.
-- [ ] **TASK-301 — Implement mission lifecycle.** Open, start, pause, resume, and close missions.
+- [x] **TASK-301 — Implement mission lifecycle.** Open, start, pause, resume, and close missions.
 - [ ] **TASK-302 — Implement event ingestion.** Validate, authorize, deduplicate, store, and publish participant events.
 - [ ] **TASK-303 — Implement scoring engine.** Calculate core, advanced, reliability, evidence, and tie-breaker scores.
 - [ ] **TASK-304 — Implement validation worker model.** Run versioned validators with timeouts and structured results.
