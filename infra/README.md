@@ -14,6 +14,7 @@ resource names, and common tags so capability modules remain consistent.
 | `modules/tags.bicep` | Required tags merged with caller-supplied tags |
 | `modules/monitoring.bicep` | Log Analytics and workspace-based Application Insights |
 | `modules/identity-secrets.bicep` | Workload identities, Key Vault, and vault-scoped RBAC |
+| `modules/data-storage.bicep` | Passwordless Cosmos DB and private campaign Blob Storage |
 
 `workloadName` and `environmentName` should contain lowercase letters, numbers,
 and hyphens. Keep them short because services such as Key Vault and Storage
@@ -69,3 +70,23 @@ exposes only identity metadata and the vault resource ID, name, and URI:
 
 TASK-206 is responsible for authenticated secret seeding without placing secret
 values in deployment history.
+
+## Data and campaign storage
+
+The data module provisions a serverless Cosmos DB for NoSQL account with
+key-based authentication disabled. The `events` and `state` containers use
+`/eventSessionId` as their partition key, keeping event data co-located and
+isolated. The events container additionally enforces unique event IDs and
+aggregate-version pairs within each event session.
+
+Campaign archives use the private `campaigns` Blob container. Blob public access
+and Storage Shared Key authorization are disabled; versioning and soft deletion
+protect reviewed packages from accidental replacement.
+
+The API identity receives:
+
+- Cosmos DB Built-in Data Contributor at the Cosmos account.
+- Storage Blob Data Contributor at the `campaigns` container only.
+
+The `data` root output contains endpoints, resource IDs, and logical names but
+never account keys or connection strings.
