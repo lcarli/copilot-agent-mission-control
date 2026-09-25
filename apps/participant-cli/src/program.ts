@@ -1,0 +1,123 @@
+import { Command } from 'commander';
+
+import type { ParticipantAuthSession } from './auth.js';
+import {
+  validateParticipantConfig,
+  type ParticipantConfigRepository,
+} from './config.js';
+import { runParticipantDiagnostics } from './diagnostics.js';
+import { createCliLocalizer } from './translations.js';
+
+export interface ParticipantCliDependencies {
+  readonly auth: ParticipantAuthSession;
+  readonly configRepository: ParticipantConfigRepository;
+  readonly environmentLocale?: string;
+  readonly fetch?: typeof globalThis.fetch;
+  readonly setExitCode?: (code: number) => void;
+  readonly writeError?: (message: string) => void;
+  readonly writeOutput?: (message: string) => void;
+}
+
+export function createParticipantProgram(
+  dependencies: ParticipantCliDependencies,
+): Command {
+  const writeOutput = dependencies.writeOutput ?? console.log;
+  const writeError = dependencies.writeError ?? console.error;
+  const setExitCode =
+    dependencies.setExitCode ??
+    ((code: number) => {
+      process.exitCode = code;
+    });
+  const program = new Command()
+    .name('mission-control')
+    .description('Copilot Agent Mission Control participant CLI')
+    .version('0.0.0')
+    .showHelpAfterError()
+    .configureOutput({
+      writeErr: (text) => {
+        writeError(text.trimEnd());
+      },
+      writeOut: (text) => {
+        writeOutput(text.trimEnd());
+      },
+    });
+
+  const configCommand = program
+    .command('config')
+    .description('Manage CLI configuration');
+  configCommand
+    .command('set')
+    .option('--api-url <url>')
+    .option('--locale <locale>')
+    .action(async (options: { apiUrl?: string; locale?: string }) => {
+      const current = await dependencies.configRepository.load();
+      const apiUrl = options.apiUrl ?? current?.apiUrl;
+      const locale =
+        options.locale ?? current?.locale ?? dependencies.environmentLocale;
+      if (apiUrl === undefined || locale === undefined) {
+        throw new Error('config-invalid');
+      }
+      const config = validateParticipantConfig({
+        apiUrl,
+        locale,
+        schemaVersion: 1,
+      });
+      await dependencies.configRepository.save(config);
+      const t = createCliLocalizer(config.locale);
+      writeOutput(t('config.saved'));
+    });
+
+  configCommand.command('show').action(async () => {
+    const config = await dependencies.configRepository.load();
+    const t = createCliLocalizer(
+      config?.locale ?? dependencies.environmentLocale,
+    );
+    if (config === undefined) {
+      writeOutput(t('config.missing'));
+      return;
+    }
+    writeOutput(JSON.stringify(config, undefined, 2));
+  });
+
+  program
+    .command('auth')
+    .description('Show participant authentication status')
+    .action(() => {
+      const status = dependencies.auth.status();
+      const t = createCliLocalizer(dependencies.environmentLocale);
+      writeOutput(
+        t(status.authenticated ? 'auth.available' : 'auth.unavailable'),
+      );
+    });
+
+  program
+    .command('diagnose')
+    .description(
+      'Check local runtime, configuration, authentication, and API connectivity',
+    )
+    .action(async () => {
+      const config = await dependencies.configRepository.load();
+      const t = createCliLocalizer(
+        config?.locale ?? dependencies.environmentLocale,
+      );
+      const results = await runParticipantDiagnostics({
+        auth: dependencies.auth,
+        configRepository: dependencies.configRepository,
+        ...(dependencies.fetch === undefined
+          ? {}
+          : { fetch: dependencies.fetch }),
+      });
+      for (const result of results) {
+        writeOutput(
+          `${result.status.toUpperCase()} ${t(
+            `diagnostic.${result.check}`,
+          )}: ${result.detail}`,
+        );
+      }
+      if (results.some(({ status }) => status === 'fail')) {
+        setExitCode(1);
+      }
+    });
+
+  return program;
+}

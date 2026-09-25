@@ -248,6 +248,13 @@ importers:
         version: 5.0.1(@types/node@24.13.5)(vite@8.0.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@24.13.5)(yaml@2.8.1))
 
   apps/participant-cli:
+    dependencies:
+      '@mission-control/localization':
+        specifier: workspace:*
+        version: link:../../packages/localization
+      commander:
+        specifier: 14.0.3
+        version: 14.0.3
     devDependencies:
       '@types/node':
         specifier: 24.13.5
@@ -1061,6 +1068,10 @@ packages:
   chai@6.2.2:
     resolution: {integrity: sha1-rkG1LJrKh3NFBTYnF/MlX6zaNg4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/chai/-/chai-6.2.2.tgz}
     engines: {node: '>=18'}
+
+  commander@14.0.3:
+    resolution: {integrity: sha1-Ql15tI+a+C/Nnk/B6or2xewHu8I=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/commander/-/commander-14.0.3.tgz}
+    engines: {node: '>=20'}
 
   cookie@1.1.1:
     resolution: {integrity: sha1-O7m9/II2nbnC9pyTycPOsxDIizw=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/cookie/-/cookie-1.1.1.tgz}
@@ -2217,6 +2228,8 @@ snapshots:
       qified: 0.10.1
 
   chai@6.2.2: {}
+
+  commander@14.0.3: {}
 
   cookie@1.1.1: {}
 
