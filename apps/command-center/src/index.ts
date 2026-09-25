@@ -1,1 +1,1 @@
-export const workspaceName = '@mission-control/command-center';
+export { CommandCenterApp, type CommandCenterAppProps } from './App.js';
