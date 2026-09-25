@@ -1208,7 +1208,7 @@ A task is complete only when:
 - [x] **TASK-602 — Implement weather simulator.** Provide deterministic observations, forecasts, and failures.
 - [x] **TASK-603 — Implement grid simulator.** Provide sector health, outages, and restoration constraints.
 - [x] **TASK-604 — Implement shelter simulator.** Provide capacity, resources, status, and controlled changes.
-- [ ] **TASK-605 — Implement transport simulator.** Provide closures, routes, travel constraints, and updates.
+- [x] **TASK-605 — Implement transport simulator.** Provide closures, routes, travel constraints, and updates.
 - [ ] **TASK-606 — Implement incident intake simulator.** Provide multilingual reports, duplicates, missing data, and contradictions.
 - [ ] **TASK-607 — Implement resource inventory simulator.** Provide constrained generators, vehicles, supplies, and teams.
 - [ ] **TASK-610 — Build Mission 1 content and validator.** Deliver Signal in the Storm in all supported languages.
