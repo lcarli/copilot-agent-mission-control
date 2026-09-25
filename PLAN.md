@@ -1194,7 +1194,7 @@ A task is complete only when:
 
 ### Phase 5 — Participant Toolkit
 
-- [ ] **TASK-500 — Create participant CLI foundation.** Add configuration, authentication, localization, and diagnostics.
+- [x] **TASK-500 — Create participant CLI foundation.** Add configuration, authentication, localization, and diagnostics.
 - [ ] **TASK-501 — Implement registration and connectivity check.** Join an event and verify required endpoints.
 - [ ] **TASK-502 — Implement mission workflow commands.** Start, test, validate, submit, retry, and request hints.
 - [ ] **TASK-503 — Create Visual Studio Code tasks.** Provide discoverable commands without requiring CLI memorization.
