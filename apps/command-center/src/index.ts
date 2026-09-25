@@ -10,6 +10,14 @@ export {
   type PlatformHealthSummary,
 } from './LobbyConnectivityView.js';
 export {
+  LiveCityMap,
+  type CityDistrict,
+  type CityIncident,
+  type CityRoute,
+  type CityService,
+  type LiveCityMapProps,
+} from './LiveCityMap.js';
+export {
   defaultSetupAdapter,
   generateEventCode,
   validateSetupDraft,

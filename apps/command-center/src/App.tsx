@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 
 import { catalogs } from './messages.js';
 import { InstructorSetupFlow } from './InstructorSetupFlow.js';
+import { LiveCityMap } from './LiveCityMap.js';
 import { LobbyConnectivityView } from './LobbyConnectivityView.js';
 
 export interface CommandCenterAppProps {
@@ -145,21 +146,7 @@ export function CommandCenterApp({
 
               <div className="workspace-grid">
                 <section className="panel map-panel" id="overview">
-                  <div className="panel-heading">
-                    <div>
-                      <p className="eyebrow">{t('nav.overview')}</p>
-                      <h2>{t('shell.cityOverview')}</h2>
-                    </div>
-                    <span className="live-indicator">LIVE</span>
-                  </div>
-                  <div
-                    className="empty-visual"
-                    role="img"
-                    aria-label={t('shell.cityDescription')}
-                  >
-                    <span aria-hidden="true">◎</span>
-                    <p>{t('shell.cityDescription')}</p>
-                  </div>
+                  <LiveCityMap translate={t} />
                 </section>
 
                 <aside
