@@ -7,6 +7,7 @@ import {
 } from './config.js';
 import { runParticipantDiagnostics } from './diagnostics.js';
 import type { ParticipantRegistrationClient } from './registration.js';
+import type { ParticipantMissionWorkflow } from './workflow.js';
 import { createCliLocalizer } from './translations.js';
 
 export interface ParticipantCliDependencies {
@@ -15,6 +16,7 @@ export interface ParticipantCliDependencies {
   readonly environmentLocale?: string;
   readonly fetch?: typeof globalThis.fetch;
   readonly registrationClient?: ParticipantRegistrationClient;
+  readonly missionWorkflow?: ParticipantMissionWorkflow;
   readonly setExitCode?: (code: number) => void;
   readonly writeError?: (message: string) => void;
   readonly writeOutput?: (message: string) => void;
@@ -91,6 +93,63 @@ export function createParticipantProgram(
         t(status.authenticated ? 'auth.available' : 'auth.unavailable'),
       );
     });
+
+  const mission = program
+    .command('mission')
+    .description('Run mission workflows');
+  const requireWorkflow = (): ParticipantMissionWorkflow => {
+    if (dependencies.missionWorkflow === undefined) {
+      throw new Error('mission-workflow-unavailable');
+    }
+    return dependencies.missionWorkflow;
+  };
+  const missionOutput = async (
+    action: () => Promise<string>,
+  ): Promise<void> => {
+    writeOutput(await action());
+  };
+
+  mission.command('start <mission-id>').action(async (missionId: string) => {
+    await requireWorkflow().start(missionId);
+    const t = createCliLocalizer(dependencies.environmentLocale);
+    writeOutput(t('mission.started'));
+  });
+  mission.command('test <mission-id>').action(async (missionId: string) => {
+    const result = await requireWorkflow().test(missionId);
+    const t = createCliLocalizer(dependencies.environmentLocale);
+    writeOutput(
+      t(result.passed ? 'mission.testsPassed' : 'mission.testsFailed'),
+    );
+    if (!result.passed) setExitCode(result.exitCode);
+  });
+  mission
+    .command('validate <mission-id>')
+    .requiredOption('--evidence <path>')
+    .action(async (missionId: string, options: { evidence: string }) => {
+      await requireWorkflow().validate(missionId, options.evidence);
+      const t = createCliLocalizer(dependencies.environmentLocale);
+      writeOutput(t('mission.evidenceValid'));
+    });
+  for (const commandName of ['submit', 'retry'] as const) {
+    mission
+      .command(`${commandName} <mission-id>`)
+      .requiredOption('--evidence <path>')
+      .action(async (missionId: string, options: { evidence: string }) => {
+        await missionOutput(async () => {
+          const result = await requireWorkflow().submit(
+            missionId,
+            options.evidence,
+          );
+          return `${result.submissionId} · ${result.status}`;
+        });
+      });
+  }
+  mission.command('hint <mission-id>').action(async (missionId: string) => {
+    await missionOutput(async () => {
+      const result = await requireWorkflow().hint(missionId);
+      return `L${String(result.level)} · ${result.contentKey}`;
+    });
+  });
 
   program
     .command('join')
