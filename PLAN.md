@@ -1166,7 +1166,7 @@ A task is complete only when:
 - [x] **TASK-204 — Provision real-time messaging.** Add Azure SignalR Service and application configuration.
 - [x] **TASK-205 — Provision container runtime.** Add Azure Container Registry, Container Apps environment, and applications.
 - [x] **TASK-206 — Implement one-command deployment.** Add preflight, what-if, deployment, image publishing, campaign seeding, and output summary.
-- [ ] **TASK-207 — Implement safe environment destruction.** Add exact-scope cleanup with confirmation and status checks.
+- [x] **TASK-207 — Implement safe environment destruction.** Add exact-scope cleanup with confirmation and status checks.
 - [ ] **TASK-208 — Add infrastructure validation.** Build Bicep, run linting and security checks, and perform deployment smoke tests.
 
 ### Phase 3 — Mission Control Core

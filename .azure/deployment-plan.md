@@ -6,59 +6,61 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-206 one-command deployment.
+**Goal:** Implement TASK-207 safe environment destruction.
 
-**Path:** Add deployment automation to the existing standalone Bicep platform.
+**Path:** Add exact-scope cleanup automation to the standalone Bicep platform.
 
 ## 2. Requirements
 
-- Preflight Azure CLI, authentication, subscription, providers, and local tools.
-- Bicep build and what-if before any deployment.
-- Explicit confirmation before Azure resource creation or modification.
-- Deploy the resource-group-scoped platform.
-- Publish bootstrap application images to ACR without registry credentials.
-- Seed versioned campaign packages through Entra-authenticated Blob access.
-- Update Container Apps to immutable image digests.
-- Print non-sensitive resource and application outputs.
-- Target subscription `4e4f76f7-bfb7-4163-84bd-2a19561451b5` in `canadaeast`.
+- Target only one explicitly named environment resource group.
+- Verify subscription, resource group identity, and managed tags before deletion.
+- Show the exact resources and deletion blockers.
+- Require typed confirmation immediately before deletion.
+- Reject non-interactive bypass by default.
+- Poll deletion status and report soft-deleted Key Vault handling.
+- Never broaden cleanup to a subscription or wildcard scope.
+- Default context: subscription `4e4f76f7-bfb7-4163-84bd-2a19561451b5`,
+  region `canadaeast`.
 
 ## 3. Components Detected
 
-- Resource-group-scoped Bicep platform with 20 planned resources.
-- API and Command Center package shells using the public Container Apps
-  bootstrap image until their application phases.
-- Operation Lighthouse campaign workspace at version `0.0.0`; campaign content
-  is intentionally minimal until Phase 6.
-- No existing deployment scripts or `azure.yaml`.
+- Subscription-scoped deployment creates exactly one tagged environment
+  resource group.
+- Resource group tags include `managedBy=bicep`, `workload`, `environment`, and
+  `owner`.
+- Development defaults disable Key Vault purge protection, while retained
+  environments may enable it.
+- No cleanup automation exists yet.
 
 ## 4. Recipe Selection
 
-**Selected:** Standalone Bicep plus PowerShell deployment orchestration.
+**Selected:** PowerShell plus Azure CLI against the existing Bicep contract.
 
 ## 5. Architecture
 
-| Component | Decision |
+| Safeguard | Decision |
 |-----------|----------|
-| Subscription entrypoint | Add subscription-scoped `infra/deploy.bicep` to create the resource group and invoke `main.bicep` |
-| Preflight | Verify PowerShell, Azure CLI, Bicep, tar, Git, authentication, subscription, providers, and campaign path |
-| Preview | Run subscription-scope ARM validation and what-if before deployment |
-| Confirmation | Require explicit interactive confirmation unless `-Force` is supplied |
-| Images | Import the reviewed Microsoft bootstrap image into ACR under commit-SHA tags, resolve digests, then redeploy the apps by digest |
-| Campaign | Create a reproducible `.tgz`, compute SHA-256, upload archive and checksum with Entra authentication |
-| Seeder RBAC | Grant the invoking principal Storage Blob Data Contributor only at the campaigns container scope |
-| Summary | Print deployment ID, ACR, app URLs, image digests, campaign blob, and checksum; never print secrets |
+| Required target | Caller must provide the full resource-group name and expected environment |
+| Subscription | Set and echo the exact subscription before inspection |
+| Ownership check | Require `managedBy=bicep`, matching `workload`, and matching `environment` tags |
+| Scope check | Resolve and display the exact resource-group resource ID; reject wildcard-like names |
+| Inventory | List every resource in the group before confirmation |
+| Blockers | Detect resource-group/resource locks and stop without deleting |
+| Key Vault | Report purge-protection state and expected soft-delete retention; never purge |
+| Confirmation | Require typing `delete <resource-group-name>`; no force/bypass option |
+| Execution | Issue only `az group delete --name <exact-name> --yes --no-wait` |
+| Status | Poll `az group exists` until false or timeout; report incomplete deletion explicitly |
+| Preview | `-PreviewOnly` performs every check but never prompts or deletes |
 
-Canada East is advertised for Container Apps, ACR, SignalR, Cosmos DB, and
-Application Insights. The deployment remains passwordless: ACR import uses the
-management plane, image pulls use managed identities, and campaign upload uses
-the signed-in Entra principal.
+The script does not enumerate or delete unrelated groups, does not delete at
+subscription scope, and does not purge recoverable services.
 
 ## 6. Execution Checklist
 
 - [x] Complete planning and approval
-- [x] Generate deployment automation
-- [x] Add image publishing and campaign seeding
-- [x] Add output summary and documentation
+- [x] Generate exact-scope cleanup script
+- [x] Add status/blocker checks
+- [x] Document destructive safeguards
 - [x] Run local verification
 - [x] Set `Ready for Validation`
 - [x] Complete azure-validate workflow
@@ -71,7 +73,9 @@ the signed-in Entra principal.
 
 | Check | Command | Result | Timestamp |
 |-------|---------|--------|-----------|
-| Deployment preview | `scripts/deploy.ps1 -PreviewOnly` | 21 creates, 5 unsupported analyses, no changes applied | 2026-09-25 |
+| Script parser | PowerShell AST parser | Passed | 2026-09-25 |
+| Missing target | `destroy.ps1 -PreviewOnly` | Safe no-op | 2026-09-25 |
+| Unmanaged target | `destroy.ps1 -PreviewOnly` | Rejected before deletion | 2026-09-25 |
 | Bicep | `az bicep lint/build` | Passed | 2026-09-25 |
 | Formatting | `pnpm format:check` | Passed | 2026-09-25 |
 | Peer dependencies | `pnpm peers check` | Passed | 2026-09-25 |
@@ -79,39 +83,31 @@ the signed-in Entra principal.
 | Types | `pnpm typecheck` | Passed | 2026-09-25 |
 | Tests | `pnpm test` | Passed | 2026-09-25 |
 | Build | `pnpm build` | Passed | 2026-09-25 |
-| Diff hygiene | `git diff --check` | Passed | 2026-09-25 |
 | Official ARM validation | `validate-deployment.ps1 -Scope sub` | Passed | 2026-09-25 |
 | Official ARM what-if | `validate-deployment.ps1 -Scope sub` | 21 creates, 0 modifies, 0 deletes | 2026-09-25 |
 | Azure Policy | `az policy assignment list` | No conflicting assignments | 2026-09-25 |
 
 ## 8. Role Assignment Verification
 
-- **Status:** Verified
-- **Campaign seeder:** Storage Blob Data Contributor at the `campaigns`
-  container only; no account, resource-group, or subscription-wide data role.
-- **Workload identities:** Existing API roles remain service-specific; API and
-  dashboard retain AcrPull only at the registry.
-- **Authentication:** ACR import uses the management plane, Blob upload uses
-  the signed-in Entra principal, and no registry/storage credentials are
-  generated or printed.
+- **Status:** Verified; TASK-207 adds no role assignments.
+- **Cleanup authorization:** Azure CLI uses only the signed-in principal's
+  existing management-plane permissions.
+- **Scope:** The script resolves one exact resource-group ID and does not grant,
+  elevate, or modify access.
 - **Issues:** None.
 
 ## 9. Files to Generate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `infra/deploy.bicep` | Subscription-scope resource group and platform entrypoint | Complete |
-| `infra/deploy.bicepparam` | Safe development deployment parameters | Complete |
-| `infra/modules/data-storage.bicep` | Optional campaign-seeder role assignment | Complete |
-| `infra/main.bicep` | Pass campaign seeder identity | Complete |
-| `scripts/deploy.ps1` | One-command orchestration | Complete |
-| `package.json` | Repository deployment command | Complete |
-| `infra/README.md` | Deployment and promotion documentation | Complete |
-| `PLAN.md` | Complete TASK-206 | Complete |
+| `scripts/destroy.ps1` | Guarded exact-resource-group deletion | Complete |
+| `package.json` | Repository cleanup command | Complete |
+| `infra/README.md` | Safeguards and recovery behavior | Complete |
+| `PLAN.md` | Complete TASK-207 | Complete |
 
 ## 10. Next Steps
 
-> Current: Validated; ready for TASK-206 publication
+> Current: Validated; ready for TASK-207 publication
 
 1. Complete the official azure-validate workflow.
-2. Publish TASK-206.
+2. Publish TASK-207 without deleting Azure resources.
