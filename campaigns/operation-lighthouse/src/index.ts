@@ -63,3 +63,9 @@ export type {
   WeatherObservation,
   WeatherScenarioId,
 } from './simulators/weather.js';
+export { GridSimulator } from './simulators/grid.js';
+export type {
+  GridSectorHealth,
+  RestorationConstraint,
+  RestorationRequest,
+} from './simulators/grid.js';

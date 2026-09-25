@@ -13,6 +13,8 @@ export interface SimulatorError {
     | 'invalid-request'
     | 'not-found'
     | 'temporarily-unavailable'
+    | 'constraint-violation'
+    | 'conflict'
     | 'scenario-complete';
   readonly message: string;
   readonly retryable: boolean;
