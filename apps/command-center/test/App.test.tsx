@@ -5,7 +5,9 @@ import { CommandCenterApp } from '../src/index.js';
 
 describe('CommandCenterApp', () => {
   it('renders accessible application landmarks and controls', () => {
-    const markup = renderToStaticMarkup(<CommandCenterApp />);
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialView="dashboard" />,
+    );
 
     expect(markup).toContain('<header');
     expect(markup).toContain('<nav');
@@ -18,11 +20,20 @@ describe('CommandCenterApp', () => {
 
   it('renders a localized shell from the initial locale', () => {
     const markup = renderToStaticMarkup(
-      <CommandCenterApp initialLocale="pt-BR" />,
+      <CommandCenterApp initialLocale="pt-BR" initialView="dashboard" />,
     );
 
     expect(markup).toContain('Centro de Comando Operação Farol');
     expect(markup).toContain('Status do evento');
     expect(markup).toContain('Progresso das unidades');
+  });
+
+  it('renders the guided setup flow by default', () => {
+    const markup = renderToStaticMarkup(<CommandCenterApp />);
+
+    expect(markup).toContain('Prepare a new event');
+    expect(markup).toContain('Operation Lighthouse 1.0');
+    expect(markup).toContain('Participant languages');
+    expect(markup).toContain('Event setup progress');
   });
 });

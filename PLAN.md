@@ -1183,7 +1183,7 @@ A task is complete only when:
 ### Phase 4 — Command Center
 
 - [x] **TASK-400 — Create dashboard shell and design system.** Add responsive layout, themes, accessibility, and localization.
-- [ ] **TASK-401 — Implement instructor setup flow.** Select campaign, languages, schedule, scoring, and event code.
+- [x] **TASK-401 — Implement instructor setup flow.** Select campaign, languages, schedule, scoring, and event code.
 - [ ] **TASK-402 — Implement lobby and connectivity view.** Show units, readiness, and platform health.
 - [ ] **TASK-403 — Implement live city map.** Render districts, incidents, services, routes, and recovery effects.
 - [ ] **TASK-404 — Implement mission control panel.** Add timeline, mission controls, hints, and incident modifiers.
