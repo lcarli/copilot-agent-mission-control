@@ -1205,7 +1205,7 @@ A task is complete only when:
 
 - [x] **TASK-600 — Create Port Azure world model.** Define districts, services, shelters, routes, grid sectors, and recovery state.
 - [x] **TASK-601 — Create campaign narrative and glossary.** Finalize characters, terminology, timeline, and localization guidance.
-- [ ] **TASK-602 — Implement weather simulator.** Provide deterministic observations, forecasts, and failures.
+- [x] **TASK-602 — Implement weather simulator.** Provide deterministic observations, forecasts, and failures.
 - [ ] **TASK-603 — Implement grid simulator.** Provide sector health, outages, and restoration constraints.
 - [ ] **TASK-604 — Implement shelter simulator.** Provide capacity, resources, status, and controlled changes.
 - [ ] **TASK-605 — Implement transport simulator.** Provide closures, routes, travel constraints, and updates.
