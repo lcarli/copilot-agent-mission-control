@@ -13,6 +13,9 @@
       "default": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@mission-control/localization": "workspace:*"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/validate-starters.mjs",
     "lint": "eslint src test",

@@ -269,7 +269,11 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
 
-  campaigns/operation-lighthouse: {}
+  campaigns/operation-lighthouse:
+    dependencies:
+      '@mission-control/localization':
+        specifier: workspace:*
+        version: link:../../packages/localization
 
   packages/auth:
     dependencies:

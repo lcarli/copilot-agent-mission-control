@@ -6,6 +6,10 @@ campaign simulators and validators. It defines stable identifiers and
 cross-referenced districts, services, shelters, transport routes, electrical
 grid sectors, and the initial recovery snapshot.
 
+The narrative catalog defines stable characters, the seven-beat campaign
+timeline, a terminology glossary, and localization guidance. English, French,
+and Brazilian Portuguese catalogs are checked for key and placeholder parity.
+
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;
 `pnpm --filter @mission-control/campaign-operation-lighthouse test` validates
