@@ -67,4 +67,14 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Server-calculated');
     expect(markup).toContain('Harbor Team');
   });
+
+  it('renders the specialist topology projection', () => {
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialView="topology" />,
+    );
+
+    expect(markup).toContain('Agent topology');
+    expect(markup).toContain('Response Orchestrator');
+    expect(markup).toContain('Coordination activity');
+  });
 });

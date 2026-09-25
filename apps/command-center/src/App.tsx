@@ -10,12 +10,13 @@ import { InstructorSetupFlow } from './InstructorSetupFlow.js';
 import { LiveCityMap } from './LiveCityMap.js';
 import { LobbyConnectivityView } from './LobbyConnectivityView.js';
 import { MissionControlPanel } from './MissionControlPanel.js';
+import { SpecialistTopologyView } from './SpecialistTopologyView.js';
 import { UnitScoringView } from './UnitScoringView.js';
 
 export interface CommandCenterAppProps {
   readonly initialLocale?: SupportedLocale;
   readonly initialView?:
-    'setup' | 'dashboard' | 'lobby' | 'missions' | 'scores';
+    'setup' | 'dashboard' | 'lobby' | 'missions' | 'scores' | 'topology';
 }
 
 type ThemeChoice = 'auto' | 'light' | 'dark';
@@ -33,7 +34,13 @@ export function CommandCenterApp({
   const [locale, setLocale] = useState<SupportedLocale>(initialLocale);
   const [theme, setTheme] = useState<ThemeChoice>('auto');
   const [activePage, setActivePage] = useState<
-    'setup' | 'overview' | 'missions' | 'units' | 'scores' | 'health'
+    | 'setup'
+    | 'overview'
+    | 'missions'
+    | 'units'
+    | 'scores'
+    | 'topology'
+    | 'health'
   >(
     initialView === 'setup'
       ? 'setup'
@@ -43,7 +50,9 @@ export function CommandCenterApp({
           ? 'missions'
           : initialView === 'scores'
             ? 'scores'
-            : 'overview',
+            : initialView === 'topology'
+              ? 'topology'
+              : 'overview',
   );
   const localizer = useMemo(
     () => createLocalizer({ catalogs, defaultLocale: 'en' }),
@@ -106,28 +115,35 @@ export function CommandCenterApp({
         </header>
 
         <nav className="primary-nav" aria-label="Primary">
-          {['setup', 'overview', 'missions', 'units', 'scores', 'health'].map(
-            (item) => (
-              <button
-                aria-current={item === activePage ? 'page' : undefined}
-                key={item}
-                onClick={() => {
-                  setActivePage(
-                    item as
-                      | 'setup'
-                      | 'overview'
-                      | 'missions'
-                      | 'units'
-                      | 'scores'
-                      | 'health',
-                  );
-                }}
-                type="button"
-              >
-                {t(`nav.${item}`)}
-              </button>
-            ),
-          )}
+          {[
+            'setup',
+            'overview',
+            'missions',
+            'units',
+            'scores',
+            'topology',
+            'health',
+          ].map((item) => (
+            <button
+              aria-current={item === activePage ? 'page' : undefined}
+              key={item}
+              onClick={() => {
+                setActivePage(
+                  item as
+                    | 'setup'
+                    | 'overview'
+                    | 'missions'
+                    | 'units'
+                    | 'scores'
+                    | 'topology'
+                    | 'health',
+                );
+              }}
+              type="button"
+            >
+              {t(`nav.${item}`)}
+            </button>
+          ))}
         </nav>
 
         <main id="command-center" tabIndex={-1}>
@@ -139,6 +155,8 @@ export function CommandCenterApp({
             <MissionControlPanel translate={t} />
           ) : activePage === 'scores' ? (
             <UnitScoringView translate={t} />
+          ) : activePage === 'topology' ? (
+            <SpecialistTopologyView translate={t} />
           ) : (
             <>
               <section
