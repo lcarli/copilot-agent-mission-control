@@ -47,4 +47,14 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Platform health');
     expect(markup).toContain('<progress');
   });
+
+  it('renders mission controls from the mission navigation view', () => {
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialView="missions" />,
+    );
+
+    expect(markup).toContain('Mission control');
+    expect(markup).toContain('Publish hint');
+    expect(markup).toContain('Incident modifiers');
+  });
 });
