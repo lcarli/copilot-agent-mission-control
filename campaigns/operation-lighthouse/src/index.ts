@@ -120,3 +120,7 @@ export {
   groundTruthContent,
   groundTruthValidator,
 } from './missions/mission-2.js';
+export {
+  connectedCityContent,
+  connectedCityValidator,
+} from './missions/mission-3.js';
