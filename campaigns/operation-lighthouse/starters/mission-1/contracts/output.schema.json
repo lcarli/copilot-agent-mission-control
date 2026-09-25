@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["category", "severity", "missingInformation"],
+  "properties": {
+    "category": { "type": "string" },
+    "severity": { "type": "string" },
+    "missingInformation": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

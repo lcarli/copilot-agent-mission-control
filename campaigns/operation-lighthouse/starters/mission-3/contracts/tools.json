@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0",
+  "tools": [
+    { "toolId": "weather", "required": true },
+    { "toolId": "shelters", "required": true },
+    { "toolId": "transport", "required": true }
+  ]
+}

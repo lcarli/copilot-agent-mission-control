@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schemaVersion", "missionId", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "missionId": { "const": "restore-the-lighthouse" },
+    "evidence": { "type": "object" }
+  }
+}

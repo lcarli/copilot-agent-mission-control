@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "missions": [
+    {
+      "missionId": "incident-intake",
+      "guidanceLevel": 5,
+      "files": [
+        "mission-1/README.md",
+        "mission-1/src/agent.ts",
+        "mission-1/contracts/output.schema.json"
+      ]
+    },
+    {
+      "missionId": "ground-truth",
+      "guidanceLevel": 4,
+      "files": [
+        "mission-2/README.md",
+        "mission-2/src/agent.ts",
+        "mission-2/context/operational-bulletin.json"
+      ]
+    },
+    {
+      "missionId": "connected-city",
+      "guidanceLevel": 3,
+      "files": [
+        "mission-3/README.md",
+        "mission-3/contracts/tools.json",
+        "mission-3/config/auth.example.json"
+      ]
+    },
+    {
+      "missionId": "specialist-network",
+      "guidanceLevel": 2,
+      "files": [
+        "mission-4/README.md",
+        "mission-4/contracts/handoff.schema.json"
+      ]
+    },
+    {
+      "missionId": "restore-the-lighthouse",
+      "guidanceLevel": 1,
+      "files": [
+        "mission-5/README.md",
+        "mission-5/contracts/submission.schema.json"
+      ]
+    }
+  ]
+}
