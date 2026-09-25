@@ -10,13 +10,20 @@ import { InstructorSetupFlow } from './InstructorSetupFlow.js';
 import { LiveCityMap } from './LiveCityMap.js';
 import { LobbyConnectivityView } from './LobbyConnectivityView.js';
 import { MissionControlPanel } from './MissionControlPanel.js';
+import { PublicPresentationView } from './PublicPresentationView.js';
 import { SpecialistTopologyView } from './SpecialistTopologyView.js';
 import { UnitScoringView } from './UnitScoringView.js';
 
 export interface CommandCenterAppProps {
   readonly initialLocale?: SupportedLocale;
   readonly initialView?:
-    'setup' | 'dashboard' | 'lobby' | 'missions' | 'scores' | 'topology';
+    | 'setup'
+    | 'dashboard'
+    | 'lobby'
+    | 'missions'
+    | 'presentation'
+    | 'scores'
+    | 'topology';
 }
 
 type ThemeChoice = 'auto' | 'light' | 'dark';
@@ -37,6 +44,7 @@ export function CommandCenterApp({
     | 'setup'
     | 'overview'
     | 'missions'
+    | 'presentation'
     | 'units'
     | 'scores'
     | 'topology'
@@ -48,11 +56,13 @@ export function CommandCenterApp({
         ? 'units'
         : initialView === 'missions'
           ? 'missions'
-          : initialView === 'scores'
-            ? 'scores'
-            : initialView === 'topology'
-              ? 'topology'
-              : 'overview',
+          : initialView === 'presentation'
+            ? 'presentation'
+            : initialView === 'scores'
+              ? 'scores'
+              : initialView === 'topology'
+                ? 'topology'
+                : 'overview',
   );
   const localizer = useMemo(
     () => createLocalizer({ catalogs, defaultLocale: 'en' }),
@@ -119,6 +129,7 @@ export function CommandCenterApp({
             'setup',
             'overview',
             'missions',
+            'presentation',
             'units',
             'scores',
             'topology',
@@ -133,6 +144,7 @@ export function CommandCenterApp({
                     | 'setup'
                     | 'overview'
                     | 'missions'
+                    | 'presentation'
                     | 'units'
                     | 'scores'
                     | 'topology'
@@ -153,6 +165,8 @@ export function CommandCenterApp({
             <LobbyConnectivityView translate={t} />
           ) : activePage === 'missions' ? (
             <MissionControlPanel translate={t} />
+          ) : activePage === 'presentation' ? (
+            <PublicPresentationView translate={t} />
           ) : activePage === 'scores' ? (
             <UnitScoringView translate={t} />
           ) : activePage === 'topology' ? (
