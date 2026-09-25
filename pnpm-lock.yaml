@@ -355,6 +355,25 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
 
+  packages/mission-management:
+    dependencies:
+      '@mission-control/campaign-contracts':
+        specifier: workspace:*
+        version: link:../campaign-contracts
+    devDependencies:
+      '@types/node':
+        specifier: 24.13.5
+        version: 24.13.5
+      eslint:
+        specifier: 10.10.0
+        version: 10.10.0
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: 5.0.1
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
+
   tests/contract: {}
 
   tests/e2e: {}
