@@ -4,6 +4,12 @@ export {
   type InstructorSetupFlowProps,
 } from './InstructorSetupFlow.js';
 export {
+  LobbyConnectivityView,
+  type LobbyConnectivityViewProps,
+  type LobbyUnitSummary,
+  type PlatformHealthSummary,
+} from './LobbyConnectivityView.js';
+export {
   defaultSetupAdapter,
   generateEventCode,
   validateSetupDraft,
