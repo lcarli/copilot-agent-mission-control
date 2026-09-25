@@ -57,4 +57,14 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Publish hint');
     expect(markup).toContain('Incident modifiers');
   });
+
+  it('renders authoritative unit scoring projections', () => {
+    const markup = renderToStaticMarkup(
+      <CommandCenterApp initialView="scores" />,
+    );
+
+    expect(markup).toContain('Unit progress and scoring');
+    expect(markup).toContain('Server-calculated');
+    expect(markup).toContain('Harbor Team');
+  });
 });
