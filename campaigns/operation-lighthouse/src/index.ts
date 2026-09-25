@@ -116,3 +116,7 @@ export {
   signalInTheStormContent,
   signalInTheStormValidator,
 } from './missions/mission-1.js';
+export {
+  groundTruthContent,
+  groundTruthValidator,
+} from './missions/mission-2.js';
