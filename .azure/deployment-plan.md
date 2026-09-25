@@ -8,16 +8,11 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-200 by creating the standalone, resource-group-scoped
-Bicep foundation used by the later Azure infrastructure tasks. This task adds
-orchestration, parameters, deterministic naming, and common tags only; it does
-not deploy Azure resources.
+**Goal:** Implement TASK-201 by provisioning one Log Analytics workspace and
+one workspace-based Application Insights resource through the existing
+resource-group-scoped Bicep orchestration.
 
-**Path:** Modernize Existing
-
-The repository already defines Azure Container Apps as its target platform and
-contains an `infra/` placeholder, but it does not yet contain deployable Azure
-configuration.
+**Path:** Add Components
 
 ---
 
@@ -27,20 +22,23 @@ configuration.
 |-----------|-------|
 | Classification | Production workshop platform |
 | Scale | Small: up to 50 concurrent participants |
-| Budget | Balanced, with disposable per-event environments |
+| Budget | Balanced with explicit ingestion cost control |
 | Subscription | `ME-MngEnvMCAP266581-lramoscostah-3` (`4e4f76f7-bfb7-4163-84bd-2a19561451b5`) |
-| Location | `eastus2` default parameter value; configurable at deployment |
-| Compliance | No task-specific regulated-data or residency requirement |
-
-The subscription and location are recorded to make validation reproducible.
-TASK-200 does not connect to or modify the subscription. Deployment tasks must
-reconfirm the target context before provisioning.
+| Location | `eastus2`, configurable through the foundation |
+| Hosting | Node.js applications on Azure Container Apps |
+| Retention | 30 days by default, configurable from 30 to 730 days |
+| Daily ingestion cap | 1 GB by default; `-1` disables the cap explicitly |
 
 ### Policy Constraints
 
-Not applicable to TASK-200 because it creates local Bicep source only and
-provisions no Azure resources. Policy assignments must be checked before the
-first provisioning task.
+The subscription has two enforced Microsoft Defender assignments:
+
+- ASC DataProtection
+- ASC OpenSourceRelationalDatabasesProtection
+
+Neither assignment restricts Log Analytics or Application Insights creation.
+No location, naming, tag, or public-network deny policy was found at subscription
+scope.
 
 ---
 
@@ -48,11 +46,11 @@ first provisioning task.
 
 | Component | Type | Technology | Path |
 |-----------|------|------------|------|
-| Mission Control API | API | Node.js, TypeScript, Fastify target | `apps/api` |
-| Command Center | Frontend | React/Vite target | `apps/command-center` |
-| Participant CLI | CLI | Node.js, TypeScript, Commander target | `apps/participant-cli` |
-| Shared capabilities | Libraries | TypeScript packages | `packages` |
-| Azure infrastructure | Infrastructure | Bicep and PowerShell 7 | `infra` |
+| Bicep orchestration | Infrastructure | Resource-group-scoped Bicep | `infra/main.bicep` |
+| Shared naming | Infrastructure module | Bicep | `infra/modules/naming.bicep` |
+| Shared tags | Infrastructure module | Bicep | `infra/modules/tags.bicep` |
+| Mission Control API | API | Node.js/TypeScript; Container Apps target | `apps/api` |
+| Command Center | Frontend | React/Vite; Container Apps target | `apps/command-center` |
 
 ---
 
@@ -60,60 +58,55 @@ first provisioning task.
 
 **Selected:** Bicep
 
-**Rationale:** ADR 0001 requires resource-group-scoped Bicep and PowerShell 7.
-The roadmap separately assigns one-command orchestration to TASK-206, so
-TASK-200 should establish standalone Bicep contracts without introducing AZD
-or deployment scripts prematurely.
+**Rationale:** TASK-200 established standalone resource-group-scoped Bicep.
+TASK-201 extends that contract with a focused local capability module.
 
 ---
 
 ## 5. Architecture
 
-**Stack:** Containers
+**Stack:** Containers with Azure Monitor observability
 
-TASK-200 establishes only the composition contract. Capability resources remain
-owned by their dedicated roadmap tasks.
+| Component | Azure Service | Configuration |
+|-----------|---------------|---------------|
+| Central logs | Log Analytics workspace | `PerGB2018`, 30-day retention, resource-context access, configurable daily cap |
+| Application telemetry | Application Insights | Workspace-based `web` component linked to the Log Analytics workspace |
 
-### Future Service Mapping
+The workspace is shared by the later Container Apps environment and both
+application workloads. Application code instrumentation is intentionally
+deferred to the API/runtime tasks; this task exposes the Application Insights
+connection string for later composition.
 
-| Component | Azure Service | Roadmap task |
-|-----------|---------------|--------------|
-| Monitoring | Log Analytics and Application Insights | TASK-201 |
-| Identity and secrets | Managed Identity and Key Vault | TASK-202 |
-| Data and campaigns | Cosmos DB and Blob Storage | TASK-203 |
-| Real-time updates | Azure SignalR Service | TASK-204 |
-| API and dashboard | Azure Container Apps and Container Registry | TASK-205 |
+Public ingestion and query endpoints remain enabled because private networking
+is outside the current roadmap scope. Local authentication remains enabled
+because Azure Container Apps workspace integration uses the workspace customer
+ID and shared key. No shared key is emitted by this module.
 
-### TASK-200 Foundation
+### Outputs
 
-| Capability | Implementation |
-|------------|----------------|
-| Deployment scope | Resource group |
-| Environment parameters | Name, location, workload, owner, and optional tags |
-| Naming | Central module with deterministic, Azure-compliant names |
-| Tags | Central module with required and caller-supplied tags |
-| Extensibility | Capability modules added by TASK-201 through TASK-205 |
+- Log Analytics resource ID and customer ID
+- Application Insights resource ID and connection string
 
 ### Role Assignment Verification
 
-- **Status:** Verified; not applicable to this foundation-only task
-- **Identities checked:** None provisioned by TASK-200
-- **Roles confirmed:** None defined by TASK-200
-- **Issues:** Identity and least-privilege data-plane assignments are owned by
-  TASK-202 and must be reviewed when those resources are introduced
+- **Status:** Verified; no identities or role assignments are introduced
+- **Future work:** TASK-202 owns managed identities and least-privilege RBAC
 
 ---
 
 ## 6. Provisioning Limit Checklist
 
-TASK-200 provisions no Azure resources and consumes no subscription quota.
+The Microsoft Quota API returned no quota resources for
+`Microsoft.OperationalInsights` or `Microsoft.Insights` in `eastus2`. Azure
+Resource Graph found zero existing workspaces/components in the subscription
+and region. Both providers are registered and advertise `East US 2`.
 
 | Resource Type | Number to Deploy | Total After Deployment | Limit/Quota | Notes |
 |---------------|------------------|------------------------|-------------|-------|
-| None | 0 | 0 | Not applicable | Local Bicep source generation and build validation only |
+| `Microsoft.OperationalInsights/workspaces` | 1 | 1 | No provider quota exposed | `az quota` unsupported for this type; region/provider verified |
+| `Microsoft.Insights/components` | 1 | 1 | No provider quota exposed | `az quota` unsupported for this type; region/provider verified |
 
-**Status:** All resources within limits; no quota-bearing resources are part of
-TASK-200.
+**Status:** All resources within documented service and ARM limits.
 
 ---
 
@@ -122,37 +115,36 @@ TASK-200.
 ### Phase 1: Planning
 
 - [x] Analyze workspace
-- [x] Gather requirements from the accepted roadmap and architecture ADR
-- [x] Record the available subscription and configurable default location
+- [x] Gather requirements
+- [x] Confirm available Azure context
 - [x] Prepare resource inventory
-- [x] Establish that TASK-200 consumes no quota
+- [x] Validate limits through quota CLI and official service documentation
 - [x] Scan codebase
-- [x] Select standalone Bicep recipe
-- [x] Plan foundation architecture
+- [x] Select Bicep recipe
+- [x] Plan monitoring architecture
 - [x] User approved completion of all remaining roadmap tasks
 
 ### Phase 2: Execution
 
-- [x] Research Bicep composition and validation guidance
-- [x] Generate resource-group-scoped Bicep foundation
-- [x] Add naming and tagging modules
-- [x] Add parameter examples and infrastructure documentation
-- [x] Build and lint Bicep
-- [x] Update plan status to `Ready for Validation`
+- [x] Generate monitoring Bicep module
+- [x] Wire module into orchestration
+- [x] Add parameters, outputs, and documentation
+- [x] Run local Bicep and monorepo verification
+- [x] Update status to `Ready for Validation`
 
 ### Phase 3: Validation
 
-- [x] Invoke azure-validate skill
+- [x] Invoke azure-validate
 - [x] All validation checks pass
-  - [x] Core validation: Azure CLI, authentication, Bicep build, resource-group validation, and what-if
+  - [x] Core validation: CLI, authentication, Bicep build, resource-group validation, and what-if
   - [x] Bicep linting
   - [x] Azure Policy validation
-- [x] Update plan status to `Validated`
-- [x] Record validation proof below
+- [x] Update status to `Validated`
+- [x] Record validation proof
 
 ### Phase 4: Deployment
 
-- [ ] Deferred to TASK-206; TASK-200 performs no deployment
+- [ ] Deferred to TASK-206
 
 ---
 
@@ -160,13 +152,13 @@ TASK-200.
 
 | Check | Command Run | Result | Timestamp |
 |-------|-------------|--------|-----------|
-| Bicep lint and local build | `az bicep lint --file infra/main.bicep`; `az bicep build`; `az bicep build-params` | Pass | 2026-09-25T11:48:54-04:00 |
-| Azure preflight | `validate-deployment.ps1 -Scope group -ResourceGroup rg-cyberdeck` | Pass: CLI, auth, build, validate, and what-if; 0 creates, modifies, or deletes | 2026-09-25T11:50:52-04:00 |
-| Subscription policies | `az policy assignment list --scope /subscriptions/4e4f76f7-bfb7-4163-84bd-2a19561451b5` | Pass: two Defender assignments; no TASK-200 conflict | 2026-09-25T11:49:33-04:00 |
-| Monorepo regression | `pnpm format:check && pnpm peers check && pnpm lint && pnpm typecheck && pnpm test && pnpm build` | Pass | 2026-09-25T11:48:54-04:00 |
+| Bicep lint and build | `az bicep lint`; `az bicep build`; `az bicep build-params` | Pass | 2026-09-25T11:54:55-04:00 |
+| Azure preflight | `validate-deployment.ps1 -Scope group -ResourceGroup rg-cyberdeck` | Pass: 3 creates, 0 modifies, 0 deletes | 2026-09-25T11:57:16-04:00 |
+| Quota and policy | `check-quota.ps1`, Azure Resource Graph, provider and policy queries | Pass: providers available, zero existing resources, no conflicting policy | 2026-09-25T11:53:15-04:00 |
+| Monorepo regression | `pnpm format:check && pnpm peers check && pnpm lint && pnpm typecheck && pnpm test && pnpm build` | Pass | 2026-09-25T11:55:50-04:00 |
 
 **Validated by:** azure-validate workflow
-**Validation timestamp:** 2026-09-25T11:51:37-04:00
+**Validation timestamp:** 2026-09-25T11:58:05-04:00
 
 ---
 
@@ -174,19 +166,18 @@ TASK-200.
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `.azure/deployment-plan.md` | Preparation and validation source of truth | Complete |
-| `infra/main.bicep` | Resource-group-scoped orchestration entry point | Complete |
-| `infra/main.bicepparam` | Safe example deployment parameters | Complete |
-| `infra/modules/naming.bicep` | Deterministic Azure resource names | Complete |
-| `infra/modules/tags.bicep` | Required and caller-supplied common tags | Complete |
-| `infra/README.md` | Foundation usage and extension contract | Complete |
+| `.azure/deployment-plan.md` | TASK-201 preparation and validation record | Complete |
+| `infra/modules/monitoring.bicep` | Log Analytics and Application Insights | Complete |
+| `infra/main.bicep` | Monitoring parameters, module composition, and outputs | Complete |
+| `infra/main.bicepparam` | Development monitoring defaults | Complete |
+| `infra/README.md` | Monitoring configuration and output contract | Complete |
 
 ---
 
 ## 10. Next Steps
 
-> Current: TASK-200 validated; ready for commit and pull request
+> Current: TASK-201 validated; ready for commit and pull request
 
-1. Generate and validate the Bicep foundation.
-2. Hand the result to `azure-validate`.
-3. Commit, publish, review, and merge TASK-200 before starting TASK-201.
+1. Implement the monitoring module and orchestration wiring.
+2. Validate locally and through the azure-validate workflow.
+3. Publish and merge TASK-201 before starting TASK-202.
