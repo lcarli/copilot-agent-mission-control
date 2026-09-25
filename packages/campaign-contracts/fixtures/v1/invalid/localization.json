@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "localization",
+  "campaignId": "Operation Lighthouse",
+  "campaignVersion": "latest",
+  "locale": "es",
+  "messages": {
+    "invalid key": ""
+  }
+}

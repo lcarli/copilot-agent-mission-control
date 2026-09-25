@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "asset-manifest",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "assets": [
+    {
+      "assetId": "invalid asset",
+      "scene": "opening",
+      "narrativePurposeKey": "assets.opening.purpose",
+      "mediaType": "video",
+      "requiredVariants": [],
+      "languageRequirements": [],
+      "continuityReferences": [],
+      "generationPrompt": "short",
+      "negativePrompt": "short",
+      "accessibilityRequirements": [],
+      "output": {
+        "format": "MP4",
+        "maximumBytes": 0
+      },
+      "licensing": {},
+      "provenance": {},
+      "reviewStatus": "approved"
+    }
+  ]
+}

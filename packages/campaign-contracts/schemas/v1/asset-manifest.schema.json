@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/asset-manifest.schema.json",
+  "title": "Campaign asset manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "campaignId",
+    "campaignVersion",
+    "assets"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/schemaVersion"
+    },
+    "kind": {
+      "const": "asset-manifest"
+    },
+    "campaignId": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+    },
+    "campaignVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    }
+  },
+  "$defs": {
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assetId",
+        "scene",
+        "narrativePurposeKey",
+        "mediaType",
+        "requiredVariants",
+        "languageRequirements",
+        "continuityReferences",
+        "generationPrompt",
+        "negativePrompt",
+        "accessibilityRequirements",
+        "output",
+        "licensing",
+        "provenance",
+        "reviewStatus"
+      ],
+      "properties": {
+        "assetId": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/assetId"
+        },
+        "scene": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "narrativePurposeKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "mediaType": {
+          "enum": [
+            "image",
+            "video",
+            "audio"
+          ]
+        },
+        "requiredVariants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "descriptionKey"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+              },
+              "descriptionKey": {
+                "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+              }
+            }
+          }
+        },
+        "languageRequirements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/locale"
+          }
+        },
+        "targetDurationSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 3600
+        },
+        "continuityReferences": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/assetId"
+          }
+        },
+        "generationPrompt": {
+          "type": "string",
+          "minLength": 50,
+          "maxLength": 30000
+        },
+        "negativePrompt": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10000
+        },
+        "scriptKeys": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/locale"
+          },
+          "additionalProperties": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+          }
+        },
+        "pronunciationNotesKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "captionFileRequirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "locale",
+              "format"
+            ],
+            "properties": {
+              "locale": {
+                "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/locale"
+              },
+              "format": {
+                "enum": [
+                  "vtt",
+                  "srt"
+                ]
+              }
+            }
+          }
+        },
+        "accessibilityRequirements": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "format",
+            "maximumBytes"
+          ],
+          "properties": {
+            "format": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "maximumBytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483648
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16384
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16384
+            },
+            "aspectRatio": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*:[1-9][0-9]*$"
+            },
+            "frameRate": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 240
+            },
+            "audioChannels": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            }
+          }
+        },
+        "licensing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "usageRightsKey",
+            "restrictionsKey"
+          ],
+          "properties": {
+            "usageRightsKey": {
+              "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+            },
+            "restrictionsKey": {
+              "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "generator",
+            "model",
+            "generatedAt",
+            "reviewer"
+          ],
+          "properties": {
+            "generator": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "generatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reviewer": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        },
+        "reviewStatus": {
+          "enum": [
+            "planned",
+            "prompt-ready",
+            "in-review",
+            "approved",
+            "rejected"
+          ]
+        },
+        "file": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+            },
+            "sha256": {
+              "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/sha256"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mediaType": {
+                "enum": [
+                  "video",
+                  "audio"
+                ]
+              }
+            },
+            "required": [
+              "mediaType"
+            ]
+          },
+          "then": {
+            "required": [
+              "targetDurationSeconds"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "reviewStatus": {
+                "const": "approved"
+              }
+            },
+            "required": [
+              "reviewStatus"
+            ]
+          },
+          "then": {
+            "required": [
+              "file"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

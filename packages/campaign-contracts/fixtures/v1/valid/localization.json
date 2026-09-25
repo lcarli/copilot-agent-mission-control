@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "localization",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "locale": "en",
+  "messages": {
+    "campaign.title": "Operation Lighthouse",
+    "campaign.synopsis": "Restore critical services in Port Azure.",
+    "missions.signal.title": "Signal in the Storm",
+    "validation.evidence.missing": "Evidence {evidenceId} was not found."
+  },
+  "metadata": {
+    "validation.evidence.missing": {
+      "description": "Shown when a submitted evidence identifier is unknown.",
+      "placeholders": [
+        "evidenceId"
+      ],
+      "maximumLength": 160
+    }
+  }
+}

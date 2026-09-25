@@ -1,0 +1,432 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/mission.schema.json",
+  "title": "Campaign mission definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "campaignId",
+    "campaignVersion",
+    "id",
+    "version",
+    "prerequisiteMissions",
+    "recommendedDurationMinutes",
+    "contentKeys",
+    "objectives",
+    "requiredEventTypes",
+    "availableTools",
+    "submissionSchema",
+    "validator",
+    "hints",
+    "scoring",
+    "dashboardEffects",
+    "instructorModifiers",
+    "failureBehavior"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/schemaVersion"
+    },
+    "kind": {
+      "const": "mission"
+    },
+    "campaignId": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+    },
+    "campaignVersion": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+    },
+    "id": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+    },
+    "version": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+    },
+    "prerequisiteMissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+      }
+    },
+    "recommendedDurationMinutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 240
+    },
+    "contentKeys": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "brief",
+        "coreObjectivesHeading",
+        "advancedObjectivesHeading",
+        "completion"
+      ],
+      "properties": {
+        "title": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "brief": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "coreObjectivesHeading": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "advancedObjectivesHeading": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "completion": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        }
+      }
+    },
+    "objectives": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "core",
+        "advanced"
+      ],
+      "properties": {
+        "core": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/objective"
+          }
+        },
+        "advanced": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/objective"
+          }
+        }
+      }
+    },
+    "requiredEventTypes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/eventType"
+      }
+    },
+    "availableTools": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    },
+    "submissionSchema": {
+      "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+    },
+    "validator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "timeoutMs"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "version": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/semanticVersion"
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 60000
+        }
+      }
+    },
+    "hints": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/hintLevel1"
+        },
+        {
+          "$ref": "#/$defs/hintLevel2"
+        },
+        {
+          "$ref": "#/$defs/hintLevel3"
+        }
+      ],
+      "items": false
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximumPoints",
+        "dimensionWeights",
+        "hintBonusAdjustments"
+      ],
+      "properties": {
+        "maximumPoints": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "dimensionWeights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "requiredOutcome",
+            "evidenceAndGrounding",
+            "reliability",
+            "explainability",
+            "efficiency"
+          ],
+          "properties": {
+            "requiredOutcome": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "evidenceAndGrounding": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "reliability": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "explainability": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "efficiency": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            }
+          }
+        },
+        "hintBonusAdjustments": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "level1",
+            "level2",
+            "level3"
+          ],
+          "properties": {
+            "level1": {
+              "type": "integer",
+              "maximum": 0
+            },
+            "level2": {
+              "type": "integer",
+              "maximum": 0
+            },
+            "level3": {
+              "type": "integer",
+              "maximum": 0
+            }
+          }
+        }
+      }
+    },
+    "dashboardEffects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dashboardEffect"
+      }
+    },
+    "instructorModifiers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/instructorModifier"
+      }
+    },
+    "failureBehavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowRetry",
+        "maximumAttempts",
+        "pauseOnSimulatorFailure",
+        "blockedOutcomeAllowed"
+      ],
+      "properties": {
+        "allowRetry": {
+          "type": "boolean"
+        },
+        "maximumAttempts": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "pauseOnSimulatorFailure": {
+          "type": "boolean"
+        },
+        "blockedOutcomeAllowed": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "descriptionKey"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "descriptionKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "operations",
+        "required"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+          }
+        },
+        "required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "contentKey"
+      ],
+      "properties": {
+        "level": {
+          "type": "integer"
+        },
+        "contentKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        }
+      }
+    },
+    "hintLevel1": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hint"
+        },
+        {
+          "properties": {
+            "level": {
+              "const": 1
+            }
+          }
+        }
+      ]
+    },
+    "hintLevel2": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hint"
+        },
+        {
+          "properties": {
+            "level": {
+              "const": 2
+            }
+          }
+        }
+      ]
+    },
+    "hintLevel3": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/hint"
+        },
+        {
+          "properties": {
+            "level": {
+              "const": 3
+            }
+          }
+        }
+      ]
+    },
+    "dashboardEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "triggerEventType",
+        "effectType"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "triggerEventType": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/eventType"
+        },
+        "effectType": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "configuration": {
+          "type": "object"
+        }
+      }
+    },
+    "instructorModifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "titleKey",
+        "descriptionKey",
+        "parametersSchema"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/kebabId"
+        },
+        "titleKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "descriptionKey": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/localizationKey"
+        },
+        "parametersSchema": {
+          "$ref": "https://github.com/lcarli/copilot-agent-mission-control/schemas/campaign/v1/common.schema.json#/$defs/relativePath"
+        }
+      }
+    }
+  }
+}

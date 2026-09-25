@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "campaign",
+  "id": "Operation Lighthouse",
+  "version": "one",
+  "titleKey": "campaign.title",
+  "synopsisKey": "campaign.synopsis",
+  "defaultLocale": "en",
+  "supportedLocales": [
+    "en"
+  ],
+  "minimumPlatformVersion": "latest",
+  "capacity": {
+    "recommendedParticipants": 0,
+    "maximumParticipants": 0
+  },
+  "missions": [],
+  "missionFiles": {},
+  "assetManifest": "../manifest.yaml",
+  "localizationFiles": {
+    "en": "locales/en.json"
+  }
+}
