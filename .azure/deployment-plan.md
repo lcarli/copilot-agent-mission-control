@@ -6,91 +6,70 @@ Generated: 2026-09-25
 
 ## 1. Project Overview
 
-**Goal:** Implement TASK-203 with passwordless Cosmos DB event/state storage
-and private Blob Storage for versioned campaign packages.
+**Goal:** Implement TASK-204 with passwordless Azure SignalR Service and
+centralized diagnostics.
 
 **Path:** Add Components
 
 ## 2. Requirements
 
-| Attribute | Value |
-|-----------|-------|
-| Classification | Production workshop platform |
-| Scale | Up to 50 participants; one disposable event environment |
-| Budget | Cost-optimized serverless Cosmos DB and Standard LRS Blob Storage |
-| Subscription | `ME-MngEnvMCAP266581-lramoscostah-3` |
-| Location | `eastus2`, configurable |
-| Authentication | API managed identity only; account keys/shared keys disabled |
-| Data isolation | Every operational document carries `eventSessionId` |
+- Up to 50 participants plus instructor/dashboard connections.
+- Default service mode with the Mission Control API as the hub server.
+- Microsoft Entra authentication only; no SignalR access keys.
+- Existing Log Analytics workspace receives connectivity and HTTP logs.
+- Subscription: `ME-MngEnvMCAP266581-lramoscostah-3`; location `eastus2`.
 
-The existing Defender policies do not conflict with these resources. Both
-providers are registered in East US 2.
+`Microsoft.SignalRService` is not yet registered in the subscription. Provider
+registration is required for validation and is also added to TASK-206 preflight.
 
 ## 3. Components Detected
 
-| Component | Need |
-|-----------|------|
-| Mission Control API | Read/write operational state, events, and campaign blobs |
-| Campaign loader | Read immutable campaign archives |
-| API managed identity | Passwordless data-plane access |
+| Component | Integration |
+|-----------|-------------|
+| Mission Control API identity | SignalR App Server role |
+| Command Center | SignalR client through API negotiation |
+| Log Analytics | SignalR diagnostics destination |
 
 ## 4. Recipe Selection
 
-**Selected:** Bicep, extending the existing local module composition.
+**Selected:** Bicep.
 
 ## 5. Architecture
 
-| Resource | Configuration |
-|----------|---------------|
-| Cosmos DB for NoSQL | Serverless, Session consistency, TLS 1.2, local/key auth disabled |
-| Database | `mission-control` |
-| `events` container | Append-only domain events, partition key `/eventSessionId` |
-| `state` container | Aggregates, projections, submissions, and idempotency records, partition key `/eventSessionId` |
-| Storage account | StorageV2, Standard LRS by default, HTTPS/TLS 1.2, public blobs and Shared Key disabled |
-| `campaigns` container | Private Blob container with versioning and soft-delete protection |
+| Setting | Value |
+|---------|-------|
+| Resource | Azure SignalR Service |
+| SKU | `Standard_S1`, capacity 1 (1,000 connections) |
+| Service mode | Default |
+| Authentication | Microsoft Entra only (`disableLocalAuth: true`) |
+| RBAC | API identity -> SignalR App Server at service scope |
+| Logging | Connectivity and HTTP request diagnostics to Log Analytics |
+| Network | Public client/server connectivity; no private-network roadmap task |
 
-### RBAC
-
-- API identity -> Cosmos DB Built-in Data Contributor at account scope
-- API identity -> Storage Blob Data Contributor at `campaigns` container scope
-- No account keys, connection strings, or shared keys are output
+No access keys or connection strings are emitted. Applications receive the
+service hostname and use managed identity for server authorization.
 
 ## 6. Provisioning Limit Checklist
 
-Quota CLI exposed no entries for these providers. Azure Resource Graph found
-one existing Cosmos account and zero Storage accounts in East US 2.
+Quota CLI returned no SignalR quota entries. There are zero SignalR resources in
+East US 2. One Standard unit supports 1,000 concurrent connections, exceeding
+the 50-participant requirement.
 
-| Resource Type | Deploy | Total | Limit |
-|---------------|-------:|------:|------:|
-| Cosmos DB accounts | 1 | 2 | 250 default |
-| Cosmos databases/containers | 3 | 3 in new account | 500 per account |
-| Storage accounts | 1 | 1 | 250 default per region |
-| Blob containers | 1 | 1 | Within account service limits |
-| Data-plane role assignments | 2 | 2 new | Within service/ARM limits |
-
-**Status:** All resources within limits.
+| Resource | Deploy | Capacity |
+|----------|-------:|----------|
+| SignalR Standard units | 1 | 1,000 connections |
+| Diagnostic settings | 1 | Below five-per-resource limit |
+| Role assignments | 1 | Within ARM limits |
 
 ## 7. Execution Checklist
 
-### Phase 1: Planning
-
-- [x] Analyze data requirements and contracts
-- [x] Confirm Azure context, policies, and quotas
-- [x] Research Cosmos DB and Blob Storage
-- [x] Finalize containers, partition keys, and RBAC
-- [x] User approved completion of all remaining roadmap tasks
-
-### Phase 2: Execution
-
-- [x] Generate data/storage module
-- [x] Add least-privilege API role assignments
-- [x] Wire parameters and outputs
-- [x] Document data boundaries
+- [x] Complete planning and approval
+- [x] Register provider for validation
+- [x] Generate SignalR module and RBAC
+- [x] Wire configuration and outputs
+- [x] Document real-time contract
 - [x] Run local verification
-- [x] Update status to `Ready for Validation`
-
-### Phase 3: Validation
-
+- [x] Set `Ready for Validation`
 - [x] Invoke azure-validate
 - [x] All validation checks pass
   - [x] Core validation: CLI, authentication, Bicep build, resource-group validation, and what-if
@@ -99,36 +78,30 @@ one existing Cosmos account and zero Storage accounts in East US 2.
 - [x] Update status to `Validated`
 - [x] Record proof
 
-### Phase 4: Deployment
-
-- [ ] Deferred to TASK-206
-
 ## 8. Validation Proof
 
 | Check | Command | Result | Timestamp |
 |-------|---------|--------|-----------|
-| Bicep lint/build | `az bicep lint`, `build`, and `build-params` | Pass | 2026-09-25T12:05:32-04:00 |
-| Azure preflight | `validate-deployment.ps1 -Scope group -ResourceGroup rg-cyberdeck` | Pass: 14 creates, 0 modifies, 0 deletes | 2026-09-25T12:08:15-04:00 |
-| Static RBAC review | Cosmos Data Contributor at account; Blob Data Contributor at campaigns container | Pass: passwordless and least privilege | 2026-09-25T12:09:02-04:00 |
-| Quota/policy review | Quota scripts, Resource Graph, providers, policies | Pass | 2026-09-25T12:05:02-04:00 |
-| Monorepo regression | `pnpm format:check`, peers, lint, typecheck, test, build | Pass | 2026-09-25T12:06:20-04:00 |
+| Bicep and monorepo | Bicep lint/build and full pnpm regression | Pass | 2026-09-25T12:12:43-04:00 |
+| Azure preflight | Resource-group validate and what-if | Pass: 16 creates, 0 modifies, 0 deletes | 2026-09-25T12:14:15-04:00 |
+| RBAC review | API -> SignalR App Server at SignalR scope | Pass | 2026-09-25T12:14:51-04:00 |
+| Provider/policy | Register Microsoft.SignalRService and review policies | Pass | 2026-09-25T12:12:00-04:00 |
 
 **Validated by:** azure-validate workflow
-**Validation timestamp:** 2026-09-25T12:09:19-04:00
+**Validation timestamp:** 2026-09-25T12:14:51-04:00
 
 ## 9. Files to Generate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `.azure/deployment-plan.md` | TASK-203 source of truth | Complete |
-| `infra/modules/data-storage.bicep` | Cosmos DB, Blob Storage, and RBAC | Complete |
-| `infra/main.bicep` | Module composition and outputs | Complete |
-| `infra/main.bicepparam` | Development storage settings | Complete |
-| `infra/README.md` | Data architecture and access contract | Complete |
+| `.azure/deployment-plan.md` | TASK-204 source of truth | Complete |
+| `infra/modules/realtime.bicep` | SignalR, diagnostics, and RBAC | Complete |
+| `infra/main.bicep` | Composition and outputs | Complete |
+| `infra/README.md` | Real-time configuration contract | Complete |
 
 ## 10. Next Steps
 
-> Current: TASK-203 validated; ready for commit and pull request
+> Current: TASK-204 validated; ready for commit and pull request
 
-1. Implement and validate the data module.
-2. Publish and merge TASK-203.
+1. Register the provider and implement the module.
+2. Validate and publish TASK-204.

@@ -15,6 +15,7 @@ resource names, and common tags so capability modules remain consistent.
 | `modules/monitoring.bicep` | Log Analytics and workspace-based Application Insights |
 | `modules/identity-secrets.bicep` | Workload identities, Key Vault, and vault-scoped RBAC |
 | `modules/data-storage.bicep` | Passwordless Cosmos DB and private campaign Blob Storage |
+| `modules/realtime.bicep` | Passwordless Azure SignalR Service, diagnostics, and API RBAC |
 
 `workloadName` and `environmentName` should contain lowercase letters, numbers,
 and hyphens. Keep them short because services such as Key Vault and Storage
@@ -90,3 +91,16 @@ The API identity receives:
 
 The `data` root output contains endpoints, resource IDs, and logical names but
 never account keys or connection strings.
+
+## Real-time messaging
+
+Azure SignalR Service runs in `Default` mode on one `Standard_S1` unit. Local
+access-key authentication is disabled; the API identity receives only the
+`SignalR App Server` role at the SignalR resource scope.
+
+Connectivity and HTTP request logs flow to the shared Log Analytics workspace.
+Messaging logs and live trace remain disabled to control cost and avoid
+collecting message content unnecessarily.
+
+The `realtime` root output exposes the service ID, name, hostname, and HTTPS URI.
+It does not expose SignalR keys or connection strings.

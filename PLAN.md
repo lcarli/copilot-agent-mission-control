@@ -1163,7 +1163,7 @@ A task is complete only when:
 - [x] **TASK-201 — Provision monitoring resources.** Add Log Analytics and workspace-based Application Insights.
 - [x] **TASK-202 — Provision identity and secrets.** Add Managed Identities, Key Vault, and least-privilege RBAC.
 - [x] **TASK-203 — Provision data and campaign storage.** Add Cosmos DB and Blob Storage.
-- [ ] **TASK-204 — Provision real-time messaging.** Add Azure SignalR Service and application configuration.
+- [x] **TASK-204 — Provision real-time messaging.** Add Azure SignalR Service and application configuration.
 - [ ] **TASK-205 — Provision container runtime.** Add Azure Container Registry, Container Apps environment, and applications.
 - [ ] **TASK-206 — Implement one-command deployment.** Add preflight, what-if, deployment, image publishing, campaign seeding, and output summary.
 - [ ] **TASK-207 — Implement safe environment destruction.** Add exact-scope cleanup with confirmation and status checks.
