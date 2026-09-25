@@ -40,6 +40,18 @@ param keyVaultSoftDeleteRetentionInDays int = 7
 @description('Protect the Key Vault from purge during the soft-delete retention period.')
 param keyVaultPurgeProtectionEnabled bool = true
 
+@description('Storage redundancy SKU for campaign packages.')
+@allowed([
+  'Standard_LRS'
+  'Standard_ZRS'
+])
+param storageSku string = 'Standard_LRS'
+
+@description('Blob and container soft-delete retention in days.')
+@minValue(1)
+@maxValue(365)
+param blobDeleteRetentionInDays int = 7
+
 module naming './modules/naming.bicep' = {
   name: 'mission-control-naming'
   params: {
@@ -56,6 +68,18 @@ module tagging './modules/tags.bicep' = {
     environmentName: environmentName
     owner: owner
     workloadName: workloadName
+  }
+}
+
+module dataStorage './modules/data-storage.bicep' = {
+  name: 'mission-control-data-storage'
+  params: {
+    apiPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
+    blobDeleteRetentionInDays: blobDeleteRetentionInDays
+    location: location
+    names: naming.outputs.names
+    storageSku: storageSku
+    tags: tagging.outputs.tags
   }
 }
 
@@ -81,6 +105,21 @@ module monitoring './modules/monitoring.bicep' = {
   }
 }
 
+output data object = {
+  campaigns: {
+    blobEndpoint: dataStorage.outputs.storageBlobEndpoint
+    containerName: dataStorage.outputs.campaignContainerName
+    storageAccountId: dataStorage.outputs.storageAccountId
+    storageAccountName: dataStorage.outputs.storageAccountName
+  }
+  cosmos: {
+    accountId: dataStorage.outputs.cosmosAccountId
+    databaseName: dataStorage.outputs.cosmosDatabaseName
+    endpoint: dataStorage.outputs.cosmosEndpoint
+    eventsContainerName: dataStorage.outputs.eventsContainerName
+    stateContainerName: dataStorage.outputs.stateContainerName
+  }
+}
 output identity object = {
   api: {
     clientId: identitySecrets.outputs.apiIdentityClientId
