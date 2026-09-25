@@ -1176,7 +1176,7 @@ A task is complete only when:
 - [x] **TASK-302 — Implement event ingestion.** Validate, authorize, deduplicate, store, and publish participant events.
 - [x] **TASK-303 — Implement scoring engine.** Calculate core, advanced, reliability, evidence, and tie-breaker scores.
 - [x] **TASK-304 — Implement validation worker model.** Run versioned validators with timeouts and structured results.
-- [ ] **TASK-305 — Implement hint system.** Deliver progressive hints and record hint usage.
+- [x] **TASK-305 — Implement hint system.** Deliver progressive hints and record hint usage.
 - [ ] **TASK-306 — Implement instructor commands.** Support modifiers, overrides, score corrections, muting, and event closure.
 - [ ] **TASK-307 — Implement result export.** Export event, unit, mission, score, and recognition summaries.
 

@@ -1,0 +1,27 @@
+{
+  "name": "@mission-control/hint-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint src test",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "uuid": "14.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.5",
+    "eslint": "10.10.0",
+    "typescript": "6.0.3",
+    "vitest": "5.0.1"
+  }
+}
