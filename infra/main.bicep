@@ -105,6 +105,17 @@ module monitoring './modules/monitoring.bicep' = {
   }
 }
 
+module realtime './modules/realtime.bicep' = {
+  name: 'mission-control-realtime'
+  params: {
+    apiPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
+    location: location
+    logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
+    names: naming.outputs.names
+    tags: tagging.outputs.tags
+  }
+}
+
 output data object = {
   campaigns: {
     blobEndpoint: dataStorage.outputs.storageBlobEndpoint
@@ -145,4 +156,10 @@ output monitoring object = {
   logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
 }
 output names object = naming.outputs.names
+output realtime object = {
+  hostName: realtime.outputs.hostName
+  id: realtime.outputs.id
+  name: realtime.outputs.name
+  serviceUri: realtime.outputs.serviceUri
+}
 output tags object = tagging.outputs.tags
