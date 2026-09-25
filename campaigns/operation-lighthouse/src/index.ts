@@ -69,3 +69,10 @@ export type {
   RestorationConstraint,
   RestorationRequest,
 } from './simulators/grid.js';
+export { ShelterSimulator } from './simulators/shelter.js';
+export type {
+  ShelterAdmission,
+  ShelterResourceChange,
+  ShelterResources,
+  ShelterState,
+} from './simulators/shelter.js';
