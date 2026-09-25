@@ -1185,7 +1185,7 @@ A task is complete only when:
 - [x] **TASK-400 — Create dashboard shell and design system.** Add responsive layout, themes, accessibility, and localization.
 - [x] **TASK-401 — Implement instructor setup flow.** Select campaign, languages, schedule, scoring, and event code.
 - [x] **TASK-402 — Implement lobby and connectivity view.** Show units, readiness, and platform health.
-- [ ] **TASK-403 — Implement live city map.** Render districts, incidents, services, routes, and recovery effects.
+- [x] **TASK-403 — Implement live city map.** Render districts, incidents, services, routes, and recovery effects.
 - [ ] **TASK-404 — Implement mission control panel.** Add timeline, mission controls, hints, and incident modifiers.
 - [ ] **TASK-405 — Implement unit progress and scoring views.** Show progress, validation status, achievements, and rankings.
 - [ ] **TASK-406 — Implement specialist topology view.** Visualize agents, tools, handoffs, reviews, and disagreements.
