@@ -51,6 +51,15 @@
     "assets.variants.audioStandard": "Primary stereo event cue.",
     "assets.variants.audioSensoryReduced": "Lower-intensity alternative with gentler attacks and reduced low frequencies.",
     "assets.variants.ambientLoop": "Seamless command-center environmental loop.",
-    "assets.variants.musicBed": "Sparse optional underscore designed to remain beneath narration."
+    "assets.variants.musicBed": "Sparse optional underscore designed to remain beneath narration.",
+    "assets.finale.purpose": "Close the campaign by showing evidence-backed collective recovery and continued responsibility.",
+    "assets.finale.script": "The storm tested every connection in Port Azure. Reports were incomplete. Evidence conflicted. Tools failed, routes changed, and resources remained finite. You responded by structuring uncertainty, grounding decisions, coordinating specialists, and asking for human approval when the impact was high. The city is not restored by one perfect answer or one heroic unit. Recovery comes from decisions that others can verify, challenge, and improve. Essential services are stabilizing. The lighthouse is shining again. Carry these practices beyond Port Azure: preserve evidence, design clear contracts, recover safely, and keep people at the center.",
+    "assets.finale.accessibility": "Provide synchronized captions, a descriptive transcript, restrained motion, and no audio-only recovery information.",
+    "assets.awards.purpose": "Recognize evidence, reliability, collaboration, and safe recovery without ranking participants.",
+    "assets.awards.accessibility": "Reserve high-contrast space for localized text and distinguish every recognition theme by shape and pattern.",
+    "assets.variants.awardEvidence": "Recognition background for evidence and grounding.",
+    "assets.variants.awardReliability": "Recognition background for reliable and recoverable operation.",
+    "assets.variants.awardCollaboration": "Recognition background for specialist collaboration and handoffs.",
+    "assets.variants.awardRecovery": "Recognition background for safe collective recovery."
   }
 }

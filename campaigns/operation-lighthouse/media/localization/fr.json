@@ -51,6 +51,15 @@
     "assets.variants.audioStandard": "Signal stéréo principal pour l'événement.",
     "assets.variants.audioSensoryReduced": "Variante moins intense avec des attaques plus douces et moins de basses fréquences.",
     "assets.variants.ambientLoop": "Boucle environnementale continue du centre de commandement.",
-    "assets.variants.musicBed": "Fond musical facultatif et épuré conçu pour rester sous la narration."
+    "assets.variants.musicBed": "Fond musical facultatif et épuré conçu pour rester sous la narration.",
+    "assets.finale.purpose": "Conclure la campagne en montrant un rétablissement collectif fondé sur les preuves et une responsabilité continue.",
+    "assets.finale.script": "La tempête a mis à l'épreuve toutes les connexions de Port Azure. Les signalements étaient incomplets. Les preuves se contredisaient. Des outils sont tombés en panne, les itinéraires ont changé et les ressources sont restées limitées. Vous avez répondu en structurant l'incertitude, en fondant les décisions, en coordonnant les spécialistes et en demandant une approbation humaine lorsque l'impact était élevé. La ville n'est pas rétablie par une réponse parfaite ni par une unité héroïque. Le rétablissement vient de décisions que les autres peuvent vérifier, contester et améliorer. Les services essentiels se stabilisent. Le phare brille de nouveau. Emportez ces pratiques au-delà de Port Azure : préservez les preuves, concevez des contrats clairs, reprenez en toute sécurité et placez les personnes au centre.",
+    "assets.finale.accessibility": "Fournir des sous-titres synchronisés, une transcription descriptive, des mouvements limités et aucune information de rétablissement uniquement sonore.",
+    "assets.awards.purpose": "Reconnaître les preuves, la fiabilité, la collaboration et le rétablissement sûr sans classer les participants.",
+    "assets.awards.accessibility": "Réserver un espace très contrasté pour le texte localisé et distinguer chaque thème par une forme et un motif.",
+    "assets.variants.awardEvidence": "Arrière-plan de reconnaissance pour les preuves et l'ancrage.",
+    "assets.variants.awardReliability": "Arrière-plan de reconnaissance pour un fonctionnement fiable et récupérable.",
+    "assets.variants.awardCollaboration": "Arrière-plan de reconnaissance pour la collaboration et les transferts entre spécialistes.",
+    "assets.variants.awardRecovery": "Arrière-plan de reconnaissance pour le rétablissement collectif sûr."
   }
 }
