@@ -60,6 +60,139 @@
         "reviewer": "unassigned"
       },
       "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-COMMANDER-AVATAR-001",
+      "scene": "character-mission-commander",
+      "narrativePurposeKey": "assets.commander.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "dashboard",
+          "descriptionKey": "assets.variants.dashboardAvatar"
+        },
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentationPortrait"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": ["OL-OPENING-VIDEO-001"],
+      "generationPrompt": "Create a consistent editorial portrait of the fictional Mission Commander for Operation Lighthouse. Depict a composed emergency-management leader in their late forties to early sixties with an inclusive, non-stereotyped appearance, attentive expression, practical navy weather shell over a charcoal operations uniform, and a small abstract lighthouse pin with no text or logo. Frame the subject chest-up, slightly right of center, facing camera at eye level with an 85 mm portrait-lens look, natural proportions, moderate depth of field, and clear negative space on the left for separately rendered UI. Use the same grounded near-future Port Azure emergency operations center established in the opening film: softly defocused status lights, slate-blue storm ambience, warm amber key light, and restrained crimson accents. Convey calm authority, psychological safety, and readiness rather than military command. Produce a 1920x1080 presentation portrait and a square dashboard crop that preserve facial identity, wardrobe, lighting, and camera height.",
+      "negativePrompt": "Generated text, badges with readable text, real logos, watermarks, identifiable real people, celebrity likeness, military insignia, weapons, authoritarian pose, exaggerated hero lighting, inaccessible color-only signals, distorted anatomy, extra fingers, asymmetrical eyes, plastic skin, cluttered background.",
+      "accessibilityRequirements": [
+        "assets.characters.accessibility",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 8388608,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MAYA-AVATAR-001",
+      "scene": "character-maya-chen",
+      "narrativePurposeKey": "assets.maya.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "dashboard",
+          "descriptionKey": "assets.variants.dashboardAvatar"
+        },
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentationPortrait"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": [
+        "OL-OPENING-VIDEO-001",
+        "OL-COMMANDER-AVATAR-001"
+      ],
+      "generationPrompt": "Create a consistent editorial portrait of Maya Chen, the fictional Port Azure Operations Lead. Depict an East Asian woman in her mid-thirties to mid-forties with a focused but approachable expression, dark hair secured for field work, a practical teal-gray operations jacket over a neutral shirt, weather-resistant radio earpiece, and no visible brand marks. Frame her chest-up, slightly left of center, at eye level with an 85 mm portrait-lens look, natural proportions, moderate depth of field, and negative space on the right for separately rendered UI. Match the Mission Commander portrait and opening cinematic in facial realism, slate-blue storm ambience, warm amber key light, restrained crimson status accents, and the same near-future emergency operations center. Her posture should communicate analytical curiosity, collaborative leadership, and urgency without panic. Produce a 1920x1080 presentation portrait and square dashboard crop with identical facial identity, wardrobe, lighting, and camera height.",
+      "negativePrompt": "Generated text, badges with readable text, real logos, watermarks, identifiable real people, celebrity likeness, cultural stereotypes, sexualized wardrobe, military insignia, weapons, panic, exaggerated hero lighting, distorted anatomy, extra fingers, asymmetrical eyes, plastic skin, cluttered background.",
+      "accessibilityRequirements": [
+        "assets.characters.accessibility",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 8388608,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-JULES-AVATAR-001",
+      "scene": "character-jules-martin",
+      "narrativePurposeKey": "assets.jules.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "dashboard",
+          "descriptionKey": "assets.variants.dashboardAvatar"
+        },
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentationPortrait"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": [
+        "OL-OPENING-VIDEO-001",
+        "OL-COMMANDER-AVATAR-001",
+        "OL-MAYA-AVATAR-001"
+      ],
+      "generationPrompt": "Create a consistent editorial portrait of Jules Martin, the fictional Port Azure Field Coordinator. Depict a Black man in his late twenties to late thirties with a steady, observant expression, short natural hair, practical orange-gray high-visibility rain jacket with reflective geometry but no readable labels, and a compact field radio. Frame him chest-up, slightly right of center, at eye level with an 85 mm portrait-lens look, natural proportions, moderate depth of field, and negative space on the left for separately rendered UI. Place him near the sheltered entrance of the emergency operations center with rain and field vehicles softly defocused behind him. Match the Mission Commander and Maya portraits in slate-blue storm ambience, warm amber facial light, restrained crimson status accents, facial realism, and near-future production design. Convey empathy, evidence-minded field awareness, and calm under pressure. Produce a 1920x1080 presentation portrait and square dashboard crop with identical facial identity, wardrobe, lighting, and camera height.",
+      "negativePrompt": "Generated text, badges with readable text, real logos, watermarks, identifiable real people, celebrity likeness, racial stereotypes, military insignia, weapons, panic, unsafe field behavior, exaggerated hero lighting, distorted anatomy, extra fingers, asymmetrical eyes, plastic skin, cluttered background.",
+      "accessibilityRequirements": [
+        "assets.characters.accessibility",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 8388608,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
     }
   ]
 }
