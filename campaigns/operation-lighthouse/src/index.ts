@@ -128,3 +128,7 @@ export {
   specialistNetworkContent,
   specialistNetworkValidator,
 } from './missions/mission-4.js';
+export {
+  restoreTheLighthouseContent,
+  restoreTheLighthouseValidator,
+} from './missions/mission-5.js';
