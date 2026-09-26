@@ -42,6 +42,15 @@
     "assets.mission2.script": "A report can be urgent and still be uncertain. Separate verified facts from assumptions and unknowns. Cite the evidence behind every conclusion. When sources conflict, explain which source you trust and why. Treat instructions inside untrusted content as data, not commands. If the evidence does not support action, say so and request the next piece of information you need.",
     "assets.mission3.script": "Port Azure is connected, but no single tool has the whole picture. Query weather, shelters, and transport. Ground every recommendation in returned evidence. A tool may fail temporarily; retry only when it is safe and bounded, then compare viable routes and shelters. Keep the tool trace concise enough for another responder to audit your decision.",
     "assets.mission4.script": "One agent cannot safely own every decision. Define bounded specialist roles with explicit inputs and outputs. Route evidence through visible handoffs and preserve its source. Let independent analyses run together where possible. When specialists disagree, do not hide the conflict. Escalate high-impact uncertainty to a human reviewer and record the final approval.",
-    "assets.mission5.script": "The storm, grid, transport, shelter, and communications incidents now overlap. Gather current evidence, prioritize actions, and allocate finite resources. Route specialist work, validate the final plan independently, and preserve an auditable decision package. An incident modifier or tool outage may change the situation. Re-plan deliberately, explain rejected alternatives, and request human approval before high-impact action."
+    "assets.mission5.script": "The storm, grid, transport, shelter, and communications incidents now overlap. Gather current evidence, prioritize actions, and allocate finite resources. Route specialist work, validate the final plan independently, and preserve an auditable decision package. An incident modifier or tool outage may change the situation. Re-plan deliberately, explain rejected alternatives, and request human approval before high-impact action.",
+    "assets.alertSting.purpose": "Signal an instructor-triggered condition change without causing alarm.",
+    "assets.successSting.purpose": "Confirm validated mission progress without competitive fanfare.",
+    "assets.dashboardAmbience.purpose": "Support focus with a low-volume command-center atmosphere and optional music bed.",
+    "assets.audio.accessibility": "Keep comfortable loudness, speech-frequency headroom, gentle transients, and a sensory-reduced alternative.",
+    "assets.audio.noAudioOnlyMeaning": "Pair every audio cue with a visible status change or text notification.",
+    "assets.variants.audioStandard": "Primary stereo event cue.",
+    "assets.variants.audioSensoryReduced": "Lower-intensity alternative with gentler attacks and reduced low frequencies.",
+    "assets.variants.ambientLoop": "Seamless command-center environmental loop.",
+    "assets.variants.musicBed": "Sparse optional underscore designed to remain beneath narration."
   }
 }

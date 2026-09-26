@@ -592,6 +592,137 @@
         "reviewer": "unassigned"
       },
       "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-ALERT-STING-001",
+      "scene": "incident-alert-audio",
+      "narrativePurposeKey": "assets.alertSting.purpose",
+      "mediaType": "audio",
+      "requiredVariants": [
+        {
+          "id": "standard",
+          "descriptionKey": "assets.variants.audioStandard"
+        },
+        {
+          "id": "sensory-reduced",
+          "descriptionKey": "assets.variants.audioSensoryReduced"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 3,
+      "continuityReferences": ["OL-OPENING-VIDEO-001"],
+      "generationPrompt": "Create a three-second nonverbal incident alert cue for Operation Lighthouse. Begin with a soft low-frequency pulse, add two clear mid-register percussive notes separated enough to be distinguishable, and resolve with a short restrained synthetic tail that matches the slate-blue, amber, and crimson command-center atmosphere. The cue must communicate attention and changed conditions without implying immediate physical danger, failure, punishment, or military action. Keep the frequency range intelligible on laptop speakers, preserve comfortable headroom, and avoid masking speech. Produce a standard stereo WAV at 48 kHz and a sensory-reduced variant with gentler attack, lower peak loudness, and no sub-bass.",
+      "negativePrompt": "Spoken text, synthetic speech, real brand audio logos, musical watermarks, sirens, klaxons, gunfire, explosions, jump-scare transients, harsh high frequencies, sub-bass shock, clipping, distortion, excessive loudness, long reverb, culturally specific alarm melodies.",
+      "accessibilityRequirements": [
+        "assets.audio.accessibility",
+        "assets.audio.noAudioOnlyMeaning"
+      ],
+      "output": {
+        "format": "wav",
+        "maximumBytes": 2097152,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-SUCCESS-STING-001",
+      "scene": "mission-success-audio",
+      "narrativePurposeKey": "assets.successSting.purpose",
+      "mediaType": "audio",
+      "requiredVariants": [
+        {
+          "id": "standard",
+          "descriptionKey": "assets.variants.audioStandard"
+        },
+        {
+          "id": "sensory-reduced",
+          "descriptionKey": "assets.variants.audioSensoryReduced"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 4,
+      "continuityReferences": ["OL-ALERT-STING-001"],
+      "generationPrompt": "Create a four-second nonverbal mission-success cue for Operation Lighthouse. Use a warm three-note upward motif played by soft mallet, muted piano, and subtle glass harmonics, followed by a brief steady beacon-like tone. Communicate verified progress, teamwork, and relief without sounding childish, triumphant, competitive, or final. Match the incident alert cue in acoustic space and production quality while clearly differing in contour. Keep speech frequencies open, ensure clarity on laptop speakers, target comfortable event-room loudness, and provide a sensory-reduced stereo WAV variant with softer attack and simplified harmony.",
+      "negativePrompt": "Spoken text, applause, synthetic speech, real brand audio logos, musical watermarks, victory fanfare, casino sounds, game reward clichés, sirens, harsh bells, jump-scare transients, clipping, distortion, excessive loudness, long reverb, culturally specific ceremonial melodies.",
+      "accessibilityRequirements": [
+        "assets.audio.accessibility",
+        "assets.audio.noAudioOnlyMeaning"
+      ],
+      "output": {
+        "format": "wav",
+        "maximumBytes": 2097152,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-DASHBOARD-AMBIENCE-001",
+      "scene": "command-center-ambience",
+      "narrativePurposeKey": "assets.dashboardAmbience.purpose",
+      "mediaType": "audio",
+      "requiredVariants": [
+        {
+          "id": "ambient-loop",
+          "descriptionKey": "assets.variants.ambientLoop"
+        },
+        {
+          "id": "music-bed",
+          "descriptionKey": "assets.variants.musicBed"
+        },
+        {
+          "id": "sensory-reduced",
+          "descriptionKey": "assets.variants.audioSensoryReduced"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 120,
+      "continuityReferences": [
+        "OL-OPENING-VIDEO-001",
+        "OL-ALERT-STING-001",
+        "OL-SUCCESS-STING-001"
+      ],
+      "generationPrompt": "Create a seamless two-minute stereo ambience package for the Operation Lighthouse command center. The ambient-loop variant should combine quiet rain against insulated windows, distant ventilation, restrained equipment hum, occasional soft radio texture with no intelligible speech, and subtle room movement. The music-bed variant should add sparse low piano, warm sustained strings, and a slow beacon-like pulse at approximately 60 beats per minute, leaving space for localized narration and conversation. The sensory-reduced variant should remove radio texture and low-frequency pulses while preserving a stable rain-and-room bed. Keep all loops phase-safe, seamless, calm, and low-volume, with no dramatic build or implied countdown. Deliver 48 kHz stereo WAV masters with consistent loudness and sufficient headroom beneath voice.",
+      "negativePrompt": "Spoken text, intelligible radio dialogue, synthetic speech, real brand audio logos, musical watermarks, sirens, alarms, explosions, thunder cracks, jump scares, tense ostinatos, ticking clocks, military drums, excessive sub-bass, clipping, distortion, abrupt loop seams, melodies that compete with narration.",
+      "accessibilityRequirements": [
+        "assets.audio.accessibility",
+        "assets.audio.noAudioOnlyMeaning"
+      ],
+      "output": {
+        "format": "wav",
+        "maximumBytes": 50331648,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
     }
   ]
 }

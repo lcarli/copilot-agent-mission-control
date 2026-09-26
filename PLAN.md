@@ -1226,7 +1226,7 @@ A task is complete only when:
 - [x] **TASK-702 — Write character asset prompts.** Add consistent prompts for Mission Commander, Maya, and Jules.
 - [x] **TASK-703 — Write Port Azure map prompts.** Add map, district, weather, service, and status visual prompts.
 - [x] **TASK-704 — Write mission briefing prompts.** Add five briefing video prompt packages and localized scripts.
-- [ ] **TASK-705 — Write audio asset prompts.** Add alerts, success cues, ambience, music, and voice direction.
+- [x] **TASK-705 — Write audio asset prompts.** Add alerts, success cues, ambience, music, and voice direction.
 - [ ] **TASK-706 — Write finale and awards prompts.** Add recovery finale and recognition visual prompt packages.
 - [ ] **TASK-707 — Integrate reviewed media assets.** Add approved files, captions, metadata, and provenance.
 - [ ] **TASK-710 — Complete English content review.** Review clarity, consistency, accessibility, and glossary use.
