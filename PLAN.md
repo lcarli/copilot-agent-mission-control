@@ -1232,7 +1232,7 @@ A task is complete only when:
 - [x] **TASK-710 — Complete English content review.** Review clarity, consistency, accessibility, and glossary use.
 - [x] **TASK-711 — Complete French localization.** Translate and review all participant, instructor, UI, and media content.
 - [x] **TASK-712 — Complete Brazilian Portuguese localization.** Translate and review all participant, instructor, UI, and media content.
-- [ ] **TASK-713 — Run localization parity tests.** Verify keys, placeholders, layout expansion, captions, and asset variants.
+- [x] **TASK-713 — Run localization parity tests.** Verify keys, placeholders, layout expansion, captions, and asset variants.
 
 ### Phase 8 — Quality, Security, and Event Readiness
 
