@@ -166,3 +166,8 @@ export type {
   AssetReviewStatus,
   MediaLocale,
 } from './media.js';
+export { validateMediaLocalization } from './media-localization.js';
+export type {
+  MediaLocalizationIssue,
+  MediaLocalizationValidation,
+} from './media-localization.js';

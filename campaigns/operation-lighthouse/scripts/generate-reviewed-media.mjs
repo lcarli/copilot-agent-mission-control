@@ -62,6 +62,9 @@ const checksum = async (path) =>
     .update(await readFile(path))
     .digest('hex');
 
+const textChecksum = (content) =>
+  createHash('sha256').update(content.replaceAll('\r\n', '\n')).digest('hex');
+
 const formatTimestamp = (seconds) => {
   const minutes = Math.floor(seconds / 60);
   const remaining = seconds % 60;
@@ -146,23 +149,20 @@ for (const asset of manifest.assets) {
       const script = catalogs[locale][scriptKey];
       const captionRelativePath = `media/captions/${asset.assetId}.${locale}.vtt`;
       const captionAbsolutePath = resolve(rootDirectory, captionRelativePath);
-      await writeFile(
-        captionAbsolutePath,
-        [
-          'WEBVTT',
-          '',
-          `00:00:00.000 --> ${formatTimestamp(duration)}`,
-          script,
-          '',
-        ].join('\n'),
-        'utf8',
-      );
+      const captionContent = [
+        'WEBVTT',
+        '',
+        `00:00:00.000 --> ${formatTimestamp(duration)}`,
+        script,
+        '',
+      ].join('\n');
+      await writeFile(captionAbsolutePath, captionContent, 'utf8');
       captionEntries.push({
         assetId: asset.assetId,
         locale,
         format: 'vtt',
         path: captionRelativePath,
-        sha256: await checksum(captionAbsolutePath),
+        sha256: textChecksum(captionContent),
       });
     }
   }

@@ -27,6 +27,9 @@ localized captions and their checksums are recorded in
 `media/caption-manifest.json`.
 Editorial approvals and locale-specific terminology decisions are recorded in
 `media/content-reviews.json` and `media/reviews/`.
+`pnpm --filter @mission-control/campaign-operation-lighthouse validate:localization`
+checks media keys, placeholders, layout expansion, localized asset references,
+caption content and checksums, variant uniqueness, and review approvals.
 
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;
