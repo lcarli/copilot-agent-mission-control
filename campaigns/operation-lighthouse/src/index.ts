@@ -132,3 +132,17 @@ export {
   restoreTheLighthouseContent,
   restoreTheLighthouseValidator,
 } from './missions/mission-5.js';
+export {
+  activateIncidentModifier,
+  deactivateIncidentModifier,
+  incidentModifierCatalog,
+  incidentModifierIds,
+  initialCampaignScenarioState,
+} from './modifiers.js';
+export type {
+  ActiveIncidentModifier,
+  CampaignScenarioState,
+  IncidentModifierDefinition,
+  IncidentModifierId,
+  SimulatorToolId,
+} from './modifiers.js';
