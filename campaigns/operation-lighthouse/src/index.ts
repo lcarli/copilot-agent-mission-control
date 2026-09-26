@@ -154,3 +154,15 @@ export type {
   CampaignDryRunMissionResult,
   CampaignDryRunReport,
 } from './dry-run.js';
+export {
+  assetReviewStatuses,
+  mediaLocales,
+  validateAssetManifest,
+  validateAssetManifestFile,
+} from './media.js';
+export type {
+  AssetManifestIssue,
+  AssetManifestValidation,
+  AssetReviewStatus,
+  MediaLocale,
+} from './media.js';
