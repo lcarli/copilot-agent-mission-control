@@ -146,3 +146,11 @@ export type {
   IncidentModifierId,
   SimulatorToolId,
 } from './modifiers.js';
+export {
+  campaignFinaleRecoveryThreshold,
+  runCampaignDryRun,
+} from './dry-run.js';
+export type {
+  CampaignDryRunMissionResult,
+  CampaignDryRunReport,
+} from './dry-run.js';

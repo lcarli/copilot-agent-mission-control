@@ -13,6 +13,10 @@ and Brazilian Portuguese catalogs are checked for key and placeholder parity.
 Instructor incident modifiers use a closed catalog with bounded parameters,
 facilitator guidance, conflict detection, and reversible state transitions.
 
+The deterministic campaign dry run traverses every narrative beat, validates all
+five missions, exercises every simulator and incident modifier, and proves that
+collective recovery unlocks the finale without leaking state between runs.
+
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;
 `pnpm --filter @mission-control/campaign-operation-lighthouse test` validates
