@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "localization",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "locale": "pt-BR",
+  "messages": {
+    "assets.opening.purpose": "Apresentar Port Azure, a tempestade que se aproxima e a missão coletiva de recuperação.",
+    "assets.opening.script": "Port Azure enfrenta tempestades há gerações, mas, nesta noite, todos os distritos encaram o mesmo horizonte. A chuva está aumentando. As rotas de transporte estão ficando limitadas. Os serviços essenciais estão sob pressão. Em toda a cidade, equipes de resposta e moradores se preparam juntos. Sua unidade está entrando no Mission Control para transformar relatos incertos em decisões fundamentadas, conectar o trabalho de especialistas e restaurar serviços essenciais com segurança. As evidências vão mudar. As ferramentas podem falhar. Os recursos são finitos. Coordenem-se com clareza, verifiquem antes de agir e mantenham as pessoas no centro de cada decisão. A tempestade está chegando. O farol ainda está aceso. Sua missão começa agora.",
+    "assets.opening.pronunciation": "Port Azure: port AZH-er. Maya Chen: MAI-a tchen. Jules Martin: jul mar-TÃ.",
+    "assets.opening.accessibility": "Fornecer legendas sincronizadas, narração clara sobre ambiência discreta e descrições visuais significativas na transcrição.",
+    "assets.variants.presentation": "Variante principal para apresentação widescreen.",
+    "assets.variants.reducedMotion": "Variante com movimento reduzido usando enquadramentos estáveis e transições suaves.",
+    "assets.accessibility.noCriticalText": "Não colocar informações essenciais em textos gerados na imagem.",
+    "assets.accessibility.reducedMotion": "Evitar flashes, cortes rápidos e movimentos de câmera desorientadores.",
+    "assets.licensing.usageRights": "Uso e adaptação aprovados para eventos e documentação do Operation Lighthouse.",
+    "assets.licensing.restrictions": "Não sugerir endosso de organizações reais nem retratar pessoas reais identificáveis."
+  }
+}
