@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "localization",
+  "campaignId": "operation-lighthouse",
+  "campaignVersion": "1.0.0",
+  "locale": "fr",
+  "messages": {
+    "assets.opening.purpose": "Présenter Port Azure, l'approche de la tempête et la mission collective de rétablissement.",
+    "assets.opening.script": "Port Azure traverse des tempêtes depuis des générations, mais ce soir, tous les quartiers font face au même horizon. La pluie s'intensifie. Les voies de transport se réduisent. Les services essentiels sont sous pression. Dans toute la ville, les équipes d'intervention et la population se préparent ensemble. Votre unité rejoint Mission Control pour transformer des signalements incertains en décisions fondées, coordonner les spécialistes et rétablir les services essentiels en toute sécurité. Les preuves évolueront. Les outils pourront tomber en panne. Les ressources sont limitées. Coordonnez-vous clairement, vérifiez avant d'agir et placez les personnes au cœur de chaque décision. La tempête approche. Le phare brille encore. Votre mission commence maintenant.",
+    "assets.opening.pronunciation": "Port Azure : por a-ZUR. Maya Chen : MA-ya tchen. Jules Martin : zhul mar-TAN.",
+    "assets.opening.accessibility": "Fournir des sous-titres synchronisés, une narration claire sur une ambiance discrète et des descriptions visuelles utiles dans la transcription.",
+    "assets.variants.presentation": "Variante principale pour présentation panoramique.",
+    "assets.variants.reducedMotion": "Variante à mouvements réduits utilisant des plans stables et des fondus.",
+    "assets.accessibility.noCriticalText": "Ne pas placer d'informations essentielles dans du texte généré à l'écran.",
+    "assets.accessibility.reducedMotion": "Éviter les flashs, les coupes rapides et les mouvements de caméra désorientants.",
+    "assets.licensing.usageRights": "Utilisation et adaptation autorisées pour les événements et la documentation Operation Lighthouse.",
+    "assets.licensing.restrictions": "Ne pas suggérer le soutien d'organisations réelles ni représenter des personnes réelles identifiables."
+  }
+}

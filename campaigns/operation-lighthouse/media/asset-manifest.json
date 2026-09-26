@@ -3,5 +3,63 @@
   "kind": "asset-manifest",
   "campaignId": "operation-lighthouse",
   "campaignVersion": "1.0.0",
-  "assets": []
+  "assets": [
+    {
+      "assetId": "OL-OPENING-VIDEO-001",
+      "scene": "opening",
+      "narrativePurposeKey": "assets.opening.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 60,
+      "continuityReferences": [],
+      "generationPrompt": "Create a 60-second cinematic establishing film for the fictional near-future coastal city of Port Azure as a severe Atlantic storm approaches. Begin with a wide aerial view over the harbor at blue hour, then move inland across the Harbor, Old Town, Civic Center, East Bank, and North Hills districts. Show emergency operations preparing calmly: transit crews securing routes, shelter volunteers organizing supplies, electrical crews inspecting substations, and residents following official guidance. Frame people as capable community members rather than helpless victims. Use grounded contemporary architecture, practical emergency vehicles without real logos, physically plausible rain and wind, deep slate-blue storm light, warm amber safety lighting, and restrained crimson status accents that remain readable for viewers with common color-vision differences. Camera movement should be slow and stable with 24 fps cinematic motion, alternating wide geographic context and medium operational detail. Reserve uncluttered lower-frame space for separately authored captions; do not generate interface text inside the image. Build tension without panic, injury, destruction spectacle, or unsafe conduct. End on the lighthouse beacon cutting through rain toward the emergency operations center, visually handing off to the Mission Commander briefing. Deliver 1920x1080, 16:9, stereo, exactly 60 seconds, with dialogue-free ambience under localized narration and a reduced-motion variant using dissolves instead of rapid movement.",
+      "negativePrompt": "Generated text, misspelled signage, real company or government logos, watermarks, identifiable real people, disaster spectacle, visible injury, panic, unsafe emergency behavior, weapons, military framing, dystopian ruins, distorted anatomy, flashing lights above accessibility thresholds, rapid cuts, excessive camera shake, crushed shadows, inaccessible color-only status communication.",
+      "scriptKeys": {
+        "en": "assets.opening.script",
+        "fr": "assets.opening.script",
+        "pt-BR": "assets.opening.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.opening.accessibility",
+        "assets.accessibility.noCriticalText",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 104857600,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    }
+  ]
 }

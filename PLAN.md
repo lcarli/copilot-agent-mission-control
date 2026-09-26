@@ -1222,7 +1222,7 @@ A task is complete only when:
 ### Phase 7 — Media and Localization
 
 - [x] **TASK-700 — Create asset manifest tooling.** Validate metadata, prompts, variants, provenance, and file references.
-- [ ] **TASK-701 — Write opening cinematic asset prompt.** Add the complete generation prompt and localized narration scripts.
+- [x] **TASK-701 — Write opening cinematic asset prompt.** Add the complete generation prompt and localized narration scripts.
 - [ ] **TASK-702 — Write character asset prompts.** Add consistent prompts for Mission Commander, Maya, and Jules.
 - [ ] **TASK-703 — Write Port Azure map prompts.** Add map, district, weather, service, and status visual prompts.
 - [ ] **TASK-704 — Write mission briefing prompts.** Add five briefing video prompt packages and localized scripts.
