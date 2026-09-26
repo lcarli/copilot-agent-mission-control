@@ -41,6 +41,26 @@
         "Mission Control remains the named product surface while Port Azure and character names remain canonical.",
         "Inclusive phrasing avoids unnecessary gender for units, participants, residents, and software agents."
       ]
+    },
+    {
+      "locale": "pt-BR",
+      "status": "approved",
+      "reviewedAt": "2026-09-25T20:45:00Z",
+      "reviewedBy": "Operation Lighthouse Brazilian Portuguese localization review",
+      "scopes": ["participant", "instructor", "ui", "media"],
+      "criteria": {
+        "clarity": "passed",
+        "consistency": "passed",
+        "accessibility": "passed",
+        "glossary": "passed"
+      },
+      "resolvedFindings": [
+        "Brazilian Portuguese instructions use natural operational language and inclusive plural constructions.",
+        "Agente, evidência, fundamentação, ferramenta, transferência, aprovação humana, and recuperação follow the approved glossary.",
+        "Unnecessary dashboard, widescreen, status, and loop borrowings were replaced with painel, tela ampla, estado, and ciclo.",
+        "Mission titles, instructor controls, narration, captions, and accessibility metadata are localized.",
+        "Port Azure, Mission Commander, Maya Chen, Jules Martin, Aurora, and Mission Control remain canonical names."
+      ]
     }
   ]
 }
