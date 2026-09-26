@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "campaignId": "operation-lighthouse",
+  "reviews": [
+    {
+      "locale": "en",
+      "status": "approved",
+      "reviewedAt": "2026-09-25T20:35:00Z",
+      "reviewedBy": "Operation Lighthouse editorial review",
+      "scopes": ["participant", "instructor", "ui", "media"],
+      "criteria": {
+        "clarity": "passed",
+        "consistency": "passed",
+        "accessibility": "passed",
+        "glossary": "passed"
+      },
+      "resolvedFindings": [
+        "Mission instructions use direct verbs and separate required actions from advanced behavior.",
+        "Incident language avoids sensational descriptions and unsupported guarantees of safety.",
+        "Agent, evidence, grounding, tool, handoff, human approval, and recovery match the campaign glossary.",
+        "Media narration does not rely on visual or audio information alone.",
+        "Canonical character and place names remain stable across participant, instructor, UI, and media surfaces."
+      ]
+    }
+  ]
+}

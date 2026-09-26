@@ -25,6 +25,8 @@ Repository-maintained fallback assets can be reproduced with
 `pnpm --filter @mission-control/campaign-operation-lighthouse generate:reviewed-media`;
 localized captions and their checksums are recorded in
 `media/caption-manifest.json`.
+Editorial approvals and locale-specific terminology decisions are recorded in
+`media/content-reviews.json` and `media/reviews/`.
 
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;
