@@ -21,6 +21,10 @@ The `media/asset-manifest.json` file is the authoritative media inventory.
 `pnpm --filter @mission-control/campaign-operation-lighthouse validate:assets`
 checks prompt completeness, variants, locale coverage, continuity, provenance,
 and approved file integrity.
+Repository-maintained fallback assets can be reproduced with
+`pnpm --filter @mission-control/campaign-operation-lighthouse generate:reviewed-media`;
+localized captions and their checksums are recorded in
+`media/caption-manifest.json`.
 
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;

@@ -20,6 +20,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs && node scripts/validate-starters.mjs",
+    "generate:reviewed-media": "node scripts/generate-reviewed-media.mjs",
     "lint": "eslint src test",
     "test": "vitest run && node scripts/validate-starters.mjs",
     "validate:assets": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs",

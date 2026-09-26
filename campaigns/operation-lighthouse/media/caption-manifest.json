@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.0",
+  "campaignId": "operation-lighthouse",
+  "captions": [
+    {
+      "assetId": "OL-OPENING-VIDEO-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-OPENING-VIDEO-001.en.vtt",
+      "sha256": "306c65154623c7f41fa290f792021554ab405132deeb3044fb3f1a9c4f7528a5"
+    },
+    {
+      "assetId": "OL-OPENING-VIDEO-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-OPENING-VIDEO-001.fr.vtt",
+      "sha256": "5a222363cf0fa95cb583c5d0f74344c9d64c712fb2dd73d6fe584d82f72d6904"
+    },
+    {
+      "assetId": "OL-OPENING-VIDEO-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-OPENING-VIDEO-001.pt-BR.vtt",
+      "sha256": "9b23bea48f203e1982529a3af913f2dff74ad730deae268e44d0de7dd45d725f"
+    },
+    {
+      "assetId": "OL-MISSION-01-BRIEF-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-01-BRIEF-001.en.vtt",
+      "sha256": "9071b2e70743e93e2fbddaeb52c8f809e4fbd309c4a5e060f46dd126d7121531"
+    },
+    {
+      "assetId": "OL-MISSION-01-BRIEF-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-01-BRIEF-001.fr.vtt",
+      "sha256": "3b614f8315fe699b80bc5567578c53dd4ca92f4abb9764782e2e8cbd4dac3184"
+    },
+    {
+      "assetId": "OL-MISSION-01-BRIEF-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-01-BRIEF-001.pt-BR.vtt",
+      "sha256": "70461e952921f1ba4fac16a5244f7f16410062567188710d07ea68297adff4ff"
+    },
+    {
+      "assetId": "OL-MISSION-02-BRIEF-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-02-BRIEF-001.en.vtt",
+      "sha256": "f4ef2a10397c347edb80242c45583b7948717abd9e29a4a2cda9ae94daca1615"
+    },
+    {
+      "assetId": "OL-MISSION-02-BRIEF-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-02-BRIEF-001.fr.vtt",
+      "sha256": "f12a2c2dd68d2e78d2d7d0288162f31a3e089e1dec25ea387faf5582e3f77853"
+    },
+    {
+      "assetId": "OL-MISSION-02-BRIEF-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-02-BRIEF-001.pt-BR.vtt",
+      "sha256": "0b9b0117c3ac19386a6fae96eff51a66c3f7afa579609a832b4f1ccda6db6e10"
+    },
+    {
+      "assetId": "OL-MISSION-03-BRIEF-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-03-BRIEF-001.en.vtt",
+      "sha256": "dcf5417a0c049e31d435227d353b0c0c3ae86a4e1ce791af4c029f9e7a9e66c7"
+    },
+    {
+      "assetId": "OL-MISSION-03-BRIEF-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-03-BRIEF-001.fr.vtt",
+      "sha256": "e528a872b6497acfed5a194dfb6746dfa7dbd761f37bbc2db8d52a408e93124c"
+    },
+    {
+      "assetId": "OL-MISSION-03-BRIEF-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-03-BRIEF-001.pt-BR.vtt",
+      "sha256": "2d007407beafea0b41b7cf6b4eebbd48cfed2b69df9f1dd46e1670c4400bc292"
+    },
+    {
+      "assetId": "OL-MISSION-04-BRIEF-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-04-BRIEF-001.en.vtt",
+      "sha256": "1d6f783bb92085226d28a1d85729eb164592d748433cd33c2f2e4ad0ce51e8a8"
+    },
+    {
+      "assetId": "OL-MISSION-04-BRIEF-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-04-BRIEF-001.fr.vtt",
+      "sha256": "ce67f1acef03d560960027d9d18affc668903d26fae271aced68cb2207eb85fd"
+    },
+    {
+      "assetId": "OL-MISSION-04-BRIEF-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-04-BRIEF-001.pt-BR.vtt",
+      "sha256": "dec933f6aa6aec9ddb8092b01fa804eaeb2f26883267a1877ed810e38595a81b"
+    },
+    {
+      "assetId": "OL-MISSION-05-BRIEF-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-05-BRIEF-001.en.vtt",
+      "sha256": "1362dd3576863cc4d09f4e6088183e796853211e4246d2349dbad9d174d5c8b4"
+    },
+    {
+      "assetId": "OL-MISSION-05-BRIEF-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-05-BRIEF-001.fr.vtt",
+      "sha256": "b9aa648688e473ba9035c1e9e5d09fe0cb6b8ca813700d96af17bb40d5ed909a"
+    },
+    {
+      "assetId": "OL-MISSION-05-BRIEF-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-MISSION-05-BRIEF-001.pt-BR.vtt",
+      "sha256": "7c206d23fed4db72f59ebf2f07462dd8a452d3c25fec95f56b7beba2349ab171"
+    },
+    {
+      "assetId": "OL-FINALE-VIDEO-001",
+      "locale": "en",
+      "format": "vtt",
+      "path": "media/captions/OL-FINALE-VIDEO-001.en.vtt",
+      "sha256": "987ef5f4d0110bc477c02e6cdb5ca720ded28ebe0c741161718fc89cf50bef9e"
+    },
+    {
+      "assetId": "OL-FINALE-VIDEO-001",
+      "locale": "fr",
+      "format": "vtt",
+      "path": "media/captions/OL-FINALE-VIDEO-001.fr.vtt",
+      "sha256": "fa95e81270a81b045086393adaa986778e52dd8d295724f05910c54d39dc5bd8"
+    },
+    {
+      "assetId": "OL-FINALE-VIDEO-001",
+      "locale": "pt-BR",
+      "format": "vtt",
+      "path": "media/captions/OL-FINALE-VIDEO-001.pt-BR.vtt",
+      "sha256": "f176346576796a8c107906233b6e84801a42ec45a815b7583280fa8fc34329e9"
+    }
+  ]
+}
