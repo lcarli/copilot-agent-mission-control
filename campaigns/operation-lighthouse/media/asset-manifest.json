@@ -723,6 +723,125 @@
         "reviewer": "unassigned"
       },
       "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-FINALE-VIDEO-001",
+      "scene": "recovery-finale",
+      "narrativePurposeKey": "assets.finale.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 60,
+      "continuityReferences": [
+        "OL-OPENING-VIDEO-001",
+        "OL-COMMANDER-AVATAR-001",
+        "OL-MAYA-AVATAR-001",
+        "OL-JULES-AVATAR-001",
+        "OL-CITY-MAP-001",
+        "OL-MISSION-05-BRIEF-001",
+        "OL-SUCCESS-STING-001",
+        "OL-DASHBOARD-AMBIENCE-001"
+      ],
+      "generationPrompt": "Create a 60-second recovery finale for Operation Lighthouse that mirrors the opening cinematic without suggesting the storm has vanished or every problem is solved. Begin on the dark lighthouse from the Mission 5 briefing, then show validated actions taking effect across canonical Port Azure: public safety radio returning, water pumping stabilizing, an evacuation bus reaching a prepared shelter, grid crews restoring a sector, and verified routes reopening. Show Mission Commander, Maya Chen, and Jules Martin observing evidence-backed progress together, never posing as individual heroes. Transition from slate-blue storm light toward balanced early-dawn neutrals and warm beacon light while rain continues lightly. Represent collective recovery with the canonical map filling through shapes and patterns, without generated percentages or text. Keep residents and responders capable, diverse, and safe. End with the lighthouse beacon crossing the harbor and all three characters looking toward the city, leaving clean caption space. Deliver 1920x1080, 24 fps, stereo, exactly 60 seconds, plus a reduced-motion dissolve variant.",
+      "negativePrompt": "Generated text, percentages, real logos, watermarks, identifiable real people, instant perfect recovery, clear skies replacing the storm abruptly, individual savior framing, applause spectacle, visible injury, unsafe response behavior, military imagery, fireworks, confetti, flashing lights, rapid cuts, camera shake, color-only recovery status, distorted anatomy.",
+      "scriptKeys": {
+        "en": "assets.finale.script",
+        "fr": "assets.finale.script",
+        "pt-BR": "assets.finale.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.finale.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 104857600,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-AWARD-BACKGROUNDS-001",
+      "scene": "recognition-backgrounds",
+      "narrativePurposeKey": "assets.awards.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "evidence-and-grounding",
+          "descriptionKey": "assets.variants.awardEvidence"
+        },
+        {
+          "id": "reliability",
+          "descriptionKey": "assets.variants.awardReliability"
+        },
+        {
+          "id": "collaboration",
+          "descriptionKey": "assets.variants.awardCollaboration"
+        },
+        {
+          "id": "safe-recovery",
+          "descriptionKey": "assets.variants.awardRecovery"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": [
+        "OL-FINALE-VIDEO-001",
+        "OL-CITY-MAP-001",
+        "OL-CITY-DISTRICTS-001"
+      ],
+      "generationPrompt": "Create a coordinated set of four 1920x1080 recognition backgrounds for Operation Lighthouse. Use the canonical Port Azure coastline and lighthouse beacon as subtle shared geometry, with a large uncluttered central safe area for separately rendered localized recipient names and award titles. Produce distinct but equal-status variants for evidence and grounding using linked source markers, reliability using a stable beacon rhythm, collaboration using converging handoff paths, and safe recovery using layered district patterns. Maintain the campaign's slate, warm amber, neutral, and restrained crimson palette; encode each theme with shape and texture rather than color alone. The tone should recognize learning, teamwork, and responsible practice rather than rank teams competitively. Use crisp vector-like detail, generous contrast, no people, and no generated typography.",
+      "negativePrompt": "Generated text, award titles, recipient names, real logos, watermarks, trophies, medals, podium rankings, gold-silver-bronze hierarchy, confetti, fireworks, competitive sports imagery, military insignia, color-only categories, low contrast, cluttered center, photorealistic disaster damage.",
+      "accessibilityRequirements": [
+        "assets.awards.accessibility",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 12582912,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
     }
   ]
 }

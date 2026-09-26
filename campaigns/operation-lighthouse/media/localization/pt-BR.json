@@ -51,6 +51,15 @@
     "assets.variants.audioStandard": "Sinal estéreo principal para o evento.",
     "assets.variants.audioSensoryReduced": "Alternativa de menor intensidade, com ataques mais suaves e menos frequências graves.",
     "assets.variants.ambientLoop": "Loop ambiental contínuo do centro de comando.",
-    "assets.variants.musicBed": "Trilha opcional e esparsa projetada para permanecer abaixo da narração."
+    "assets.variants.musicBed": "Trilha opcional e esparsa projetada para permanecer abaixo da narração.",
+    "assets.finale.purpose": "Encerrar a campanha mostrando recuperação coletiva baseada em evidências e responsabilidade contínua.",
+    "assets.finale.script": "A tempestade testou todas as conexões de Port Azure. Os relatos estavam incompletos. As evidências entraram em conflito. Ferramentas falharam, rotas mudaram e os recursos continuaram finitos. Vocês responderam estruturando a incerteza, fundamentando decisões, coordenando especialistas e solicitando aprovação humana quando o impacto era alto. A cidade não é restaurada por uma resposta perfeita nem por uma unidade heroica. A recuperação vem de decisões que outras pessoas podem verificar, questionar e melhorar. Os serviços essenciais estão se estabilizando. O farol está aceso novamente. Levem estas práticas além de Port Azure: preservem evidências, criem contratos claros, recuperem com segurança e mantenham as pessoas no centro.",
+    "assets.finale.accessibility": "Fornecer legendas sincronizadas, transcrição descritiva, movimento moderado e nenhuma informação de recuperação transmitida apenas por áudio.",
+    "assets.awards.purpose": "Reconhecer evidências, confiabilidade, colaboração e recuperação segura sem classificar participantes.",
+    "assets.awards.accessibility": "Reservar espaço de alto contraste para texto localizado e diferenciar cada tema por forma e padrão.",
+    "assets.variants.awardEvidence": "Fundo de reconhecimento para evidências e fundamentação.",
+    "assets.variants.awardReliability": "Fundo de reconhecimento para operação confiável e recuperável.",
+    "assets.variants.awardCollaboration": "Fundo de reconhecimento para colaboração e transferências entre especialistas.",
+    "assets.variants.awardRecovery": "Fundo de reconhecimento para recuperação coletiva segura."
   }
 }
