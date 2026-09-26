@@ -124,3 +124,7 @@ export {
   connectedCityContent,
   connectedCityValidator,
 } from './missions/mission-3.js';
+export {
+  specialistNetworkContent,
+  specialistNetworkValidator,
+} from './missions/mission-4.js';
