@@ -1215,7 +1215,7 @@ A task is complete only when:
 - [x] **TASK-611 — Build Mission 2 content and validator.** Deliver Ground Truth in all supported languages.
 - [x] **TASK-612 — Build Mission 3 content and validator.** Deliver Connected City in all supported languages.
 - [x] **TASK-613 — Build Mission 4 content and validator.** Deliver Specialist Network in all supported languages.
-- [ ] **TASK-614 — Build Mission 5 content and validator.** Deliver Restore the Lighthouse in all supported languages.
+- [x] **TASK-614 — Build Mission 5 content and validator.** Deliver Restore the Lighthouse in all supported languages.
 - [ ] **TASK-615 — Build instructor incident modifiers.** Add safe, documented scenario changes for live facilitation.
 - [ ] **TASK-616 — Build campaign dry run.** Prove every mission and narrative transition end to end.
 
