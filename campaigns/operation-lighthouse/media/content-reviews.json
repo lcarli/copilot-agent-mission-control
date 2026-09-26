@@ -21,6 +21,26 @@
         "Media narration does not rely on visual or audio information alone.",
         "Canonical character and place names remain stable across participant, instructor, UI, and media surfaces."
       ]
+    },
+    {
+      "locale": "fr",
+      "status": "approved",
+      "reviewedAt": "2026-09-25T20:40:00Z",
+      "reviewedBy": "Operation Lighthouse French localization review",
+      "scopes": ["participant", "instructor", "ui", "media"],
+      "criteria": {
+        "clarity": "passed",
+        "consistency": "passed",
+        "accessibility": "passed",
+        "glossary": "passed"
+      },
+      "resolvedFindings": [
+        "French instructions use natural operational syntax rather than literal English sentence structure.",
+        "Élément probant, ancrage, outil, transfert, approbation humaine, and rétablissement follow the approved glossary.",
+        "Mission titles, public presentation labels, instructor controls, narration, and captions are localized.",
+        "Mission Control remains the named product surface while Port Azure and character names remain canonical.",
+        "Inclusive phrasing avoids unnecessary gender for units, participants, residents, and software agents."
+      ]
     }
   ]
 }
