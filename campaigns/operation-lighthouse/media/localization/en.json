@@ -14,6 +14,12 @@
     "assets.accessibility.noCriticalText": "Do not place critical information in generated on-screen text.",
     "assets.accessibility.reducedMotion": "Avoid flashes, rapid cuts, and disorienting camera movement.",
     "assets.licensing.usageRights": "Approved for use and adaptation in Operation Lighthouse event delivery and documentation.",
-    "assets.licensing.restrictions": "Do not imply endorsement by real organizations or depict identifiable real people."
+    "assets.licensing.restrictions": "Do not imply endorsement by real organizations or depict identifiable real people.",
+    "assets.commander.purpose": "Identify the Mission Commander as the calm authority guiding the campaign.",
+    "assets.maya.purpose": "Identify Maya Chen as the analytical Operations Lead for mission briefings.",
+    "assets.jules.purpose": "Identify Jules Martin as the evidence-minded Field Coordinator.",
+    "assets.characters.accessibility": "Preserve clear facial expressions, strong subject-background separation, and useful alternative text.",
+    "assets.variants.dashboardAvatar": "Square close crop for dashboard identity.",
+    "assets.variants.presentationPortrait": "Widescreen portrait with negative space for presentation copy."
   }
 }

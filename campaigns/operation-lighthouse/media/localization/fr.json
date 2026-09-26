@@ -14,6 +14,12 @@
     "assets.accessibility.noCriticalText": "Ne pas placer d'informations essentielles dans du texte généré à l'écran.",
     "assets.accessibility.reducedMotion": "Éviter les flashs, les coupes rapides et les mouvements de caméra désorientants.",
     "assets.licensing.usageRights": "Utilisation et adaptation autorisées pour les événements et la documentation Operation Lighthouse.",
-    "assets.licensing.restrictions": "Ne pas suggérer le soutien d'organisations réelles ni représenter des personnes réelles identifiables."
+    "assets.licensing.restrictions": "Ne pas suggérer le soutien d'organisations réelles ni représenter des personnes réelles identifiables.",
+    "assets.commander.purpose": "Présenter Mission Commander comme l'autorité calme qui guide la campagne.",
+    "assets.maya.purpose": "Présenter Maya Chen comme la responsable analytique des opérations pour les briefings.",
+    "assets.jules.purpose": "Présenter Jules Martin comme le coordinateur terrain attentif aux preuves.",
+    "assets.characters.accessibility": "Préserver des expressions faciales claires, un fort contraste sujet-arrière-plan et un texte alternatif utile.",
+    "assets.variants.dashboardAvatar": "Recadrage carré rapproché pour l'identité dans le tableau de bord.",
+    "assets.variants.presentationPortrait": "Portrait panoramique avec espace libre pour le texte de présentation."
   }
 }
