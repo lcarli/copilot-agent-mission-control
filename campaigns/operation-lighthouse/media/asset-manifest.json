@@ -290,6 +290,308 @@
         "reviewer": "unassigned"
       },
       "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MISSION-01-BRIEF-001",
+      "scene": "mission-1-briefing",
+      "narrativePurposeKey": "assets.mission1.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 45,
+      "continuityReferences": [
+        "OL-OPENING-VIDEO-001",
+        "OL-MAYA-AVATAR-001",
+        "OL-CITY-MAP-001",
+        "OL-CITY-DISTRICTS-001"
+      ],
+      "generationPrompt": "Create a 45-second mission briefing for Signal in the Storm, matching the opening cinematic and Maya Chen portrait. Begin with Maya in the Port Azure operations center, then cut to language-neutral incident cards arriving from Harbor in three distinct visual rhythms that imply multilingual reports without generated text. Show duplicate evidence lines converging, missing fields as empty structured slots, water-pumping service pressure, and a clear severity escalation from uncertain to high. Use stable eye-level and map-over-shoulder compositions, restrained slate-blue storm light, amber task lighting, and accessible crimson accents paired with shape. Keep lower-frame caption space clear. End with a structured incident package moving into a verified queue and Maya looking toward the next evidence panel. Deliver 1920x1080, 24 fps, stereo, exactly 45 seconds, plus a reduced-motion dissolve variant.",
+      "negativePrompt": "Generated text, readable incident details, real logos, watermarks, identifiable real people, visible injury, panic, disaster spectacle, unsafe response behavior, military imagery, flashing UI, rapid cuts, camera shake, color-only severity, distorted anatomy.",
+      "scriptKeys": {
+        "en": "assets.mission1.script",
+        "fr": "assets.mission1.script",
+        "pt-BR": "assets.mission1.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.briefings.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 83886080,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MISSION-02-BRIEF-001",
+      "scene": "mission-2-briefing",
+      "narrativePurposeKey": "assets.mission2.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 45,
+      "continuityReferences": [
+        "OL-JULES-AVATAR-001",
+        "OL-MISSION-01-BRIEF-001",
+        "OL-CITY-MAP-001"
+      ],
+      "generationPrompt": "Create a 45-second mission briefing for Ground Truth, matching Jules Martin and the established Port Azure visual language. Open on Jules reviewing two conflicting field observations near an East Bank route. Visualize facts, assumptions, and unknowns as separate language-neutral evidence lanes using icons and geometry rather than generated words. Show one untrusted instruction attempting to enter the workflow, being isolated rather than followed, while source evidence remains intact. Move between a sheltered field position and the operations map with stable documentary camera work, rain-muted slate tones, warm practical light, and restrained status accents paired with patterns. Keep caption space clear and avoid revealing an answer. End on an unresolved evidence gap and a deliberate request for the next verified observation. Deliver 1920x1080, 24 fps, stereo, exactly 45 seconds, plus a reduced-motion variant.",
+      "negativePrompt": "Generated text, readable evidence claims, real logos, watermarks, identifiable real people, cyberattack clichés, malicious instructions shown legibly, panic, visible injury, military imagery, rapid cuts, flashing UI, camera shake, color-only trust signals, distorted anatomy.",
+      "scriptKeys": {
+        "en": "assets.mission2.script",
+        "fr": "assets.mission2.script",
+        "pt-BR": "assets.mission2.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.briefings.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 83886080,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MISSION-03-BRIEF-001",
+      "scene": "mission-3-briefing",
+      "narrativePurposeKey": "assets.mission3.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 45,
+      "continuityReferences": [
+        "OL-MISSION-02-BRIEF-001",
+        "OL-CITY-MAP-001",
+        "OL-CITY-DISTRICTS-001"
+      ],
+      "generationPrompt": "Create a 45-second mission briefing for Connected City using the canonical Port Azure map. Show a weather forecast layer, shelter capacity symbols, and transport routes being queried in sequence by a calm language-neutral assistant presence represented only by a soft neutral light pulse, never a humanoid robot. The first transport query should fail transiently with a non-alarming interrupted connection symbol; show one bounded retry, then a verified alternate route from Harbor through Old Town toward North Hills. Compare the selected shelter and one alternative without generated labels. Use clear map geometry, non-color status patterns, stable camera movement, slate-blue storm context, warm operational light, and restrained crimson accents. Preserve lower-frame caption space. End with evidence links visibly attached to the recommendation. Deliver 1920x1080, 24 fps, stereo, exactly 45 seconds, plus a reduced-motion variant.",
+      "negativePrompt": "Generated text, readable route labels, humanoid AI, robot face, real logos, watermarks, identifiable real people, magic interfaces, instant unexplained answers, repeated retries, panic, unsafe evacuation behavior, rapid cuts, flashing UI, camera shake, color-only status.",
+      "scriptKeys": {
+        "en": "assets.mission3.script",
+        "fr": "assets.mission3.script",
+        "pt-BR": "assets.mission3.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.briefings.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 83886080,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MISSION-04-BRIEF-001",
+      "scene": "mission-4-briefing",
+      "narrativePurposeKey": "assets.mission4.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 45,
+      "continuityReferences": [
+        "OL-MAYA-AVATAR-001",
+        "OL-MISSION-03-BRIEF-001",
+        "OL-CITY-DISTRICTS-001"
+      ],
+      "generationPrompt": "Create a 45-second mission briefing for Specialist Network, returning to Maya Chen in the operations center. Visualize three bounded specialist roles as distinct workstations for weather, logistics, and independent review, each with clear input and output geometry and no generated words. Show weather and logistics analyses proceeding concurrently, evidence traveling intact through explicit handoff paths, and a reviewer separate from the proposer. Include one disagreement that pauses and escalates to a human decision rather than being silently merged. Match established portraits, map geometry, slate-blue storm ambience, amber work light, and restrained crimson status accents paired with shape. Use stable medium shots and overhead workflow views with clear caption space. End with the reviewed recommendation returning to Mission Control. Deliver 1920x1080, 24 fps, stereo, exactly 45 seconds, plus a reduced-motion variant.",
+      "negativePrompt": "Generated text, role labels, humanoid robot agents, real logos, watermarks, identifiable real people, chaotic network webs, unlimited agent swarms, hidden evidence changes, reviewer and proposer merged, military command imagery, panic, rapid cuts, flashing UI, camera shake, color-only roles.",
+      "scriptKeys": {
+        "en": "assets.mission4.script",
+        "fr": "assets.mission4.script",
+        "pt-BR": "assets.mission4.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.briefings.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 83886080,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-MISSION-05-BRIEF-001",
+      "scene": "mission-5-briefing",
+      "narrativePurposeKey": "assets.mission5.purpose",
+      "mediaType": "video",
+      "requiredVariants": [
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.presentation"
+        },
+        {
+          "id": "reduced-motion",
+          "descriptionKey": "assets.variants.reducedMotion"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "targetDurationSeconds": 45,
+      "continuityReferences": [
+        "OL-COMMANDER-AVATAR-001",
+        "OL-MISSION-04-BRIEF-001",
+        "OL-CITY-MAP-001",
+        "OL-CITY-DISTRICTS-001"
+      ],
+      "generationPrompt": "Create a 45-second finale-mission briefing for Restore the Lighthouse, led by the Mission Commander. Show the combined storm-surge, grid, communications, shelter, transport, and finite-resource situation across the canonical Port Azure map. Present multiple evidence sources converging into an ordered response plan, then introduce a route closure and temporary tool outage that require visible re-planning without panic. Show portable generators and evacuation buses as finite countable resources, specialist handoffs, independent final review, and a human approval moment for high-impact actions. Maintain continuity with all prior briefings, portraits, and overlays using stable cinematic framing, slate-blue storm light, amber operational warmth, and accessible status shapes. Keep caption space clear and withhold the final outcome. End on the lighthouse dark but ready to be restored. Deliver 1920x1080, 24 fps, stereo, exactly 45 seconds, plus a reduced-motion variant.",
+      "negativePrompt": "Generated text, readable plan details, real logos, watermarks, identifiable real people, infinite resources, instant recovery, destruction spectacle, visible injury, panic, autonomous high-impact action without approval, military imagery, rapid cuts, flashing UI, camera shake, color-only status.",
+      "scriptKeys": {
+        "en": "assets.mission5.script",
+        "fr": "assets.mission5.script",
+        "pt-BR": "assets.mission5.script"
+      },
+      "pronunciationNotesKey": "assets.opening.pronunciation",
+      "captionFileRequirements": [
+        { "locale": "en", "format": "vtt" },
+        { "locale": "fr", "format": "vtt" },
+        { "locale": "pt-BR", "format": "vtt" }
+      ],
+      "accessibilityRequirements": [
+        "assets.briefings.accessibility",
+        "assets.accessibility.reducedMotion"
+      ],
+      "output": {
+        "format": "mp4",
+        "maximumBytes": 83886080,
+        "width": 1920,
+        "height": 1080,
+        "aspectRatio": "16:9",
+        "frameRate": 24,
+        "audioChannels": 2
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
     }
   ]
 }

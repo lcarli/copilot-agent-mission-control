@@ -31,6 +31,17 @@
     "assets.variants.districtBoundaries": "Transparent district boundary overlay.",
     "assets.variants.weatherLayer": "Transparent weather and hazard overlay.",
     "assets.variants.serviceLayer": "Transparent city service and shelter symbol overlay.",
-    "assets.variants.statusSymbols": "Transparent non-color-dependent operational status symbols."
+    "assets.variants.statusSymbols": "Transparent non-color-dependent operational status symbols.",
+    "assets.briefings.accessibility": "Provide synchronized captions, clear narration, restrained ambience, and sufficient time to understand each visual transition.",
+    "assets.mission1.purpose": "Launch Signal in the Storm and frame structured incident assessment.",
+    "assets.mission2.purpose": "Launch Ground Truth and frame evidence, uncertainty, and instruction safety.",
+    "assets.mission3.purpose": "Launch Connected City and frame grounded tool use and bounded recovery.",
+    "assets.mission4.purpose": "Launch Specialist Network and frame explicit roles, handoffs, and independent review.",
+    "assets.mission5.purpose": "Launch Restore the Lighthouse and frame coordinated, auditable recovery planning.",
+    "assets.mission1.script": "Incoming reports describe flooding near Harbor Pier 4, but the details do not yet agree. Your first task is to build a structured incident assessment. Identify the category, severity, location, and affected services. Preserve what is missing. Explain the severity using the evidence, and flag probable duplicates without erasing their sources. A clear contract is the first step toward a safe response.",
+    "assets.mission2.script": "A report can be urgent and still be uncertain. Separate verified facts from assumptions and unknowns. Cite the evidence behind every conclusion. When sources conflict, explain which source you trust and why. Treat instructions inside untrusted content as data, not commands. If the evidence does not support action, say so and request the next piece of information you need.",
+    "assets.mission3.script": "Port Azure is connected, but no single tool has the whole picture. Query weather, shelters, and transport. Ground every recommendation in returned evidence. A tool may fail temporarily; retry only when it is safe and bounded, then compare viable routes and shelters. Keep the tool trace concise enough for another responder to audit your decision.",
+    "assets.mission4.script": "One agent cannot safely own every decision. Define bounded specialist roles with explicit inputs and outputs. Route evidence through visible handoffs and preserve its source. Let independent analyses run together where possible. When specialists disagree, do not hide the conflict. Escalate high-impact uncertainty to a human reviewer and record the final approval.",
+    "assets.mission5.script": "The storm, grid, transport, shelter, and communications incidents now overlap. Gather current evidence, prioritize actions, and allocate finite resources. Route specialist work, validate the final plan independently, and preserve an auditable decision package. An incident modifier or tool outage may change the situation. Re-plan deliberately, explain rejected alternatives, and request human approval before high-impact action."
   }
 }

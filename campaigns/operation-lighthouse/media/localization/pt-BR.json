@@ -31,6 +31,17 @@
     "assets.variants.districtBoundaries": "Camada transparente de limites dos distritos.",
     "assets.variants.weatherLayer": "Camada transparente de clima e riscos.",
     "assets.variants.serviceLayer": "Camada transparente de serviços urbanos e abrigos.",
-    "assets.variants.statusSymbols": "Símbolos transparentes de status operacional que não dependem apenas de cor."
+    "assets.variants.statusSymbols": "Símbolos transparentes de status operacional que não dependem apenas de cor.",
+    "assets.briefings.accessibility": "Fornecer legendas sincronizadas, narração clara, ambiência discreta e tempo suficiente para compreender cada transição visual.",
+    "assets.mission1.purpose": "Iniciar Sinal na tempestade e contextualizar a avaliação estruturada de incidentes.",
+    "assets.mission2.purpose": "Iniciar Verdade em campo e contextualizar evidências, incerteza e segurança de instruções.",
+    "assets.mission3.purpose": "Iniciar Cidade conectada e contextualizar o uso fundamentado de ferramentas e a recuperação controlada.",
+    "assets.mission4.purpose": "Iniciar Rede de especialistas e contextualizar papéis, transferências e revisão independente.",
+    "assets.mission5.purpose": "Iniciar Restaurar o Lighthouse e contextualizar o planejamento coordenado e auditável da recuperação.",
+    "assets.mission1.script": "Relatos recebidos descrevem uma inundação perto do Píer 4 de Harbor, mas os detalhes ainda não concordam. Sua primeira tarefa é criar uma avaliação estruturada do incidente. Identifique categoria, gravidade, local e serviços afetados. Preserve o que estiver faltando. Explique a gravidade usando as evidências e sinalize duplicatas prováveis sem apagar suas fontes. Um contrato claro é o primeiro passo para uma resposta segura.",
+    "assets.mission2.script": "Um relato pode ser urgente e ainda assim incerto. Separe fatos verificados, suposições e informações desconhecidas. Cite a evidência por trás de cada conclusão. Quando as fontes entrarem em conflito, explique em qual delas você confia e por quê. Trate instruções dentro de conteúdo não confiável como dados, não como comandos. Se a evidência não sustentar uma ação, diga isso e solicite a próxima informação necessária.",
+    "assets.mission3.script": "Port Azure está conectada, mas nenhuma ferramenta tem o cenário completo. Consulte clima, abrigos e transporte. Fundamente cada recomendação nas evidências retornadas. Uma ferramenta pode falhar temporariamente; tente novamente apenas de forma segura e limitada e então compare rotas e abrigos viáveis. Mantenha o histórico de ferramentas conciso o bastante para outra pessoa auditar sua decisão.",
+    "assets.mission4.script": "Um único agente não pode assumir todas as decisões com segurança. Defina papéis especializados e limitados, com entradas e saídas explícitas. Encaminhe evidências por transferências visíveis e preserve a origem. Execute análises independentes em paralelo quando possível. Quando especialistas discordarem, não esconda o conflito. Encaminhe incertezas de alto impacto para revisão humana e registre a aprovação final.",
+    "assets.mission5.script": "Os incidentes de tempestade, rede elétrica, transporte, abrigos e comunicação agora se sobrepõem. Reúna evidências atuais, priorize ações e aloque recursos finitos. Encaminhe o trabalho dos especialistas, valide o plano final de forma independente e preserve um pacote de decisão auditável. Um modificador de incidente ou uma indisponibilidade de ferramenta pode mudar a situação. Replaneje com cuidado, explique alternativas rejeitadas e solicite aprovação humana antes de ações de alto impacto."
   }
 }
