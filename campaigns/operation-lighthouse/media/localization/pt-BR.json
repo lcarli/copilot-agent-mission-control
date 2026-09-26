@@ -20,6 +20,17 @@
     "assets.jules.purpose": "Identificar Jules Martin como o coordenador de campo orientado por evidências.",
     "assets.characters.accessibility": "Preservar expressões faciais claras, boa separação entre pessoa e fundo e texto alternativo útil.",
     "assets.variants.dashboardAvatar": "Recorte quadrado aproximado para identidade no dashboard.",
-    "assets.variants.presentationPortrait": "Retrato widescreen com espaço livre para texto da apresentação."
+    "assets.variants.presentationPortrait": "Retrato widescreen com espaço livre para texto da apresentação.",
+    "assets.cityMap.purpose": "Fornecer a base geográfica estável para as visualizações operacionais de Port Azure.",
+    "assets.cityDistricts.purpose": "Fornecer camadas alinhadas de distritos, clima, serviços e status operacional.",
+    "assets.maps.accessibility": "Usar silhuetas claras, limites de alto contraste e geometria compreensível sem rótulos.",
+    "assets.maps.nonColorStatus": "Combinar cada cor de status com uma forma, padrão ou estilo de linha distinto.",
+    "assets.variants.mapDashboardLight": "Mapa-base neutro otimizado para o tema claro do dashboard.",
+    "assets.variants.mapDashboardDark": "Mapa-base neutro otimizado para o tema escuro do dashboard.",
+    "assets.variants.mapPresentation": "Mapa widescreen em alta resolução para apresentação pública.",
+    "assets.variants.districtBoundaries": "Camada transparente de limites dos distritos.",
+    "assets.variants.weatherLayer": "Camada transparente de clima e riscos.",
+    "assets.variants.serviceLayer": "Camada transparente de serviços urbanos e abrigos.",
+    "assets.variants.statusSymbols": "Símbolos transparentes de status operacional que não dependem apenas de cor."
   }
 }

@@ -20,6 +20,17 @@
     "assets.jules.purpose": "Présenter Jules Martin comme le coordinateur terrain attentif aux preuves.",
     "assets.characters.accessibility": "Préserver des expressions faciales claires, un fort contraste sujet-arrière-plan et un texte alternatif utile.",
     "assets.variants.dashboardAvatar": "Recadrage carré rapproché pour l'identité dans le tableau de bord.",
-    "assets.variants.presentationPortrait": "Portrait panoramique avec espace libre pour le texte de présentation."
+    "assets.variants.presentationPortrait": "Portrait panoramique avec espace libre pour le texte de présentation.",
+    "assets.cityMap.purpose": "Fournir la base géographique stable des vues opérationnelles de Port Azure.",
+    "assets.cityDistricts.purpose": "Fournir des calques alignés pour les quartiers, la météo, les services et l'état opérationnel.",
+    "assets.maps.accessibility": "Utiliser des silhouettes claires, des limites très contrastées et une géométrie compréhensible sans étiquettes.",
+    "assets.maps.nonColorStatus": "Associer chaque couleur d'état à une forme, un motif ou un style de ligne distinct.",
+    "assets.variants.mapDashboardLight": "Carte de base neutre optimisée pour le thème clair du tableau de bord.",
+    "assets.variants.mapDashboardDark": "Carte de base neutre optimisée pour le thème sombre du tableau de bord.",
+    "assets.variants.mapPresentation": "Carte panoramique haute résolution pour la présentation publique.",
+    "assets.variants.districtBoundaries": "Calque transparent des limites de quartiers.",
+    "assets.variants.weatherLayer": "Calque transparent de météo et de dangers.",
+    "assets.variants.serviceLayer": "Calque transparent des services municipaux et des abris.",
+    "assets.variants.statusSymbols": "Symboles transparents d'état opérationnel ne dépendant pas uniquement de la couleur."
   }
 }

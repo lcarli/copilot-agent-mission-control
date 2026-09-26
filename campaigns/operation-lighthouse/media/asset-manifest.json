@@ -193,6 +193,103 @@
         "reviewer": "unassigned"
       },
       "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-CITY-MAP-001",
+      "scene": "port-azure-base-map",
+      "narrativePurposeKey": "assets.cityMap.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "dashboard-light",
+          "descriptionKey": "assets.variants.mapDashboardLight"
+        },
+        {
+          "id": "dashboard-dark",
+          "descriptionKey": "assets.variants.mapDashboardDark"
+        },
+        {
+          "id": "presentation",
+          "descriptionKey": "assets.variants.mapPresentation"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": ["OL-OPENING-VIDEO-001"],
+      "generationPrompt": "Create a precise, fictional, north-up base map of Port Azure for an emergency operations dashboard. Show a coastal harbor in the southwest, Old Town immediately inland, Civic Center at the geographic center, East Bank across a navigable river, and elevated North Hills to the north. Include the six canonical transport corridors as clean unlabeled paths: Harbor to Old Town, Harbor to East Bank, Old Town to Civic Center, Old Town to North Hills, Civic Center to East Bank, and North Hills to East Bank. Indicate coastline, river, elevation, major street texture, and the lighthouse without adding generated labels, legends, icons, logos, borders, or status colors. Use simplified vector-cartographic geometry with sufficient empty space for application-rendered district names, service markers, routes, weather layers, and incident symbols. Maintain exact geography and geometry across light, dark, and 16:9 presentation variants. Use neutral surfaces, strong line hierarchy, accessible contrast, and no photographic texture. Deliver lossless 3840x2160 PNG masters suitable for responsive cropping and dashboard overlays.",
+      "negativePrompt": "Generated text, labels, legends, real city geography, real company or government logos, watermarks, flags, political borders, decorative compass text, status colors baked into the base, photorealistic satellite imagery, inaccessible low contrast, excessive detail, distorted roads, impossible bridges.",
+      "accessibilityRequirements": [
+        "assets.maps.accessibility",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 16777216,
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
+    },
+    {
+      "assetId": "OL-CITY-DISTRICTS-001",
+      "scene": "port-azure-operational-overlays",
+      "narrativePurposeKey": "assets.cityDistricts.purpose",
+      "mediaType": "image",
+      "requiredVariants": [
+        {
+          "id": "district-boundaries",
+          "descriptionKey": "assets.variants.districtBoundaries"
+        },
+        {
+          "id": "weather-layer",
+          "descriptionKey": "assets.variants.weatherLayer"
+        },
+        {
+          "id": "service-layer",
+          "descriptionKey": "assets.variants.serviceLayer"
+        },
+        {
+          "id": "status-symbols",
+          "descriptionKey": "assets.variants.statusSymbols"
+        }
+      ],
+      "languageRequirements": ["en", "fr", "pt-BR"],
+      "continuityReferences": ["OL-CITY-MAP-001"],
+      "generationPrompt": "Create a coordinated transparent overlay set for the canonical Port Azure base map. Preserve pixel-perfect alignment with OL-CITY-MAP-001 and provide four separate lossless layers: district boundaries for Harbor, Old Town, Civic Center, East Bank, and North Hills; weather shapes for wind, rain, flood warning, and storm surge; service symbols for emergency operations, hospital, water pumping, transit control, public safety radio, shelters, and grid sectors; and operational status symbols for stable, recovering, strained, degraded, constrained, closed, and outage. Use geometric boundaries, hatching, line patterns, icon silhouettes, and shape changes so no meaning depends on color alone. Do not generate words, numbers, labels, legends, or abbreviations. Maintain a restrained slate, amber, crimson, and neutral palette compatible with both light and dark dashboard themes, with high-contrast outlines and minimum 44-pixel interactive symbol footprints at 1920x1080. Deliver each variant as a transparent 3840x2160 PNG using identical coordinates and no baked-in background.",
+      "negativePrompt": "Generated text, district names, legends, numbers, real logos, watermarks, color-only status coding, red-green-only pairs, misaligned geography, opaque background, photorealism, decorative textures, tiny symbols, ambiguous icons, emergency symbols that resemble weapons or military targets.",
+      "accessibilityRequirements": [
+        "assets.maps.accessibility",
+        "assets.maps.nonColorStatus",
+        "assets.accessibility.noCriticalText"
+      ],
+      "output": {
+        "format": "png",
+        "maximumBytes": 16777216,
+        "width": 3840,
+        "height": 2160,
+        "aspectRatio": "16:9"
+      },
+      "licensing": {
+        "usageRightsKey": "assets.licensing.usageRights",
+        "restrictionsKey": "assets.licensing.restrictions"
+      },
+      "provenance": {
+        "generator": "pending external generation",
+        "model": "pending",
+        "generatedAt": "2026-09-25T20:00:00Z",
+        "reviewer": "unassigned"
+      },
+      "reviewStatus": "prompt-ready"
     }
   ]
 }
