@@ -5,6 +5,7 @@
   "type": "module",
   "files": [
     "dist",
+    "media",
     "starters"
   ],
   "exports": {
@@ -18,9 +19,10 @@
     "@mission-control/validation-worker": "workspace:*"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/validate-starters.mjs",
+    "build": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs && node scripts/validate-starters.mjs",
     "lint": "eslint src test",
     "test": "vitest run && node scripts/validate-starters.mjs",
+    "validate:assets": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs",
     "typecheck": "tsc -p tsconfig.json"
   }
 }

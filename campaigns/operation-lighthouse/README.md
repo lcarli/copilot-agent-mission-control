@@ -17,6 +17,11 @@ The deterministic campaign dry run traverses every narrative beat, validates all
 five missions, exercises every simulator and incident modifier, and proves that
 collective recovery unlocks the finale without leaking state between runs.
 
+The `media/asset-manifest.json` file is the authoritative media inventory.
+`pnpm --filter @mission-control/campaign-operation-lighthouse validate:assets`
+checks prompt completeness, variants, locale coverage, continuity, provenance,
+and approved file integrity.
+
 The `starters/` tree supplies progressively decreasing participant scaffolding.
 `starter-manifest.json` is the authoritative file list and guidance order;
 `pnpm --filter @mission-control/campaign-operation-lighthouse test` validates
