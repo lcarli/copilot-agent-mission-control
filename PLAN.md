@@ -1229,7 +1229,7 @@ A task is complete only when:
 - [x] **TASK-705 — Write audio asset prompts.** Add alerts, success cues, ambience, music, and voice direction.
 - [x] **TASK-706 — Write finale and awards prompts.** Add recovery finale and recognition visual prompt packages.
 - [x] **TASK-707 — Integrate reviewed media assets.** Add approved files, captions, metadata, and provenance.
-- [ ] **TASK-710 — Complete English content review.** Review clarity, consistency, accessibility, and glossary use.
+- [x] **TASK-710 — Complete English content review.** Review clarity, consistency, accessibility, and glossary use.
 - [ ] **TASK-711 — Complete French localization.** Translate and review all participant, instructor, UI, and media content.
 - [ ] **TASK-712 — Complete Brazilian Portuguese localization.** Translate and review all participant, instructor, UI, and media content.
 - [ ] **TASK-713 — Run localization parity tests.** Verify keys, placeholders, layout expansion, captions, and asset variants.
