@@ -20,6 +20,17 @@
     "assets.jules.purpose": "Identify Jules Martin as the evidence-minded Field Coordinator.",
     "assets.characters.accessibility": "Preserve clear facial expressions, strong subject-background separation, and useful alternative text.",
     "assets.variants.dashboardAvatar": "Square close crop for dashboard identity.",
-    "assets.variants.presentationPortrait": "Widescreen portrait with negative space for presentation copy."
+    "assets.variants.presentationPortrait": "Widescreen portrait with negative space for presentation copy.",
+    "assets.cityMap.purpose": "Provide the stable geographic foundation for Port Azure operational views.",
+    "assets.cityDistricts.purpose": "Provide aligned district, weather, service, and operational status overlays.",
+    "assets.maps.accessibility": "Use clear silhouettes, high-contrast boundaries, and geometry that remains understandable without labels.",
+    "assets.maps.nonColorStatus": "Pair every status color with a distinct shape, pattern, or line treatment.",
+    "assets.variants.mapDashboardLight": "Neutral base map optimized for the light dashboard theme.",
+    "assets.variants.mapDashboardDark": "Neutral base map optimized for the dark dashboard theme.",
+    "assets.variants.mapPresentation": "High-resolution widescreen map for public presentation.",
+    "assets.variants.districtBoundaries": "Transparent district boundary overlay.",
+    "assets.variants.weatherLayer": "Transparent weather and hazard overlay.",
+    "assets.variants.serviceLayer": "Transparent city service and shelter symbol overlay.",
+    "assets.variants.statusSymbols": "Transparent non-color-dependent operational status symbols."
   }
 }
