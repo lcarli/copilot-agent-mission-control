@@ -124,6 +124,7 @@ it('handles 50 local registrations, concurrent submissions, reconnects and instr
         );
         expect(result.outcome).toBe('passed');
         expect(result.score.totalPoints).toBe(882);
+        expect(result.recovery?.status).toBe('applied');
         return result;
       }),
     );
@@ -178,6 +179,7 @@ it('handles 50 local registrations, concurrent submissions, reconnects and instr
           ),
         );
         expect(result.score.awardedPoints).toBe(0);
+        expect(result.recovery?.status).toBe('unchanged');
       }),
     );
     const projection = decodePublicPresentationProjection(
@@ -187,6 +189,19 @@ it('handles 50 local registrations, concurrent submissions, reconnects and instr
     expect(projection.activeMission.progressPercent).toBe(100);
     expect(projection.rankings).toHaveLength(50);
     expect(projection.rankings.every(({ score }) => score === 882)).toBe(true);
+    expect(projection.recoverySource).toBe('validated-decisions');
+    expect(projection.collectiveRecoveryPercent).toBe(59);
+    expect(projection.recovery).toMatchObject({
+      policyVersion: '1.0.0',
+      eligibleUnitCount: 50,
+      contributionCount: 50,
+      finaleUnlocked: false,
+    });
+    expect(projection.districts[0]).toMatchObject({
+      districtId: 'harbor',
+      recoveryPercent: 38,
+      contributionCount: 50,
+    });
     const sorted = durations.toSorted((a, b) => a - b);
     const p95 = sorted[Math.ceil(sorted.length * 0.95) - 1];
     if (p95 === undefined)

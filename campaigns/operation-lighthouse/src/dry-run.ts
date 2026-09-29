@@ -1,3 +1,5 @@
+import type { VersionedValidator } from '@mission-control/validation-worker';
+
 import { campaignNarrative, type NarrativeBeatId } from './narrative.js';
 import {
   activateIncidentModifier,
@@ -21,8 +23,7 @@ import { TransportSimulator } from './simulators/transport.js';
 import { WeatherSimulator } from './simulators/weather.js';
 import { LighthouseSimulatorSession } from './simulators/tools.js';
 import { portAzureWorld } from './world.js';
-
-export const campaignFinaleRecoveryThreshold = 80;
+import { LighthouseRecovery } from './recovery.js';
 
 export interface CampaignDryRunMissionResult {
   readonly missionId: string;
@@ -96,10 +97,18 @@ const missionContext = (
   observedEvidence,
 });
 
-const runMissionValidations = async (): Promise<
-  readonly CampaignDryRunMissionResult[]
-> => {
+const runMissionValidations = async (
+  recovery: LighthouseRecovery,
+): Promise<readonly CampaignDryRunMissionResult[]> => {
   const abortSignal = new AbortController().signal;
+  const validate = async (
+    validator: VersionedValidator,
+    ...args: Parameters<VersionedValidator['validate']>
+  ) => {
+    const result = await validator.validate(...args);
+    recovery.recordValidation(args[0], result.outcome);
+    return result;
+  };
   const observeTools = (missionId: string) => {
     const session = new LighthouseSimulatorSession({
       eventSessionId: 'dry-run-event',
@@ -139,7 +148,8 @@ const runMissionValidations = async (): Promise<
       })),
     };
   };
-  const mission1 = await signalInTheStormValidator.validate(
+  const mission1 = await validate(
+    signalInTheStormValidator,
     missionContext(1, 'signal-in-the-storm', {
       category: 'flooding',
       severity: 'high',
@@ -157,7 +167,8 @@ const runMissionValidations = async (): Promise<
     ),
     abortSignal,
   );
-  const mission2 = await groundTruthValidator.validate(
+  const mission2 = await validate(
+    groundTruthValidator,
     missionContext(
       2,
       'ground-truth',
@@ -187,7 +198,8 @@ const runMissionValidations = async (): Promise<
     abortSignal,
   );
   const cityTools = observeTools('connected-city');
-  const mission3 = await connectedCityValidator.validate(
+  const mission3 = await validate(
+    connectedCityValidator,
     missionContext(
       3,
       'connected-city',
@@ -210,7 +222,8 @@ const runMissionValidations = async (): Promise<
     ),
     abortSignal,
   );
-  const mission4 = await specialistNetworkValidator.validate(
+  const mission4 = await validate(
+    specialistNetworkValidator,
     missionContext(4, 'specialist-network', {
       specialists: [
         {
@@ -284,7 +297,8 @@ const runMissionValidations = async (): Promise<
     abortSignal,
   );
   const finaleTools = observeTools('restore-the-lighthouse');
-  const mission5 = await restoreTheLighthouseValidator.validate(
+  const mission5 = await validate(
+    restoreTheLighthouseValidator,
     missionContext(
       5,
       'restore-the-lighthouse',
@@ -538,15 +552,14 @@ export const runCampaignDryRun = async (): Promise<CampaignDryRunReport> => {
     'Allocate evacuation buses',
   );
 
-  const missionResults = await runMissionValidations();
+  const recovery = new LighthouseRecovery();
+  const missionResults = await runMissionValidations(recovery);
   if (missionResults.some(({ outcome }) => outcome !== 'passed')) {
     throw new Error('Every mission must pass the campaign dry run.');
   }
   const modifierCycle = cycleIncidentModifiers();
-  const finalRecoveryPercent = Math.min(
-    100,
-    portAzureWorld.recovery.overallPercent + missionResults.length * 5,
-  );
+  const decisionRecovery = recovery.project('dry-run-event', ['dry-run-unit']);
+  const finalRecoveryPercent = decisionRecovery.collectiveRecoveryPercent;
 
   return cloneFrozen({
     narrativeBeatIds: campaignNarrative.timeline.map(({ beatId }) => beatId),
@@ -569,7 +582,7 @@ export const runCampaignDryRun = async (): Promise<CampaignDryRunReport> => {
     finalScenarioState: modifierCycle.finalState,
     initialRecoveryPercent: portAzureWorld.recovery.overallPercent,
     finalRecoveryPercent,
-    finaleThreshold: campaignFinaleRecoveryThreshold,
-    finaleUnlocked: finalRecoveryPercent >= campaignFinaleRecoveryThreshold,
+    finaleThreshold: decisionRecovery.finaleThreshold,
+    finaleUnlocked: decisionRecovery.finaleUnlocked,
   });
 };

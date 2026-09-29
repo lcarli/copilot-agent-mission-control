@@ -1239,8 +1239,10 @@ A task is complete only when:
 Local implementation evidence (2026-09-29): the
 [readiness handoff](docs/workshop-readiness-handoff.md) records a working
 loopback API/CLI/browser round trip, five mission submissions with actual
-server-observed simulator calls for Missions 3 and 5, and a 50-unit Mission 1
-local concurrency scenario. The
+server-observed simulator calls for Missions 3 and 5, versioned pedagogical
+decision recovery by district with public finale readiness and late-join
+recalculation, and a 50-unit Mission 1 local concurrency scenario. Recovery is
+not a points conversion or execution of proposed allocations. The
 [participant guide](docs/participant-guide.md) and
 [local operating guide](docs/local-workshop.md) are available. These are partial
 evidence for the tasks below, not completion of intended deployment, actual

@@ -43,6 +43,8 @@ describe('Operation Lighthouse campaign dry run', () => {
       campaignFinaleRecoveryThreshold,
     );
     expect(report.finaleUnlocked).toBe(true);
+    expect(report.initialRecoveryPercent).toBe(58);
+    expect(report.finalRecoveryPercent).toBe(84);
   });
 
   it('is deterministic, immutable, and isolated across repeated runs', async () => {

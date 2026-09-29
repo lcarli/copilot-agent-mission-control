@@ -214,7 +214,15 @@ const messages = {
     'presentation.connectionFailed':
       'Event connection failed. Results are hidden until a fresh snapshot is available.',
     'presentation.baseline':
-      'City recovery is the scenario starting state, not participant achievement. Only mission completion and scores reflect submitted evidence.',
+      'City recovery shows the scenario starting state. No eligible decision contributions are currently applied.',
+    'presentation.validatedDecisions':
+      'Pedagogical recovery based on validated decisions, not score totals. No resources have been consumed and no simulator service state has been changed.',
+    'presentation.recoveryPolicy': 'Decision policy',
+    'presentation.recoveryBaseline': 'Starting state',
+    'presentation.eligibleUnits': 'Eligible units',
+    'presentation.decisionContributions': 'Validated contributions',
+    'presentation.finaleReady': 'Finale threshold reached',
+    'presentation.finalePending': 'Finale threshold not reached',
     'presentation.recentActivity': 'recently active units',
     'presentation.activityWindow': 'Activity window:',
     'presentation.noScores': 'No evaluated scores yet.',
@@ -458,7 +466,15 @@ const messages = {
     'presentation.connectionFailed':
       'Connexion perdue. Les résultats sont masqués jusqu’à réception d’un nouvel état.',
     'presentation.baseline':
-      'Le rétablissement représente l’état initial du scénario, pas les acquis des participants. Seuls les scores et la progression reflètent les preuves soumises.',
+      'Le rétablissement représente l’état initial du scénario. Aucune contribution admissible n’est actuellement appliquée.',
+    'presentation.validatedDecisions':
+      'Indicateur pédagogique fondé sur les décisions validées, et non sur les points. Aucune ressource n’a été consommée et aucun état des services simulés n’a été modifié.',
+    'presentation.recoveryPolicy': 'Règle de décision',
+    'presentation.recoveryBaseline': 'État initial',
+    'presentation.eligibleUnits': 'Unités admissibles',
+    'presentation.decisionContributions': 'Contributions validées',
+    'presentation.finaleReady': 'Seuil du final atteint',
+    'presentation.finalePending': 'Seuil du final non atteint',
     'presentation.recentActivity': 'unités récemment actives',
     'presentation.activityWindow': 'Fenêtre d’activité :',
     'presentation.noScores': 'Aucun score évalué.',
@@ -700,7 +716,15 @@ const messages = {
     'presentation.connectionFailed':
       'Falha na conexão. Resultados ocultos até receber um novo estado do evento.',
     'presentation.baseline':
-      'A recuperação da cidade é o estado inicial do cenário, não uma conquista dos participantes. Apenas a conclusão das missões e os pontos refletem evidências enviadas.',
+      'A recuperação mostra o estado inicial do cenário. Nenhuma contribuição elegível de decisão está aplicada no momento.',
+    'presentation.validatedDecisions':
+      'Indicador pedagógico baseado em decisões validadas, não na pontuação. Nenhum recurso foi consumido e nenhum serviço dos simuladores foi alterado.',
+    'presentation.recoveryPolicy': 'Regra de decisão',
+    'presentation.recoveryBaseline': 'Estado inicial',
+    'presentation.eligibleUnits': 'Unidades elegíveis',
+    'presentation.decisionContributions': 'Contribuições validadas',
+    'presentation.finaleReady': 'Limiar do final atingido',
+    'presentation.finalePending': 'Limiar do final não atingido',
     'presentation.recentActivity': 'unidades com atividade recente',
     'presentation.activityWindow': 'Janela de atividade:',
     'presentation.noScores': 'Nenhuma pontuação avaliada.',

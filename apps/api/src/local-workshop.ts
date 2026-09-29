@@ -12,10 +12,10 @@ import {
   groundTruthContent,
   groundTruthValidator,
   lighthouseScoreWeights,
+  LighthouseRecovery,
   LighthouseSimulatorInvocationSchema,
   LighthouseSimulatorSession,
   lighthouseSimulatorCatalog,
-  portAzureWorld,
   restoreTheLighthouseContent,
   restoreTheLighthouseValidator,
   signalInTheStormContent,
@@ -195,6 +195,7 @@ export function buildLocalWorkshopApp(
     },
   });
   const requests = new LocalRequests();
+  const cityRecovery = new LighthouseRecovery();
   const submissions = new Map<string, ResolvedValidationContext>();
   const simulatorSessions = new Map<string, LighthouseSimulatorSession>();
   const simulatorKey = (
@@ -849,7 +850,7 @@ export function buildLocalWorkshopApp(
         if (progress === undefined)
           throw workshopProblem('mission-not-started');
         const submissionId = uuidV7();
-        submissions.set(submissionId, {
+        const context: ResolvedValidationContext = {
           submissionId,
           eventSessionId: unit.eventSessionId,
           unitId: unit.unitId,
@@ -860,7 +861,8 @@ export function buildLocalWorkshopApp(
             simulatorSessions
               .get(simulatorKey(unit.eventSessionId, unit.unitId, missionId))
               ?.observations() ?? [],
-        });
+        };
+        submissions.set(submissionId, context);
         const requestedAt = new Date();
         const result = await validators.run({
           schemaVersion: '1.0',
@@ -917,6 +919,7 @@ export function buildLocalWorkshopApp(
           );
         }
         const score = await scoring.project(unit.eventSessionId, unit.unitId);
+        const recovery = cityRecovery.recordValidation(context, result.outcome);
         feedback.set(submissionId, {
           schemaVersion: '1.0',
           submissionId,
@@ -938,6 +941,10 @@ export function buildLocalWorkshopApp(
               (sum, entry) => sum + entry.points,
               0,
             ),
+          },
+          recovery: {
+            ...recovery,
+            districtIds: [...recovery.districtIds],
           },
           evaluatedAt: result.trace.completedAt,
         });
@@ -1039,6 +1046,10 @@ export function buildLocalWorkshopApp(
             'east-bank': 'East Bank',
             'civic-center': 'Civic Center',
           };
+          const recovery = cityRecovery.project(
+            request.query.eventSessionId,
+            ranked.map(({ unitId }) => unitId),
+          );
           return {
             schemaVersion: '1.0',
             eventSessionId: request.query.eventSessionId,
@@ -1062,18 +1073,23 @@ export function buildLocalWorkshopApp(
                     phase: active.status,
                     progressPercent: active.completionPercent,
                   },
-            recoverySource: 'scenario-baseline',
-            collectiveRecoveryPercent: portAzureWorld.recovery.overallPercent,
-            districts: portAzureWorld.recovery.districts.map((district) => ({
+            recoverySource: recovery.source,
+            recovery: {
+              policyVersion: recovery.policyVersion,
+              baselinePercent: recovery.baselinePercent,
+              eligibleUnitCount: recovery.eligibleUnitCount,
+              contributionCount: recovery.contributionCount,
+              finaleThreshold: recovery.finaleThreshold,
+              finaleUnlocked: recovery.finaleUnlocked,
+            },
+            collectiveRecoveryPercent: recovery.collectiveRecoveryPercent,
+            districts: recovery.districts.map((district) => ({
               districtId: district.districtId,
               displayName: districtNames[district.districtId],
               recoveryPercent: district.recoveryPercent,
-              status:
-                district.status === 'critical'
-                  ? 'critical'
-                  : district.recoveryPercent === 100
-                    ? 'recovered'
-                    : 'stabilizing',
+              baselinePercent: district.baselinePercent,
+              contributionCount: district.contributionCount,
+              status: district.status,
             })),
             rankings: ranked
               .filter(({ projection }) => projection.totalPoints > 0)

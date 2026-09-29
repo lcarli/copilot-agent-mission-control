@@ -156,8 +156,14 @@ export type {
 } from './modifiers.js';
 export {
   campaignFinaleRecoveryThreshold,
-  runCampaignDryRun,
-} from './dry-run.js';
+  lighthouseRecoveryPolicy,
+  LighthouseRecovery,
+} from './recovery.js';
+export type {
+  DecisionRecoveryProjection,
+  RecoveryDecisionFeedback,
+} from './recovery.js';
+export { runCampaignDryRun } from './dry-run.js';
 export type {
   CampaignDryRunMissionResult,
   CampaignDryRunReport,

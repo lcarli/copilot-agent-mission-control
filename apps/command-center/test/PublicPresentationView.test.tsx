@@ -49,4 +49,47 @@ describe('PublicPresentationView', () => {
     expect(markup).not.toContain('private source');
     expect(markup).not.toContain('private token');
   });
+
+  it.each([false, true])(
+    'identifies the pedagogical model and finale readiness: %s',
+    (unlocked) => {
+      const projection: PublicPresentationProjection = {
+        eventName: 'Operation Lighthouse',
+        activeMission: {
+          title: 'Mission 5',
+          phase: 'open',
+          progressPercent: 100,
+        },
+        connectedUnitCount: 1,
+        collectiveRecoveryPercent: unlocked ? 80 : 79,
+        recoverySource: 'validated-decisions',
+        recovery: {
+          policyVersion: '1.0.0',
+          baselinePercent: 58,
+          eligibleUnitCount: 1,
+          contributionCount: 5,
+          finaleThreshold: 80,
+          finaleUnlocked: unlocked,
+        },
+        districts: [],
+        rankings: [],
+        recognitions: [],
+      };
+      const markup = renderToStaticMarkup(
+        <PublicPresentationView
+          projection={projection}
+          translate={translate}
+        />,
+      );
+      expect(markup).toContain('presentation.validatedDecisions');
+      expect(markup).toContain('presentation.recoveryPolicy');
+      expect(markup).toContain('1.0.0');
+      expect(markup).toContain('presentation.eligibleUnits');
+      expect(markup).toContain('presentation.decisionContributions');
+      expect(markup).toContain(
+        unlocked ? 'presentation.finaleReady' : 'presentation.finalePending',
+      );
+      expect(markup).not.toContain('presentation.baseline');
+    },
+  );
 });

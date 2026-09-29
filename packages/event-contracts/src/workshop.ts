@@ -20,6 +20,8 @@ export const PublicDistrictSummarySchema = Type.Object(
     districtId: text(),
     displayName: text(),
     recoveryPercent: percent(),
+    baselinePercent: Type.Optional(percent()),
+    contributionCount: Type.Optional(count()),
     status: Type.Union([
       Type.Literal('critical'),
       Type.Literal('stabilizing'),
@@ -47,6 +49,18 @@ export const PublicRecognitionSummarySchema = Type.Object(
   closed,
 );
 
+export const PublicRecoverySummarySchema = Type.Object(
+  {
+    policyVersion: text(),
+    baselinePercent: percent(),
+    eligibleUnitCount: count(),
+    contributionCount: count(),
+    finaleThreshold: percent(),
+    finaleUnlocked: Type.Boolean(),
+  },
+  closed,
+);
+
 export const PublicPresentationProjectionSchema = Type.Object(
   {
     eventName: text(),
@@ -59,7 +73,13 @@ export const PublicPresentationProjectionSchema = Type.Object(
     schemaVersion: Type.Optional(Type.Literal('1.0')),
     eventSessionId: Type.Optional(text()),
     source: Type.Optional(Type.Literal('local-event')),
-    recoverySource: Type.Optional(Type.Literal('scenario-baseline')),
+    recoverySource: Type.Optional(
+      Type.Union([
+        Type.Literal('scenario-baseline'),
+        Type.Literal('validated-decisions'),
+      ]),
+    ),
+    recovery: Type.Optional(PublicRecoverySummarySchema),
     registeredUnitCount: Type.Optional(count()),
     activityWindowSeconds: Type.Optional(Type.Integer({ minimum: 1 })),
     updatedAt: Type.Optional(text()),
@@ -86,6 +106,20 @@ const RuleSchema = Type.Object(
   closed,
 );
 
+export const MissionRecoveryFeedbackSchema = Type.Object(
+  {
+    policyVersion: text(),
+    status: Type.Union([
+      Type.Literal('applied'),
+      Type.Literal('unchanged'),
+      Type.Literal('not-applied'),
+      Type.Literal('unattributed'),
+    ]),
+    districtIds: Type.Array(text(), { maxItems: 100, uniqueItems: true }),
+  },
+  closed,
+);
+
 export const MissionSubmissionFeedbackSchema = Type.Object(
   {
     schemaVersion: Type.Literal('1.0'),
@@ -107,6 +141,7 @@ export const MissionSubmissionFeedbackSchema = Type.Object(
       },
       closed,
     ),
+    recovery: Type.Optional(MissionRecoveryFeedbackSchema),
     evaluatedAt: text(),
   },
   closed,
@@ -123,6 +158,10 @@ export type PublicPresentationProjection = Static<
 >;
 export type MissionSubmissionFeedback = Static<
   typeof MissionSubmissionFeedbackSchema
+>;
+export type PublicRecoverySummary = Static<typeof PublicRecoverySummarySchema>;
+export type MissionRecoveryFeedback = Static<
+  typeof MissionRecoveryFeedbackSchema
 >;
 
 export const decodePublicPresentationProjection = (

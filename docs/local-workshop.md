@@ -9,8 +9,9 @@ readiness sign-off.
 
 - The API binds to `127.0.0.1` and rejects non-loopback callers. Do not expose
   it through a tunnel, port forward or shared reverse proxy.
-- Event data, unit sessions, submissions, scores and command audit are in
-  memory. Restarting the process clears them. Do not use real participant data.
+- Event data, unit sessions, submissions, scores, decision contributions and
+  command audit are in memory. Restarting the process clears them. Do not use
+  real participant data.
 - The instructor token is supplied through an environment variable and kept
   only in the private browser tab. It is not an Entra authentication adapter.
 - The supported local scoring mode is guided: 1,000 possible points per
@@ -19,9 +20,11 @@ readiness sign-off.
   points. Core completion requires all required rules, not all advanced rules.
 - Public updates use HTTP polling, not SignalR. Activity means an authenticated
   request or registration within 90 seconds, not an open socket.
-- The public city recovery values are explicitly labeled scenario baselines.
-  Evaluated mission completion and unit scores update; validated simulator
-  decisions do not yet update city recovery.
+- Public city recovery is a **pedagogical decision-coverage indicator**, not
+  executed city operations or a conversion of points. Policy `1.0.0` starts
+  from the scenario baseline and applies approved, attributable decisions.
+  The public screen identifies the source, policy, eligible-unit count,
+  contribution count and current finale threshold.
 - Missions 3 and 5 require server-observed simulator receipts scoped to the
   authenticated event/unit/mission. Proposed allocations are not executed;
   specialist execution and human-approval flags are not proof of actual
@@ -77,7 +80,9 @@ for these instructions.
    instructor token. Never project the private setup tab.
 4. Follow the [participant guide](participant-guide.md) in a separate terminal.
    A successful submission changes mission completion and the anonymous unit
-   ranking in the public page.
+   ranking in the public page. An approved, attributable decision also updates
+   the pedagogical district indicator; inspect `recovery.status` separately
+   from the score.
 5. Exercise pause/resume and a partial submission. Verify the CLI shows an
    explicit server error or failed required rules, then correct and resubmit.
 6. Close the current mission and open the next mission. Per-unit prerequisites
@@ -110,8 +115,8 @@ response; a different body returns `409 idempotency-key-reused`.
 | `POST /api/v1/missions/{id}/start` | Start an open mission with completed prerequisites. |
 | `GET /api/v1/missions/{id}/tools` | List allowed simulator operations and argument schemas for the mission. |
 | `POST /api/v1/missions/{id}/tools` | Invoke an allowed read operation and record its scoped success/failure receipt. Requires an active, started mission and idempotency key. |
-| `POST /api/v1/missions/{id}/submissions` | Unwrap `evidence`, invoke the versioned validator, apply score improvements and return the submission ID. |
-| `GET /api/v1/submissions/{id}` | Read only the requesting unit's evaluation, rule results and scoring. |
+| `POST /api/v1/missions/{id}/submissions` | Unwrap `evidence`, invoke the versioned validator, apply score improvements and an eligible decision contribution, then return the submission ID. |
+| `GET /api/v1/submissions/{id}` | Read only the requesting unit's evaluation, rule results, scoring and decision-recovery feedback. |
 | `POST /api/v1/missions/{id}/hints` | Deliver the next localized hint for an active mission. |
 | `GET /api/v1/public/event-session?eventSessionId={id}` | Allowlisted public projection with anonymous unit labels and explicit source metadata. |
 
@@ -131,6 +136,84 @@ Submissions snapshot the server log, never a log supplied inside the envelope.
 Validators 1.1.0 reject fabricated references and verify the selected
 shelter/route and aggregate resource quantities against the observed data.
 
+## Decision recovery: policy 1.0.0
+
+The selected local model is explicitly **pedagogical**, not operational
+simulation. The shared campaign implementation in
+[`recovery.ts`](../campaigns/operation-lighthouse/src/recovery.ts) is used by
+both the local API and the campaign dry run. The dry run no longer adds five
+percentage points for each passed mission.
+
+Only an actual validator outcome of `passed` can contribute. Advanced failures
+do not prevent core completion or contribution. Partial submissions can earn
+points without changing recovery. Client-supplied percentages, claimed tool
+receipts and unknown geographic references do not create recovery effects.
+
+| Mission | Weight in each covered district's remaining range | District attribution |
+| --- | --- | --- |
+| 1 - Signal in the Storm | 10% | Districts of canonical `affectedServices` in the city catalog. Free-text locations are not guessed. |
+| 2 - Ground Truth | 10% | All five districts: city-wide grounding readiness. |
+| 3 - Connected City | 20% | The recommended shelter's district and endpoints of the supported routes. The validator first verifies the actual scoped simulator receipts. |
+| 4 - Specialist Network | 10% | All five districts: coordination-plan readiness, not independently verified specialist execution. |
+| 5 - Restore the Lighthouse | 50% | Distinct proposed allocation destinations, after validation against observed inventory. More allocations to the same district do not multiply coverage. |
+
+These weights are not score weights or direct percentage-point awards. For
+each district `d`, with baseline `B[d]`, eligible-unit count `N` and the sum
+`W[d]` of applicable mission weights across those units:
+
+```text
+district[d] = B[d] + floor((100 - B[d]) * W[d] / (100 * N))
+collective = floor(sum(district[d]) / 5)
+```
+
+With no eligible units, retain the baseline: overall **58%**, and district
+values **32, 51, 86, 48, 73** in canonical order. Each unit can contribute at
+most once per mission to each district, so the indicator cannot exceed 100%.
+The first four missions account for at most half of the remaining range;
+even complete coverage cannot reach the 80% finale threshold without Mission 5.
+
+The current local rules are:
+
+- The latest approved, attributable decision **replaces** the earlier decision
+  for the same event/unit/mission. New submission IDs, transport replays and
+  repeated destination IDs do not stack contributions. Replanning can move
+  coverage between districts or lower the collective indicator.
+- A rejected attempt does not erase the previous contribution. An approved
+  incident with no canonical service reference returns `unattributed`, makes
+  no change and preserves any earlier attributable decision.
+- All registered units except `muted` and `withdrawn` share the denominator,
+  matching ranking eligibility **before** zero-score units are hidden from the
+  leaderboard. Late joins count immediately. Activity timers and disconnects
+  do not remove units; reconnecting does not create a new unit.
+- `finaleUnlocked` means the **current snapshot** reaches at least **80%** with
+  an eligible unit. It is reversible after replanning or late registration,
+  not a latched celebration, video trigger or certificate requirement.
+- No allocation is executed, inventory consumed, shelter admission performed,
+  route reopened or grid sector restored. Simulator service states and the
+  immutable scenario seed remain unchanged.
+
+Submission feedback adds `recovery.policyVersion`, `recovery.districtIds` and
+one of these `recovery.status` values:
+
+| Status | Meaning |
+| --- | --- |
+| `applied` | A first contribution or a replacement with different district coverage. |
+| `unchanged` | The approved decision has the same district coverage as its predecessor. |
+| `not-applied` | The current submission did not pass all required rules. Prior contributions are retained. |
+| `unattributed` | The approved decision has no canonical district attribution. Prior contributions are retained. |
+
+The public projection exposes aggregate counts, district baselines and the
+policy version, never unit IDs, submission IDs or raw evidence. It retains
+`recoverySource: "scenario-baseline"` until there is an eligible contribution,
+then reports `"validated-decisions"`.
+
+With one unit, the Mission 1 worked example changes Harbor from **32% to 38%**
+and the collective indicator from **58% to 59%**. The five-mission synthetic
+journey reaches district values **100, 95, 91, 58, 78** and a collective **84%**.
+A second unit joining without contributions changes that collective value to
+**71%** and clears finale readiness. These are reproducible model outputs, not
+evidence of physical restoration or actual Copilot authoring.
+
 ## Reproducible local evidence
 
 ```powershell
@@ -144,12 +227,17 @@ credential directories. The five-mission journey uses synthetic decision fixture
 under `campaigns\operation-lighthouse\test\fixtures\`; do not include those
 in the participant distribution. Its tool-based missions replace placeholder
 IDs with receipts from actual CLI/HTTP simulator calls before submission.
+It also drives the public browser through district updates, the 80% finale
+threshold and late-join recalculation, verifies that retries do not add
+contributions, and checks that proposed allocations leave inventory unchanged.
 Browser traces, screenshots and videos are disabled to avoid retaining
 credentials from the private page.
 
 The load scenario uses 50 units and a local p95 regression threshold of five
 seconds, including submissions, reconnects, duplicate retries and instructor
-pause/resume. It does not prove deployed-service capacity, SignalR reconnect
+pause/resume. It also requires exactly 50 decision contributions after retries
+and reconnects, without inflating the 59% Mission 1 collective indicator.
+It does not prove deployed-service capacity, SignalR reconnect
 behavior or 50 classroom browsers.
 
 ## Recovery and remaining gates
@@ -165,8 +253,8 @@ behavior or 50 classroom browsers.
 | API restart | Create a new event and rejoin; the old credentials and event code are no longer usable. |
 | Browser runner reports a missing executable | Install Chromium with the documented Playwright command; do not treat a skipped browser journey as a passing one. |
 
-Still required: participant-driven city recovery, real specialist/human-approval
-provenance, intended deployment authentication/persistence/SignalR, complete
+Still required: real specialist/human-approval provenance, intended deployment
+authentication/persistence/SignalR, complete
 security and accessibility checks, a clean VS Code authoring rehearsal, the
 human-led workshop and the controlled pilot. Keep TASK-800 through TASK-810 open
 until their full acceptance criteria are evidenced.

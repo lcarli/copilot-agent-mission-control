@@ -31,8 +31,12 @@ The package exports:
 - Allowlisted public-presentation and participant-feedback schemas, with
   `decodePublicPresentationProjection` and `decodeMissionSubmissionFeedback`
   for HTTP response validation. Unknown fields are rejected. Local projections
-  explicitly identify scenario-baseline recovery and the recent-activity window;
-  neither is a claim of participant-driven city recovery or a persistent socket.
+  distinguish scenario-baseline recovery from the pedagogical
+  `validated-decisions` source. Optional recovery metadata identifies the
+  policy version, eligible units, contributions, district baselines and current
+  finale readiness. Feedback reports whether a decision contribution was
+  applied, unchanged, not applied or unattributed; it does not claim execution
+  of simulator actions. The recent-activity window is not a persistent socket.
 - Simulator catalog, invocation and observation schemas and decoders.
   Observations include explicit success/failure and server-assigned
   event/unit/mission scope. Invocation requests cannot supply that scope.

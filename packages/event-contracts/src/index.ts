@@ -31,7 +31,9 @@ export {
 } from './validation.js';
 export {
   PublicPresentationProjectionSchema,
+  PublicRecoverySummarySchema,
   MissionSubmissionFeedbackSchema,
+  MissionRecoveryFeedbackSchema,
   decodePublicPresentationProjection,
   decodeMissionSubmissionFeedback,
   type PublicMissionSummary,
@@ -39,7 +41,9 @@ export {
   type PublicRankingSummary,
   type PublicRecognitionSummary,
   type PublicPresentationProjection,
+  type PublicRecoverySummary,
   type MissionSubmissionFeedback,
+  type MissionRecoveryFeedback,
 } from './workshop.js';
 export {
   SimulatorInvocationSchema,

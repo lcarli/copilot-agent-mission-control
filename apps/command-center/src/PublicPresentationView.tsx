@@ -61,6 +61,8 @@ export function PublicPresentationView({
       )}
       {projection.recoverySource === 'scenario-baseline' ? (
         <p className="runtime-notice">{t('presentation.baseline')}</p>
+      ) : projection.recoverySource === 'validated-decisions' ? (
+        <p className="runtime-notice">{t('presentation.validatedDecisions')}</p>
       ) : null}
       <div className="presentation-hero">
         <article className="presentation-mission">
@@ -79,6 +81,34 @@ export function PublicPresentationView({
         <article className="presentation-recovery">
           <p>{t('presentation.collectiveRecovery')}</p>
           <strong>{projection.collectiveRecoveryPercent}%</strong>
+          {projection.recovery === undefined ? null : (
+            <div className="presentation-recovery-details">
+              <p>
+                {t('presentation.recoveryPolicy')}:{' '}
+                {projection.recovery.policyVersion}
+              </p>
+              <p>
+                {t('presentation.recoveryBaseline')}:{' '}
+                {projection.recovery.baselinePercent}%
+              </p>
+              <p>
+                {t('presentation.eligibleUnits')}:{' '}
+                {projection.recovery.eligibleUnitCount}
+              </p>
+              <p>
+                {t('presentation.decisionContributions')}:{' '}
+                {projection.recovery.contributionCount}
+              </p>
+              <p role="status">
+                {t(
+                  projection.recovery.finaleUnlocked
+                    ? 'presentation.finaleReady'
+                    : 'presentation.finalePending',
+                )}{' '}
+                ({projection.recovery.finaleThreshold}%)
+              </p>
+            </div>
+          )}
         </article>
       </div>
       <div className="presentation-columns">

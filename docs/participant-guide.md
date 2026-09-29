@@ -126,8 +126,16 @@ node $cli mission status '<submission ID printed by submit>'
 ```
 
 The public example passes core requirements without claiming duplicate detection.
-The instructor should see completion and anonymous score updates in the public
-view. The city baseline does not change merely because an assessment passed.
+The instructor should see completion, anonymous scoring and **pedagogical**
+district recovery in the public view. With one registered unit, its validated
+`water-pumping` reference changes Harbor from 32% to 38% and the collective
+indicator from 58% to 59%. This does not restore the pumping service.
+
+Use supported canonical service IDs: `emergency-operations`,
+`port-azure-general`, `water-pumping`, `transit-control` and
+`public-safety-radio`. Include only services supported by the report.
+The recovery model does not guess districts from free-text locations; an
+otherwise approved incident without a canonical service is `unattributed`.
 
 ## Missions 2-5: artifacts and progression
 
@@ -203,6 +211,32 @@ reads it again. The result includes an `outcome`, individual `rules`, and
 Non-passing evaluated outcomes return a nonzero CLI exit code. Score improvements
 are retained across attempts; duplicate attempts award zero additional points.
 Scoring and mission completion are not certificate eligibility.
+
+## Understand the city indicator
+
+The public recovery percentage is a **pedagogical indicator of validated
+decisions**, not a score conversion or proof that the city simulators executed
+your plan. No inventory is consumed and no shelter, route or electrical sector
+changes state when you submit an approved proposal.
+
+Feedback includes `recovery.policyVersion`, the affected `districtIds` and
+`status`: `applied`, `unchanged`, `not-applied` or `unattributed`.
+There is one contribution per unit/mission. A later approved, attributable plan
+replaces its predecessor rather than adding another reward. Failed or
+unattributed attempts leave the earlier contribution in place.
+
+Policy `1.0.0` assigns Missions 1-5 weights of **10%, 10%, 20%, 10%, 50%** in the
+remaining recovery range of each covered district. All eligible registered
+units share the calculation, including units without submissions. Repeated
+submissions cannot raise it; a late join or an approved change of plan can lower
+or redistribute it. The public screen reports finale readiness only while the
+current collective indicator is at least **80%**.
+
+The [local operating guide](local-workshop.md#decision-recovery-policy-100)
+documents the complete attribution and calculation rules. Do not add
+unsupported services, destinations or approval claims to raise the indicator.
+Specialist execution and human authorization still require independent
+confirmation.
 
 ## Recovery
 

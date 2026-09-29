@@ -1,7 +1,7 @@
 # Operation Lighthouse - Workshop Readiness Handoff
 
-Snapshot: **2026-09-29, local integration and simulator evidence complete**  
-Next objective: **connect participant-driven city recovery, then rehearse the participant authoring workflow, excluding videos**.
+Snapshot: **2026-09-29, local integration, simulator evidence and decision recovery complete**  
+Next objective: **rehearse the participant authoring workflow from a clean VS Code setup, excluding videos**.
 
 The main visual and presentation deliverables are complete. That does not mean
 the full event integration has been rehearsed or approved for public delivery.
@@ -44,6 +44,9 @@ folder. Its generator writes directly to that project directory.
   and participant information out of public files.
 - Local evidence-envelope validation is not server-side mission approval.
   Clearly distinguish examples, local checks and actual event results.
+- The accepted S02 recovery model is a **pedagogical indicator based on
+  validated decisions**, not executed simulator actions or a points conversion.
+  Keep this distinction visible in the public display and facilitation.
 - Keep reusable deliverables in the project. Keep personalized certificates,
   participant records and secrets outside source control.
 
@@ -57,9 +60,9 @@ plan. Update its status when a gate is actually resolved and demonstrated.
 | R01 - Mission 1 | **Resolved locally.** Starter and runtime use `signal-in-the-storm`; the contract includes location/services and optional advanced fields. A public worked example passes schema and server evaluation. | Preserve the contract regression and real CLI/browser round trip. |
 | R02 - Mission 3 | **Resolved locally.** Canonical `weather`, `shelter`, `transport` operations are callable from the CLI. Validator 1.1.0 verifies scoped receipts, the actual shelter/route and bounded failure recovery. | Rehearse the chosen VS Code agent and its approved tool permissions. |
 | R03 - Mission 5 | **Contract and provenance demonstrated locally.** The full schema and CLI/HTTP journey use actual simulator receipts. Validator 1.1.0 checks nested citations and aggregate proposed resource quantities against observed inventory. | Proposed allocations are not executed. Specialist and human-approval claims are not independently verified authorization. |
-| R04 - Public projection | **Partial.** Local completion and scores update over HTTP; districts are canonical, absent/disconnected state has no invented results, and other component demos are labeled. City recovery is explicitly a scenario baseline. | Integrate real recovery effects and the intended event transport. |
+| R04 - Public projection | **Resolved locally; intended transport pending.** Canonical district recovery now follows versioned, validated-decision coverage, separately from points. The public browser identifies the pedagogical source, roster denominator and 80% finale threshold; disconnected state hides results. | Rehearse the projector view and implement the intended event transport. Do not present decision coverage as executed city operations. |
 | R05 - Validation language | **Resolved locally.** CLI output distinguishes envelope checks, submission and evaluated server feedback; failed required rules produce a nonzero exit. | Preserve this distinction in live facilitation. |
-| R06 - End-to-end integration | **Partial.** The browser/CLI/HTTP path covers all five missions; tool-based missions use actual CLI simulator calls and server observations rather than fixture trace IDs. Retries, reconnects and event/unit/mission isolation are covered. | Rehearse actual Copilot/specialist authoring and the intended deployed event. City recovery remains pending. |
+| R06 - End-to-end integration | **Partial.** The five-mission HTTP journey uses actual CLI simulator receipts and drives the public browser through district recovery, finale readiness and late-join recalculation. Retries, replanning, reconnects, scope isolation and unchanged inventory are covered. | Rehearse actual Copilot/specialist authoring and the intended deployed event. Persistence and the intended real-time transport remain pending. |
 | R07 - Mission 2 evidence | **Reproducible local scenario delivered.** Reports `incident-004`/`incident-005` and `bulletin-03` replace the placeholder, with source-quality, contradiction and untrusted-instruction teaching outcomes. | Exercise the scenario with participants and confirm learning outcomes. |
 | R08 - Copilot authoring workflow | **Documentation checked; hands-on confirmation pending.** The participant guide references current official VS Code setup, custom-agent and MCP documentation. | Confirm the actual account, harness, approved tools and clean participant setup before screenshots or event sign-off. |
 
@@ -106,7 +109,7 @@ still lists TASK-800 through TASK-810 as open.
 | Roadmap item | Remaining readiness work |
 | --- | --- |
 | TASK-800 | Establish the required platform-wide unit and contract coverage. Existing tests in packages and applications should be reused; an open checkbox does not mean there are no tests. |
-| TASK-801 | Extend the local instructor/participant scenarios to real authoring, simulator evidence and the intended deployment's failure/recovery paths. |
+| TASK-801 | Extend the local instructor/participant scenarios to clean VS Code/Copilot authoring and the intended deployment's failure/recovery paths. |
 | TASK-802 | Extend the 50-unit local scenario to the intended APIs, simulators, SignalR and classroom dashboard behavior. |
 | TASK-803 | Complete the planned authorization, event isolation, rate-limit, payload-limit and secret-handling validation. |
 | TASK-804 | Complete keyboard, contrast, reduced-motion and screen-reader checks, plus applicable caption requirements. |
@@ -114,10 +117,11 @@ still lists TASK-800 through TASK-810 as open.
 `tests\e2e` now implements real browser/CLI and five-mission HTTP scenarios.
 `tests\load` implements a loopback scenario with exactly 50 units, 457 HTTP
 requests, concurrent submissions, reconnects, retries and instructor commands.
-The earlier local run measured p95 **1,595 ms** against a local regression limit
+The latest local run measured p95 **1,859 ms** against a local regression limit
 of 5,000 ms. This is not a deployed-service SLO or proof of Azure/SignalR capacity.
-The 50-unit load scenario still uses Mission 1; it is not simulator-capacity
-evidence. TASK-800 through TASK-804 remain open for their full platform-wide scope.
+The scenario also verifies exactly 50 decision contributions after retries and
+reconnects. It still uses Mission 1; it is not simulator-capacity evidence.
+TASK-800 through TASK-804 remain open for their full platform-wide scope.
 
 ## 6. Priority 4: Reconcile guides, rehearse and run a pilot
 
@@ -156,9 +160,11 @@ instructions.
 
 > Read `docs\workshop-readiness-handoff.md`, `docs\local-workshop.md` and the
 > referenced readiness gates. Continue the non-video preparation from the
-> working local HTTP/CLI/browser and server-observed simulator integration.
-> Next connect participant-driven city recovery; do not relabel the scenario
-> baseline as an achievement. Reuse the existing services, validators and tests.
+> working local HTTP/CLI/browser, server-observed simulator integration and
+> versioned decision-recovery model. Next rehearse actual participant authoring
+> from a clean VS Code/Copilot setup. Preserve the distinction between the
+> pedagogical indicator and executed simulator actions. Reuse the existing
+> services, validators and tests.
 > Preserve approved artwork, presentations, certificates and unrelated working
 > changes. Keep intended deployment, clean VS Code rehearsal and the human pilot
 > explicit rather than marking the entire event ready from synthetic fixtures.
@@ -211,7 +217,19 @@ server remains unchanged; do not deploy the local in-memory entry point.
 | Task | Status | Required outcome |
 | --- | --- | --- |
 | S01 - Simulator evidence | Complete locally | Authenticated CLI/HTTP operations invoke the existing city simulators. The server snapshots event/unit/mission-scoped observations; validators 1.1.0 reject invented/foreign receipts, verify shelter/route support and bound proposed resources by observed inventory. The five-mission journey uses these actual calls. |
-| S02 - City recovery | Pending | Derive public recovery from validated participant decisions without counting retries twice or presenting the scenario baseline as an earned effect. |
+| S02 - City recovery | Complete locally | Accepted pedagogical model, policy `1.0.0`: approved decisions update attributed districts and the collective indicator; one replaceable contribution per event/unit/mission prevents farming. API feedback and the public browser expose the source, policy, denominator and current 80% finale threshold. |
+
+S02 does **not** execute allocations or mutate simulator service states.
+The one-unit synthetic journey reaches **84%** from a **58%** baseline; a late
+second unit with no contributions recalculates it to **71%**. Replanning can
+redistribute coverage, and finale readiness is deliberately reversible.
+Advanced human-approval evidence remains advanced, not a new core requirement.
+See [the complete policy](local-workshop.md#decision-recovery-policy-100).
+
+The next step is R08 and L08: a clean, human-led VS Code/Copilot authoring
+rehearsal using the participant guide. It requires the actual participant
+account, approved tools and facilitator observation; synthetic fixtures do not
+complete it. Intended deployment and the broader quality/pilot gates remain open.
 
 ## 11. Continuing on another computer
 
@@ -232,4 +250,5 @@ pnpm build:local
 Follow `docs\local-workshop.md` to generate a new local instructor token, start
 the API and dashboard, and create a fresh rehearsal event. Credentials and event
 state are deliberately not transferred between computers. For browser scenarios,
-install Chromium using the command in that guide. Resume at S02, not at L01.
+install Chromium using the command in that guide. S01 and S02 are complete
+locally; resume at the clean authoring rehearsal, not at L01.

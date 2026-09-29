@@ -1531,6 +1531,11 @@ progress {
   line-height: 1;
 }
 
+.presentation-recovery-details {
+  display: grid;
+  gap: 0.25rem;
+}
+
 .presentation-columns {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }

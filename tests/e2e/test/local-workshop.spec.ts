@@ -245,10 +245,20 @@ test('instructor browser -> participant CLI -> evaluation -> public browser, inc
       'Synthetic confidential name',
     );
     await expect(
-      publicPage.getByText('City recovery is the scenario starting state', {
-        exact: false,
-      }),
+      publicPage.getByText(
+        'Pedagogical recovery based on validated decisions',
+        {
+          exact: false,
+        },
+      ),
     ).toBeVisible();
+    await expect(
+      publicPage.locator('.presentation-recovery > strong'),
+    ).toHaveText('59%');
+    await expect(
+      publicPage.getByRole('progressbar', { name: 'Harbor recovery' }),
+    ).toHaveAttribute('value', '38');
+    expect(passed.stdout).toContain('"status": "applied"');
     expect((await runCli(home, ['reconnect'])).code).toBe(0);
     expect((await runCli(home, ['connectivity'])).stdout).not.toContain('FAIL');
 
@@ -258,6 +268,7 @@ test('instructor browser -> participant CLI -> evaluation -> public browser, inc
       { timeout: 10_000 },
     );
     await expect(publicPage.locator('.presentation-ranking')).toHaveCount(0);
+    await expect(publicPage.locator('.presentation-recovery')).toHaveCount(0);
   } finally {
     await vite.close();
     await api.close();
@@ -265,11 +276,22 @@ test('instructor browser -> participant CLI -> evaluation -> public browser, inc
   }
 });
 
-test('all five missions use server observations and avoid double-awarding', async () => {
+test('all five missions drive public decision recovery without double-awarding or executing allocations', async ({
+  page,
+}) => {
   const instructorToken = randomBytes(32).toString('hex');
   const api = buildLocalWorkshopApp({ instructorToken });
   const address = await api.listen({ host: '127.0.0.1', port: 0 });
   const home = await mkdtemp(join(tmpdir(), 'lighthouse-tools-e2e-'));
+  const vite = await createServer({
+    root: dashboardRoot,
+    server: {
+      host: '127.0.0.1',
+      port: 0,
+      proxy: { '/api': { target: address } },
+    },
+    logLevel: 'error',
+  });
   const request = async (
     path: string,
     body?: unknown,
@@ -295,6 +317,9 @@ test('all five missions use server observations and avoid double-awarding', asyn
     return field;
   };
   try {
+    await vite.listen();
+    const url = vite.resolvedUrls?.local[0];
+    if (url === undefined) throw new Error('Dashboard did not start.');
     expect(
       (
         await runCli(home, [
@@ -343,6 +368,13 @@ test('all five missions use server observations and avoid double-awarding', asyn
       locale: 'en',
     });
     const token = requiredString(joined, 'unitToken');
+    await page.goto(`${url}?view=presentation&eventSessionId=${id}`);
+    await expect(page.locator('.presentation-recovery > strong')).toHaveText(
+      '58%',
+    );
+    await expect(
+      page.getByText('Finale threshold not reached', { exact: false }),
+    ).toBeVisible();
     const fixtures: unknown = JSON.parse(
       await readFile(
         join(
@@ -359,8 +391,10 @@ test('all five missions use server observations and avoid double-awarding', asyn
     if (!Array.isArray(fixtures) || fixtures.length !== 5)
       throw new Error('Expected five rehearsal envelopes.');
     let totalPoints = 0;
+    let contributionCount = 0;
     for (let envelope of fixtures as unknown[]) {
       const missionId = requiredString(envelope, 'missionId');
+      let inventoryBefore: SimulatorObservation['result'] | undefined;
       await command('mission.open', 1, { missionId });
       await request(`missions/${missionId}/start`, {}, token);
       if (
@@ -388,6 +422,8 @@ test('all five missions use server observations and avoid double-awarding', asyn
           );
           expect(output.code).toBe(receipt.result.ok ? 0 : 1);
           receipts.push(receipt);
+          if (tool === 'resources' && operation === 'inventory')
+            inventoryBefore = receipt.result;
           return receipt.evidenceId;
         };
         const ids: Record<string, string> = {};
@@ -459,6 +495,8 @@ test('all five missions use server observations and avoid double-awarding', asyn
       );
       expect(feedback.missionId).toBe(missionId);
       expect(feedback.outcome).toBe('passed');
+      expect(feedback.recovery?.status).toBe('applied');
+      contributionCount += 1;
       expect(feedback.score.totalPoints).toBeGreaterThan(totalPoints);
       totalPoints = feedback.score.totalPoints;
       const repeated = await request(
@@ -475,14 +513,59 @@ test('all five missions use server observations and avoid double-awarding', asyn
       );
       expect(replayed.score.totalPoints).toBe(totalPoints);
       expect(replayed.score.awardedPoints).toBe(0);
+      expect(replayed.recovery?.status).toBe('unchanged');
       const projection = decodePublicPresentationProjection(
         await request(`public/event-session?eventSessionId=${id}`),
       );
       expect(projection.activeMission.progressPercent).toBe(100);
       expect(projection.rankings[0]?.score).toBe(totalPoints);
+      expect(projection.recoverySource).toBe('validated-decisions');
+      expect(projection.recovery?.contributionCount).toBe(contributionCount);
+      await expect(page.locator('.presentation-recovery > strong')).toHaveText(
+        `${String(projection.collectiveRecoveryPercent)}%`,
+      );
+      if (missionId === 'restore-the-lighthouse') {
+        expect(projection.collectiveRecoveryPercent).toBe(84);
+        expect(projection.recovery?.finaleUnlocked).toBe(true);
+        await expect(
+          page.getByText('Finale threshold reached', { exact: false }),
+        ).toBeVisible();
+        const inventoryAfter = decodeSimulatorObservation(
+          await request(
+            `missions/${missionId}/tools`,
+            { tool: 'resources', operation: 'inventory', arguments: {} },
+            token,
+          ),
+        );
+        expect(inventoryBefore?.ok).toBe(true);
+        expect(inventoryAfter.result).toEqual(inventoryBefore);
+      } else {
+        expect(projection.recovery?.finaleUnlocked).toBe(false);
+      }
       await command('mission.close', 2, { missionId });
     }
+    await request('registrations', {
+      eventCode: code,
+      displayName: 'Late synthetic unit',
+      locale: 'en',
+    });
+    const diluted = decodePublicPresentationProjection(
+      await request(`public/event-session?eventSessionId=${id}`),
+    );
+    expect(diluted.recovery).toMatchObject({
+      eligibleUnitCount: 2,
+      contributionCount: 5,
+      finaleUnlocked: false,
+    });
+    expect(diluted.collectiveRecoveryPercent).toBe(71);
+    await expect(page.locator('.presentation-recovery > strong')).toHaveText(
+      '71%',
+    );
+    await expect(
+      page.getByText('Finale threshold not reached', { exact: false }),
+    ).toBeVisible();
   } finally {
+    await vite.close();
     await api.close();
     await rm(home, { recursive: true, force: true });
   }

@@ -136,7 +136,14 @@ function harness() {
     expect(response.statusCode).toBe(200);
     return decodeMissionSubmissionFeedback(response.json());
   };
-  return { app, create, command, setup, start, submit, feedback };
+  const projection = async (eventSessionId: string) => {
+    const response = await app.inject({
+      url: `/api/v1/public/event-session?eventSessionId=${eventSessionId}`,
+    });
+    expect(response.statusCode).toBe(200);
+    return decodePublicPresentationProjection(response.json());
+  };
+  return { app, create, command, setup, start, submit, feedback, projection };
 }
 
 describe('local workshop HTTP composition', () => {
@@ -302,6 +309,9 @@ describe('local workshop HTTP composition', () => {
         response.json<{ submissionId: string }>().submissionId,
       );
       expect(result.outcome).toBe(expected);
+      expect(result.recovery?.status).toBe(
+        expected === 'passed' ? 'applied' : 'not-applied',
+      );
     }
     await h.command(first.id, 'mission.pause', 2, { missionId: id });
     expect(
@@ -317,6 +327,9 @@ describe('local workshop HTTP composition', () => {
     const publicResult = await h.app.inject({
       url: `/api/v1/public/event-session?eventSessionId=${first.id}`,
     });
+    expect(
+      decodePublicPresentationProjection(publicResult.json()).recovery,
+    ).toMatchObject({ eligibleUnitCount: 2, contributionCount: 5 });
     for (const receipt of receipts)
       expect(publicResult.body).not.toContain(receipt.evidenceId);
   });
@@ -385,12 +398,33 @@ describe('local workshop HTTP composition', () => {
       'East Bank',
       'Civic Center',
     ]);
-    expect(projection.recoverySource).toBe('scenario-baseline');
+    expect(result.recovery).toEqual({
+      policyVersion: '1.0.0',
+      status: 'applied',
+      districtIds: ['harbor'],
+    });
+    expect(projection.recoverySource).toBe('validated-decisions');
+    expect(projection.collectiveRecoveryPercent).toBe(59);
+    expect(projection.recovery).toEqual({
+      policyVersion: '1.0.0',
+      baselinePercent: 58,
+      eligibleUnitCount: 1,
+      contributionCount: 1,
+      finaleThreshold: 80,
+      finaleUnlocked: false,
+    });
+    expect(projection.districts[0]).toMatchObject({
+      baselinePercent: 32,
+      recoveryPercent: 38,
+      contributionCount: 1,
+    });
     for (const privateValue of [
       unit.unitToken,
       unit.reconnectSecret,
       'Synthetic private unit name',
       'severityExplanation',
+      unit.unit.unitId,
+      result.submissionId,
     ]) {
       expect(projectionResponse.body).not.toContain(privateValue);
     }
@@ -432,6 +466,8 @@ describe('local workshop HTTP composition', () => {
       totalPoints: 882,
       awardedPoints: 0,
     });
+    expect(result.recovery?.status).toBe('unchanged');
+    expect((await h.projection(unit.id)).recovery?.contributionCount).toBe(1);
   });
 
   it('awards only positive per-dimension improvements across partial and passing attempts', async () => {
@@ -442,20 +478,25 @@ describe('local workshop HTTP composition', () => {
       ...evidence,
       evidence: {},
     });
-    expect(
-      (
-        await h.feedback(
-          unit.unitToken,
-          partial.json<{ submissionId: string }>().submissionId,
-        )
-      ).outcome,
-    ).toBe('partial');
+    const partialFeedback = await h.feedback(
+      unit.unitToken,
+      partial.json<{ submissionId: string }>().submissionId,
+    );
+    expect(partialFeedback.outcome).toBe('partial');
+    expect(partialFeedback.score.totalPoints).toBeGreaterThan(0);
+    expect(partialFeedback.recovery?.status).toBe('not-applied');
+    expect(await h.projection(unit.id)).toMatchObject({
+      recoverySource: 'scenario-baseline',
+      collectiveRecoveryPercent: 58,
+      recovery: { contributionCount: 0, finaleUnlocked: false },
+    });
     const passed = await h.submit(unit.unitToken);
     const complete = await h.feedback(
       unit.unitToken,
       passed.json<{ submissionId: string }>().submissionId,
     );
     expect(complete.score.totalPoints).toBe(882);
+    const recovered = await h.projection(unit.id);
     const worse = await h.submit(unit.unitToken, { ...evidence, evidence: {} });
     const worseResult = await h.feedback(
       unit.unitToken,
@@ -463,6 +504,124 @@ describe('local workshop HTTP composition', () => {
     );
     expect(worseResult.score.totalPoints).toBe(882);
     expect(worseResult.score.awardedPoints).toBe(0);
+    expect(worseResult.recovery?.status).toBe('not-applied');
+    const unchanged = await h.projection(unit.id);
+    expect(unchanged.districts).toEqual(recovered.districts);
+    expect(unchanged.recovery).toEqual(recovered.recovery);
+  });
+
+  it('replaces district coverage without adding points or stacking a mission contribution', async () => {
+    const h = harness();
+    const unit = await h.setup();
+    await h.start(unit.unitToken);
+    await h.submit(unit.unitToken);
+    const revised = await h.submit(unit.unitToken, {
+      ...evidence,
+      evidence: {
+        ...evidence.evidence,
+        affectedServices: ['port-azure-general'],
+      },
+    });
+    const result = await h.feedback(
+      unit.unitToken,
+      revised.json<{ submissionId: string }>().submissionId,
+    );
+    expect(result.outcome).toBe('passed');
+    expect(result.score.awardedPoints).toBe(0);
+    expect(result.recovery).toMatchObject({
+      status: 'applied',
+      districtIds: ['north-hills'],
+    });
+    const projection = await h.projection(unit.id);
+    expect(
+      projection.districts.map((district) => district.recoveryPercent),
+    ).toEqual([32, 51, 87, 48, 73]);
+    expect(projection.recovery?.contributionCount).toBe(1);
+  });
+
+  it('reports approved incidents without canonical attribution instead of inventing effects', async () => {
+    const h = harness();
+    const unit = await h.setup();
+    await h.start(unit.unitToken);
+    const response = await h.submit(unit.unitToken, {
+      ...evidence,
+      evidence: {
+        ...evidence.evidence,
+        affectedServices: ['unknown-service'],
+      },
+    });
+    const result = await h.feedback(
+      unit.unitToken,
+      response.json<{ submissionId: string }>().submissionId,
+    );
+    expect(result.outcome).toBe('passed');
+    expect(result.recovery).toEqual({
+      policyVersion: '1.0.0',
+      status: 'unattributed',
+      districtIds: [],
+    });
+    const claimed = await h.submit(unit.unitToken, {
+      ...evidence,
+      evidence: {
+        ...evidence.evidence,
+        recoveryPercent: 100,
+        finaleUnlocked: true,
+      },
+    });
+    const rejected = await h.feedback(
+      unit.unitToken,
+      claimed.json<{ submissionId: string }>().submissionId,
+    );
+    expect(rejected.outcome).toBe('partial');
+    expect(rejected.recovery?.status).toBe('not-applied');
+    expect(await h.projection(unit.id)).toMatchObject({
+      recoverySource: 'scenario-baseline',
+      collectiveRecoveryPercent: 58,
+      recovery: { contributionCount: 0, finaleUnlocked: false },
+    });
+  });
+
+  it('includes units without scores in collective recovery and preserves identity on reconnect', async () => {
+    const h = harness();
+    const first = await h.setup();
+    await h.start(first.unitToken);
+    await h.submit(first.unitToken);
+    const joined = await h.app.inject({
+      method: 'POST',
+      url: '/api/v1/registrations',
+      headers: headers(),
+      payload: {
+        eventCode: first.eventCode,
+        displayName: 'Late synthetic unit',
+        locale: 'en',
+      },
+    });
+    expect(joined.statusCode).toBe(201);
+    const second = joined.json<{ unitToken: string }>();
+    expect((await h.projection(first.id)).districts[0]?.recoveryPercent).toBe(
+      35,
+    );
+    expect((await h.projection(first.id)).recovery).toMatchObject({
+      eligibleUnitCount: 2,
+      contributionCount: 1,
+    });
+    await h.start(second.unitToken);
+    await h.submit(second.unitToken);
+    const before = await h.projection(first.id);
+    expect(before.districts[0]?.recoveryPercent).toBe(38);
+    expect(before.recovery?.contributionCount).toBe(2);
+    const reconnect = await h.app.inject({
+      method: 'POST',
+      url: '/api/v1/auth/refresh',
+      headers: headers(),
+      payload: {
+        eventCode: first.eventCode,
+        unitId: first.unit.unitId,
+        reconnectSecret: first.reconnectSecret,
+      },
+    });
+    expect(reconnect.statusCode).toBe(200);
+    expect((await h.projection(first.id)).recovery).toEqual(before.recovery);
   });
 
   it('enforces envelope binding, unknown-property rejection and payload limits', async () => {
@@ -507,6 +666,11 @@ describe('local workshop HTTP composition', () => {
     expect(decodePublicPresentationProjection(other.json()).rankings).toEqual(
       [],
     );
+    expect(decodePublicPresentationProjection(other.json())).toMatchObject({
+      recoverySource: 'scenario-baseline',
+      collectiveRecoveryPercent: 58,
+      recovery: { contributionCount: 0, eligibleUnitCount: 1 },
+    });
     expect(
       (
         await h.app.inject({
