@@ -54,6 +54,12 @@ export type {
   NarrativeBeatId,
 } from './narrative.js';
 export { cloneFrozen } from './simulators/shared.js';
+export {
+  LighthouseSimulatorInvocationSchema,
+  LighthouseSimulatorSession,
+  lighthouseSimulatorCatalog,
+  type SimulatorScope,
+} from './simulators/tools.js';
 export type { SimulatorError, SimulatorResult } from './simulators/shared.js';
 export { WeatherSimulator, weatherScenarioIds } from './simulators/weather.js';
 export type {
@@ -105,6 +111,8 @@ export type {
 export {
   isRecord,
   isStringArray,
+  lighthouseScoreWeights,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './missions/shared.js';

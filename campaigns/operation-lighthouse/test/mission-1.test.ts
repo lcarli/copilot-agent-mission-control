@@ -62,7 +62,7 @@ describe('Signal in the Storm', () => {
 
     expect(result.outcome).toBe('passed');
     expect(result.checksRun).toBe(9);
-    expect(result.dimensionScores.requiredOutcome).toBe(112);
+    expect(result.dimensionScores.requiredOutcome).toBe(4000);
   });
 
   it('returns partial when some required fields are missing', async () => {
@@ -83,6 +83,22 @@ describe('Signal in the Storm', () => {
     expect(
       result.rules.find(({ ruleId }) => ruleId === 'location'),
     ).toMatchObject({ status: 'failed', severity: 'required' });
+  });
+
+  it('rejects extra output fields and blank required or optional strings', async () => {
+    for (const fields of [
+      { unexpected: true },
+      { affectedServices: [' '] },
+      { location: ' ' },
+      { duplicateOf: '' },
+    ]) {
+      const result = await signalInTheStormValidator.validate(
+        { ...context, submission: { ...context.submission, ...fields } },
+        request,
+        new AbortController().signal,
+      );
+      expect(result.outcome).not.toBe('passed');
+    }
   });
 
   it('requests a retry for an invalid submission shape', async () => {

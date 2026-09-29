@@ -15,8 +15,13 @@
     }
   },
   "dependencies": {
+    "@mission-control/event-contracts": "workspace:*",
     "@mission-control/localization": "workspace:*",
-    "@mission-control/validation-worker": "workspace:*"
+    "@mission-control/validation-worker": "workspace:*",
+    "@sinclair/typebox": "0.34.52"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs && node scripts/validate-media-localization.mjs && node scripts/validate-starters.mjs",

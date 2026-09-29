@@ -1,0 +1,652 @@
+[
+  {
+    "Text": "Port",
+    "AudioOffset": 50,
+    "Duration": 325
+  },
+  {
+    "Text": "Azure",
+    "AudioOffset": 387,
+    "Duration": 275
+  },
+  {
+    "Text": "enfrenta",
+    "AudioOffset": 675,
+    "Duration": 437
+  },
+  {
+    "Text": "tempestades",
+    "AudioOffset": 1125,
+    "Duration": 612
+  },
+  {
+    "Text": "há",
+    "AudioOffset": 1750,
+    "Duration": 125
+  },
+  {
+    "Text": "gerações",
+    "AudioOffset": 1887,
+    "Duration": 687
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 2675,
+    "Duration": 125
+  },
+  {
+    "Text": "mas",
+    "AudioOffset": 2812,
+    "Duration": 287
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 3125,
+    "Duration": 0
+  },
+  {
+    "Text": "nesta",
+    "AudioOffset": 3137,
+    "Duration": 312
+  },
+  {
+    "Text": "noite",
+    "AudioOffset": 3462,
+    "Duration": 437
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 4012,
+    "Duration": 87
+  },
+  {
+    "Text": "todos",
+    "AudioOffset": 4112,
+    "Duration": 262
+  },
+  {
+    "Text": "os",
+    "AudioOffset": 4387,
+    "Duration": 150
+  },
+  {
+    "Text": "distritos",
+    "AudioOffset": 4550,
+    "Duration": 537
+  },
+  {
+    "Text": "encaram",
+    "AudioOffset": 5100,
+    "Duration": 487
+  },
+  {
+    "Text": "o",
+    "AudioOffset": 5600,
+    "Duration": 25
+  },
+  {
+    "Text": "mesmo",
+    "AudioOffset": 5637,
+    "Duration": 312
+  },
+  {
+    "Text": "horizonte",
+    "AudioOffset": 5962,
+    "Duration": 662
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 6637,
+    "Duration": 100
+  },
+  {
+    "Text": "A",
+    "AudioOffset": 6887,
+    "Duration": 100
+  },
+  {
+    "Text": "chuva",
+    "AudioOffset": 7000,
+    "Duration": 387
+  },
+  {
+    "Text": "está",
+    "AudioOffset": 7400,
+    "Duration": 200
+  },
+  {
+    "Text": "aumentando",
+    "AudioOffset": 7612,
+    "Duration": 675
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 8300,
+    "Duration": 100
+  },
+  {
+    "Text": "As",
+    "AudioOffset": 8550,
+    "Duration": 162
+  },
+  {
+    "Text": "rotas",
+    "AudioOffset": 8725,
+    "Duration": 362
+  },
+  {
+    "Text": "de",
+    "AudioOffset": 9100,
+    "Duration": 87
+  },
+  {
+    "Text": "transporte",
+    "AudioOffset": 9200,
+    "Duration": 600
+  },
+  {
+    "Text": "estão",
+    "AudioOffset": 9812,
+    "Duration": 237
+  },
+  {
+    "Text": "ficando",
+    "AudioOffset": 10062,
+    "Duration": 387
+  },
+  {
+    "Text": "limitadas",
+    "AudioOffset": 10462,
+    "Duration": 787
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 11262,
+    "Duration": 100
+  },
+  {
+    "Text": "Os",
+    "AudioOffset": 11512,
+    "Duration": 112
+  },
+  {
+    "Text": "serviços",
+    "AudioOffset": 11637,
+    "Duration": 475
+  },
+  {
+    "Text": "essenciais",
+    "AudioOffset": 12125,
+    "Duration": 675
+  },
+  {
+    "Text": "estão",
+    "AudioOffset": 12812,
+    "Duration": 362
+  },
+  {
+    "Text": "sob",
+    "AudioOffset": 13187,
+    "Duration": 300
+  },
+  {
+    "Text": "pressão",
+    "AudioOffset": 13500,
+    "Duration": 512
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 14025,
+    "Duration": 100
+  },
+  {
+    "Text": "Em",
+    "AudioOffset": 14275,
+    "Duration": 137
+  },
+  {
+    "Text": "toda",
+    "AudioOffset": 14425,
+    "Duration": 225
+  },
+  {
+    "Text": "a",
+    "AudioOffset": 14662,
+    "Duration": 25
+  },
+  {
+    "Text": "cidade",
+    "AudioOffset": 14700,
+    "Duration": 575
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 15350,
+    "Duration": 0
+  },
+  {
+    "Text": "equipes",
+    "AudioOffset": 15362,
+    "Duration": 437
+  },
+  {
+    "Text": "de",
+    "AudioOffset": 15812,
+    "Duration": 75
+  },
+  {
+    "Text": "resposta",
+    "AudioOffset": 15900,
+    "Duration": 600
+  },
+  {
+    "Text": "e",
+    "AudioOffset": 16512,
+    "Duration": 50
+  },
+  {
+    "Text": "moradores",
+    "AudioOffset": 16575,
+    "Duration": 612
+  },
+  {
+    "Text": "se",
+    "AudioOffset": 17200,
+    "Duration": 100
+  },
+  {
+    "Text": "preparam",
+    "AudioOffset": 17312,
+    "Duration": 450
+  },
+  {
+    "Text": "juntos",
+    "AudioOffset": 17775,
+    "Duration": 562
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 18350,
+    "Duration": 100
+  },
+  {
+    "Text": "Sua",
+    "AudioOffset": 18600,
+    "Duration": 287
+  },
+  {
+    "Text": "unidade",
+    "AudioOffset": 18900,
+    "Duration": 475
+  },
+  {
+    "Text": "está",
+    "AudioOffset": 19387,
+    "Duration": 200
+  },
+  {
+    "Text": "entrando",
+    "AudioOffset": 19600,
+    "Duration": 450
+  },
+  {
+    "Text": "no",
+    "AudioOffset": 20062,
+    "Duration": 87
+  },
+  {
+    "Text": "Mission",
+    "AudioOffset": 20162,
+    "Duration": 400
+  },
+  {
+    "Text": "Control",
+    "AudioOffset": 20575,
+    "Duration": 475
+  },
+  {
+    "Text": "para",
+    "AudioOffset": 21062,
+    "Duration": 200
+  },
+  {
+    "Text": "transformar",
+    "AudioOffset": 21275,
+    "Duration": 625
+  },
+  {
+    "Text": "relatos",
+    "AudioOffset": 21912,
+    "Duration": 450
+  },
+  {
+    "Text": "incertos",
+    "AudioOffset": 22375,
+    "Duration": 587
+  },
+  {
+    "Text": "em",
+    "AudioOffset": 22975,
+    "Duration": 137
+  },
+  {
+    "Text": "decisões",
+    "AudioOffset": 23125,
+    "Duration": 575
+  },
+  {
+    "Text": "fundamentadas",
+    "AudioOffset": 23712,
+    "Duration": 950
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 24675,
+    "Duration": 100
+  },
+  {
+    "Text": "conectar",
+    "AudioOffset": 24825,
+    "Duration": 537
+  },
+  {
+    "Text": "o",
+    "AudioOffset": 25375,
+    "Duration": 37
+  },
+  {
+    "Text": "trabalho",
+    "AudioOffset": 25425,
+    "Duration": 450
+  },
+  {
+    "Text": "de",
+    "AudioOffset": 25887,
+    "Duration": 75
+  },
+  {
+    "Text": "especialistas",
+    "AudioOffset": 25975,
+    "Duration": 800
+  },
+  {
+    "Text": "e",
+    "AudioOffset": 26787,
+    "Duration": 125
+  },
+  {
+    "Text": "restaurar",
+    "AudioOffset": 26925,
+    "Duration": 625
+  },
+  {
+    "Text": "serviços",
+    "AudioOffset": 27562,
+    "Duration": 562
+  },
+  {
+    "Text": "essenciais",
+    "AudioOffset": 28137,
+    "Duration": 712
+  },
+  {
+    "Text": "com",
+    "AudioOffset": 28862,
+    "Duration": 175
+  },
+  {
+    "Text": "segurança",
+    "AudioOffset": 29050,
+    "Duration": 700
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 29762,
+    "Duration": 100
+  },
+  {
+    "Text": "As",
+    "AudioOffset": 30012,
+    "Duration": 112
+  },
+  {
+    "Text": "evidências",
+    "AudioOffset": 30137,
+    "Duration": 712
+  },
+  {
+    "Text": "vão",
+    "AudioOffset": 30862,
+    "Duration": 150
+  },
+  {
+    "Text": "mudar",
+    "AudioOffset": 31025,
+    "Duration": 400
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 31437,
+    "Duration": 100
+  },
+  {
+    "Text": "As",
+    "AudioOffset": 31687,
+    "Duration": 175
+  },
+  {
+    "Text": "ferramentas",
+    "AudioOffset": 31875,
+    "Duration": 637
+  },
+  {
+    "Text": "podem",
+    "AudioOffset": 32525,
+    "Duration": 312
+  },
+  {
+    "Text": "falhar",
+    "AudioOffset": 32850,
+    "Duration": 412
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 33275,
+    "Duration": 100
+  },
+  {
+    "Text": "Os",
+    "AudioOffset": 33525,
+    "Duration": 125
+  },
+  {
+    "Text": "recursos",
+    "AudioOffset": 33662,
+    "Duration": 537
+  },
+  {
+    "Text": "são",
+    "AudioOffset": 34212,
+    "Duration": 162
+  },
+  {
+    "Text": "finitos",
+    "AudioOffset": 34387,
+    "Duration": 650
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 35050,
+    "Duration": 100
+  },
+  {
+    "Text": "Coordenem-se",
+    "AudioOffset": 35300,
+    "Duration": 675
+  },
+  {
+    "Text": "com",
+    "AudioOffset": 35987,
+    "Duration": 150
+  },
+  {
+    "Text": "clareza",
+    "AudioOffset": 36150,
+    "Duration": 537
+  },
+  {
+    "Text": ",",
+    "AudioOffset": 36787,
+    "Duration": 125
+  },
+  {
+    "Text": "verifiquem",
+    "AudioOffset": 36925,
+    "Duration": 625
+  },
+  {
+    "Text": "antes",
+    "AudioOffset": 37575,
+    "Duration": 312
+  },
+  {
+    "Text": "de",
+    "AudioOffset": 37900,
+    "Duration": 62
+  },
+  {
+    "Text": "agir",
+    "AudioOffset": 37975,
+    "Duration": 350
+  },
+  {
+    "Text": "e",
+    "AudioOffset": 38337,
+    "Duration": 50
+  },
+  {
+    "Text": "mantenham",
+    "AudioOffset": 38400,
+    "Duration": 487
+  },
+  {
+    "Text": "as",
+    "AudioOffset": 38900,
+    "Duration": 100
+  },
+  {
+    "Text": "pessoas",
+    "AudioOffset": 39012,
+    "Duration": 475
+  },
+  {
+    "Text": "no",
+    "AudioOffset": 39500,
+    "Duration": 100
+  },
+  {
+    "Text": "centro",
+    "AudioOffset": 39612,
+    "Duration": 400
+  },
+  {
+    "Text": "de",
+    "AudioOffset": 40025,
+    "Duration": 112
+  },
+  {
+    "Text": "cada",
+    "AudioOffset": 40150,
+    "Duration": 300
+  },
+  {
+    "Text": "decisão",
+    "AudioOffset": 40462,
+    "Duration": 575
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 41050,
+    "Duration": 100
+  },
+  {
+    "Text": "A",
+    "AudioOffset": 41300,
+    "Duration": 100
+  },
+  {
+    "Text": "tempestade",
+    "AudioOffset": 41412,
+    "Duration": 637
+  },
+  {
+    "Text": "está",
+    "AudioOffset": 42062,
+    "Duration": 200
+  },
+  {
+    "Text": "chegando",
+    "AudioOffset": 42275,
+    "Duration": 587
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 42875,
+    "Duration": 100
+  },
+  {
+    "Text": "O",
+    "AudioOffset": 43125,
+    "Duration": 75
+  },
+  {
+    "Text": "farol",
+    "AudioOffset": 43212,
+    "Duration": 375
+  },
+  {
+    "Text": "ainda",
+    "AudioOffset": 43600,
+    "Duration": 275
+  },
+  {
+    "Text": "está",
+    "AudioOffset": 43887,
+    "Duration": 237
+  },
+  {
+    "Text": "aceso",
+    "AudioOffset": 44137,
+    "Duration": 525
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 44675,
+    "Duration": 100
+  },
+  {
+    "Text": "Sua",
+    "AudioOffset": 44925,
+    "Duration": 262
+  },
+  {
+    "Text": "missão",
+    "AudioOffset": 45200,
+    "Duration": 387
+  },
+  {
+    "Text": "começa",
+    "AudioOffset": 45600,
+    "Duration": 437
+  },
+  {
+    "Text": "agora",
+    "AudioOffset": 46050,
+    "Duration": 437
+  },
+  {
+    "Text": ".",
+    "AudioOffset": 46500,
+    "Duration": 100
+  }
+]

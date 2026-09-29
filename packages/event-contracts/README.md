@@ -28,6 +28,14 @@ The package exports:
 - `assertDomainEvent` for validation that throws
   `EventContractValidationError`.
 - Stable schema-version and event-type guards.
+- Allowlisted public-presentation and participant-feedback schemas, with
+  `decodePublicPresentationProjection` and `decodeMissionSubmissionFeedback`
+  for HTTP response validation. Unknown fields are rejected. Local projections
+  explicitly identify scenario-baseline recovery and the recent-activity window;
+  neither is a claim of participant-driven city recovery or a persistent socket.
+- Simulator catalog, invocation and observation schemas and decoders.
+  Observations include explicit success/failure and server-assigned
+  event/unit/mission scope. Invocation requests cannot supply that scope.
 
 `pnpm build` also writes standalone JSON Schema artifacts to
 `dist/schemas/v1/`. Unknown properties are rejected at the envelope and payload

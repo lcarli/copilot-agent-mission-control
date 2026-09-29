@@ -6,15 +6,16 @@ import {
 import { useMemo, useState } from 'react';
 
 import { catalogs } from './messages.js';
-import { InstructorSetupFlow } from './InstructorSetupFlow.js';
+import { LocalWorkshopView } from './LocalWorkshopView.js';
 import { LiveCityMap } from './LiveCityMap.js';
 import { LobbyConnectivityView } from './LobbyConnectivityView.js';
 import { MissionControlPanel } from './MissionControlPanel.js';
-import { PublicPresentationView } from './PublicPresentationView.js';
+import { PublicEventDisplay } from './PublicEventDisplay.js';
 import { SpecialistTopologyView } from './SpecialistTopologyView.js';
 import { UnitScoringView } from './UnitScoringView.js';
 
 export interface CommandCenterAppProps {
+  readonly eventSessionId?: string;
   readonly initialLocale?: SupportedLocale;
   readonly initialView?:
     | 'setup'
@@ -37,6 +38,7 @@ const metricCards = [
 export function CommandCenterApp({
   initialLocale = 'en',
   initialView = 'setup',
+  eventSessionId,
 }: CommandCenterAppProps) {
   const [locale, setLocale] = useState<SupportedLocale>(initialLocale);
   const [theme, setTheme] = useState<ThemeChoice>('auto');
@@ -80,6 +82,17 @@ export function CommandCenterApp({
         : choice;
     document.documentElement.dataset.theme = resolved;
   };
+
+  if (initialView === 'presentation') {
+    return (
+      <main className="app-shell" id="command-center">
+        <PublicEventDisplay
+          {...(eventSessionId === undefined ? {} : { eventSessionId })}
+          translate={t}
+        />
+      </main>
+    );
+  }
 
   return (
     <>
@@ -159,14 +172,22 @@ export function CommandCenterApp({
         </nav>
 
         <main id="command-center" tabIndex={-1}>
+          {activePage === 'setup' || activePage === 'presentation' ? null : (
+            <p className="runtime-notice" role="status">
+              {t('shell.demoNotice')}
+            </p>
+          )}
           {activePage === 'setup' ? (
-            <InstructorSetupFlow locale={locale} translate={t} />
+            <LocalWorkshopView locale={locale} translate={t} />
           ) : activePage === 'units' || activePage === 'health' ? (
             <LobbyConnectivityView translate={t} />
           ) : activePage === 'missions' ? (
             <MissionControlPanel translate={t} />
           ) : activePage === 'presentation' ? (
-            <PublicPresentationView translate={t} />
+            <PublicEventDisplay
+              {...(eventSessionId === undefined ? {} : { eventSessionId })}
+              translate={t}
+            />
           ) : activePage === 'scores' ? (
             <UnitScoringView translate={t} />
           ) : activePage === 'topology' ? (

@@ -10,6 +10,10 @@
   },
   "scripts": {
     "build": "pnpm exec turbo run build",
+    "build:local": "pnpm --filter @mission-control/api... --filter @mission-control/participant-cli... --workspace-concurrency=1 exec tsc -p tsconfig.build.json",
+    "start:local": "pnpm --filter @mission-control/api start:local",
+    "test:workshop": "pnpm run build:local && pnpm --filter @mission-control/tests-e2e test",
+    "test:workshop:load": "pnpm run build:local && pnpm --filter @mission-control/tests-load test",
     "deploy:azure": "pwsh -NoProfile -File scripts/deploy.ps1",
     "destroy:azure": "pwsh -NoProfile -File scripts/destroy.ps1",
     "dev": "pnpm exec turbo run dev --parallel",

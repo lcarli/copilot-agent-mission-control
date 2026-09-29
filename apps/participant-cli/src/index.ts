@@ -62,5 +62,7 @@ export {
   type ParticipantMissionWorkflow,
 } from './workflow.js';
 export { createCliLocalizer } from './translations.js';
+export { ParticipantHttpError } from './http.js';
+export type { MissionSubmissionFeedback } from '@mission-control/event-contracts';
 
 export const workspaceName = '@mission-control/participant-cli';

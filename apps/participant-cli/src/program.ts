@@ -136,7 +136,51 @@ export function createParticipantProgram(
   ): Promise<void> => {
     writeOutput(await action());
   };
+  const showFeedback = async (submissionId: string): Promise<void> => {
+    const feedback = await requireWorkflow().feedback(submissionId);
+    writeOutput(JSON.stringify(feedback, undefined, 2));
+    if (feedback.outcome !== 'passed') setExitCode(1);
+  };
 
+  mission
+    .command('tools <mission-id>')
+    .description('List authenticated simulator operations and argument schemas')
+    .action(async (missionId: string) => {
+      writeOutput(
+        JSON.stringify(await requireWorkflow().tools(missionId), undefined, 2),
+      );
+    });
+  mission
+    .command('tool <mission-id>')
+    .description(
+      'Invoke a simulator and print its server-observed evidence receipt',
+    )
+    .requiredOption(
+      '--request <path>',
+      'JSON containing tool, operation, and arguments',
+    )
+    .option(
+      '--idempotency-key <key>',
+      'Reuse only when recovering the same HTTP request',
+    )
+    .action(
+      async (
+        missionId: string,
+        options: { request: string; idempotencyKey?: string },
+      ) => {
+        const receipt = await requireWorkflow().invokeTool(
+          missionId,
+          options.request,
+          options.idempotencyKey,
+        );
+        writeOutput(JSON.stringify(receipt, undefined, 2));
+        if (!receipt.result.ok) setExitCode(1);
+      },
+    );
+  mission
+    .command('status <submission-id>')
+    .description('Read server evaluation, rule feedback, and scoring')
+    .action(showFeedback);
   mission.command('start <mission-id>').action(async (missionId: string) => {
     await requireWorkflow().start(missionId);
     const t = createCliLocalizer(dependencies.environmentLocale);
@@ -162,22 +206,52 @@ export function createParticipantProgram(
     mission
       .command(`${commandName} <mission-id>`)
       .requiredOption('--evidence <path>')
-      .action(async (missionId: string, options: { evidence: string }) => {
-        await missionOutput(async () => {
-          const result = await requireWorkflow().submit(
-            missionId,
-            options.evidence,
-          );
-          return `${result.submissionId} · ${result.status}`;
-        });
-      });
+      .option(
+        '--idempotency-key <key>',
+        'Reuse the same key when retrying a lost HTTP response',
+      )
+      .action(
+        async (
+          missionId: string,
+          options: { evidence: string; idempotencyKey?: string },
+        ) => {
+          await missionOutput(async () => {
+            const result = await requireWorkflow().submit(
+              missionId,
+              options.evidence,
+              options.idempotencyKey,
+            );
+            if (result.status === 'evaluated')
+              await showFeedback(result.submissionId);
+            return `${result.submissionId} · ${result.status}`;
+          });
+        },
+      );
   }
   mission.command('hint <mission-id>').action(async (missionId: string) => {
     await missionOutput(async () => {
       const result = await requireWorkflow().hint(missionId);
-      return `L${String(result.level)} · ${result.contentKey}`;
+      return `L${String(result.level)} · ${result.content ?? result.contentKey}`;
     });
   });
+
+  program
+    .command('reconnect')
+    .description(
+      'Refresh this unit session using its stored reconnect credential',
+    )
+    .action(async () => {
+      if (dependencies.registrationClient === undefined)
+        throw new Error('registration-client-unavailable');
+      const joined = await dependencies.registrationClient.reconnect();
+      const config = await dependencies.configRepository.load();
+      const t = createCliLocalizer(
+        config?.locale ?? dependencies.environmentLocale,
+      );
+      writeOutput(
+        `${t('registration.reconnected')} ${joined.unitId} · ${joined.eventSessionId}`,
+      );
+    });
 
   program
     .command('join')

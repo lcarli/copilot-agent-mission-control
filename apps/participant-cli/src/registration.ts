@@ -1,4 +1,5 @@
 import type { SupportedLocale } from '@mission-control/localization';
+import { randomUUID } from 'node:crypto';
 
 import type { ParticipantAuthSession } from './auth.js';
 import type { ParticipantConfigRepository } from './config.js';
@@ -6,6 +7,7 @@ import type {
   ParticipantCredentialRepository,
   ParticipantCredentials,
 } from './credentials.js';
+import { ParticipantHttpError, assertHttpSuccess } from './http.js';
 
 export interface JoinEventRequest {
   readonly displayName: string;
@@ -29,11 +31,18 @@ export class ParticipantRegistrationError extends Error {
   constructor(
     readonly code:
       | 'configuration-missing'
+      | 'credentials-missing'
+      | 'credentials-server-mismatch'
       | 'registration-failed'
       | 'registration-response-invalid',
     options?: ErrorOptions,
   ) {
-    super(code, options);
+    super(
+      options?.cause instanceof ParticipantHttpError
+        ? options.cause.message
+        : code,
+      options,
+    );
     this.name = 'ParticipantRegistrationError';
   }
 }
@@ -41,6 +50,7 @@ export class ParticipantRegistrationError extends Error {
 export interface ParticipantRegistrationClient {
   checkConnectivity(): Promise<readonly ConnectivityCheckResult[]>;
   join(request: JoinEventRequest): Promise<JoinedEventSummary>;
+  reconnect(): Promise<JoinedEventSummary>;
 }
 
 interface RegistrationResponse {
@@ -108,7 +118,10 @@ export class HttpParticipantRegistrationClient implements ParticipantRegistratio
     try {
       response = await this.#fetch(`${config.apiUrl}/api/v1/registrations`, {
         body: JSON.stringify(request),
-        headers: { 'content-type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': randomUUID(),
+        },
         method: 'POST',
         signal: AbortSignal.timeout(10_000),
       });
@@ -117,8 +130,12 @@ export class HttpParticipantRegistrationClient implements ParticipantRegistratio
         cause: error,
       });
     }
-    if (!response.ok) {
-      throw new ParticipantRegistrationError('registration-failed');
+    try {
+      await assertHttpSuccess(response);
+    } catch (error) {
+      throw new ParticipantRegistrationError('registration-failed', {
+        cause: error,
+      });
     }
     let joined: RegistrationResponse;
     try {
@@ -130,6 +147,7 @@ export class HttpParticipantRegistrationClient implements ParticipantRegistratio
       });
     }
     const credentials: ParticipantCredentials = {
+      apiUrl: config.apiUrl,
       eventCode: request.eventCode,
       eventSessionId: joined.eventSession.eventSessionId,
       reconnectSecret: joined.reconnectSecret,
@@ -138,6 +156,69 @@ export class HttpParticipantRegistrationClient implements ParticipantRegistratio
     };
     await this.#credentialRepository.save(credentials);
     this.#updateToken(joined.unitToken);
+    return {
+      eventSessionId: credentials.eventSessionId,
+      unitId: credentials.unitId,
+    };
+  }
+
+  async reconnect(): Promise<JoinedEventSummary> {
+    const config = await this.#requireConfig();
+    const credentials = await this.#credentialRepository.load();
+    if (credentials === undefined)
+      throw new ParticipantRegistrationError('credentials-missing');
+    if (credentials.apiUrl !== config.apiUrl) {
+      throw new ParticipantRegistrationError('credentials-server-mismatch');
+    }
+    let response: Response;
+    try {
+      response = await this.#fetch(`${config.apiUrl}/api/v1/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': randomUUID(),
+        },
+        body: JSON.stringify({
+          eventCode: credentials.eventCode,
+          unitId: credentials.unitId,
+          reconnectSecret: credentials.reconnectSecret,
+        }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      await assertHttpSuccess(response);
+    } catch (error) {
+      throw new ParticipantRegistrationError('registration-failed', {
+        cause: error,
+      });
+    }
+    let refreshed: RegistrationResponse;
+    try {
+      const value: unknown = await response.json();
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        throw new ParticipantRegistrationError('registration-response-invalid');
+      }
+      refreshed = parseRegistrationResponse({
+        ...value,
+        reconnectSecret: credentials.reconnectSecret,
+      });
+      if (
+        refreshed.unit.unitId !== credentials.unitId ||
+        refreshed.eventSession.eventSessionId !== credentials.eventSessionId
+      ) {
+        throw new ParticipantRegistrationError('registration-response-invalid');
+      }
+    } catch (error) {
+      if (error instanceof ParticipantRegistrationError) throw error;
+      throw new ParticipantRegistrationError('registration-response-invalid', {
+        cause: error,
+      });
+    }
+    await this.#credentialRepository.save({
+      ...credentials,
+      apiUrl: config.apiUrl,
+      unitToken: refreshed.unitToken,
+    });
+    this.#updateToken(refreshed.unitToken);
     return {
       eventSessionId: credentials.eventSessionId,
       unitId: credentials.unitId,

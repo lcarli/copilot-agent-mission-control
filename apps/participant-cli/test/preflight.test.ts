@@ -14,6 +14,30 @@ const token = [
 ].join('.');
 
 describe('participant preflight', () => {
+  it('recognizes the Copilot Chat extension without claiming account entitlement', async () => {
+    const result = await runParticipantPreflight({
+      auth: new ParticipantAuthSession({ read: () => undefined }),
+      configRepository: {
+        load: () => Promise.resolve(undefined),
+        save: () => Promise.resolve(),
+      },
+      nodeVersion: '24.14.0',
+      probe: {
+        run: (command, args) =>
+          Promise.resolve({
+            exitCode: 0,
+            stdout: args.includes('--list-extensions')
+              ? 'GitHub.copilot-chat'
+              : command === 'pnpm'
+                ? '11.27.0'
+                : '1.0.0',
+          }),
+      },
+    });
+    const copilot = result.find(({ check }) => check === 'copilot');
+    expect(copilot?.status).toBe('pass');
+    expect(copilot?.detail).toContain('confirm account access');
+  });
   it('passes when required tools, Copilot, configuration, and API are available', async () => {
     const responses = new Map([
       ['pnpm --version', '11.27.0'],

@@ -68,11 +68,7 @@
         "generatedAt": "2026-09-25T20:30:00Z",
         "reviewer": "automated continuity and accessibility review"
       },
-      "reviewStatus": "approved",
-      "file": {
-        "path": "media/assets/OL-OPENING-VIDEO-001.mp4",
-        "sha256": "509528235e0d28bc276ef4e998084cc3c5bd6987d9b4eeaec330ca610d8cd225"
-      }
+      "reviewStatus": "prompt-ready"
     },
     {
       "assetId": "OL-COMMANDER-AVATAR-001",

@@ -113,7 +113,7 @@ describe('Specialist Network', () => {
     );
 
     expect(result.outcome).toBe('passed');
-    expect(result.dimensionScores.reliability).toBe(95);
+    expect(result.dimensionScores.reliability).toBe(1425);
     expect(result.checksRun).toBe(10);
   });
 

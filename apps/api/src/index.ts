@@ -1,5 +1,9 @@
 export { buildApp, type BuildAppOptions } from './app.js';
 export {
+  buildLocalWorkshopApp,
+  type LocalWorkshopOptions,
+} from './local-workshop.js';
+export {
   ConfigurationError,
   loadConfig,
   supportedLogLevels,

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "scenarioId": "east-bank-underpass-closure",
+  "reports": [
+    {
+      "reportId": "incident-004",
+      "receivedAt": "2026-09-25T09:02:00Z",
+      "source": "Port Azure Transit Control operator",
+      "districtId": "east-bank",
+      "text": "Transit Control reports the East Bank underpass is closed by flooding."
+    },
+    {
+      "reportId": "incident-005",
+      "receivedAt": "2026-09-25T09:04:00Z",
+      "source": "Unverified driver report",
+      "districtId": "east-bank",
+      "text": "A driver claims that the East Bank underpass remains open.",
+      "note": "English teaching translation of the French simulator report."
+    }
+  ]
+}

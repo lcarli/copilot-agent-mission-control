@@ -4,6 +4,9 @@ import {
   restoreTheLighthouseContent,
   restoreTheLighthouseValidator,
 } from '../src/index.js';
+import { observeTools, traceFor } from './fixtures/tool-evidence.js';
+
+const observations = observeTools('restore-the-lighthouse');
 
 const request = {
   schemaVersion: '1.0',
@@ -32,19 +35,13 @@ const context = {
       hazards: ['grid-failure', 'communications-loss', 'storm-surge'],
     },
     evidenceIds: [
-      'forecast-1200',
+      'forecast-1000',
       'harbor-loop-health',
       'shelter-state',
       'journey-1',
       'inventory-1',
     ],
-    toolTrace: [
-      { tool: 'weather', status: 'success' },
-      { tool: 'grid', status: 'success' },
-      { tool: 'shelter', status: 'success' },
-      { tool: 'transport', status: 'success' },
-      { tool: 'resources', status: 'success' },
-    ],
+    toolTrace: traceFor(observations),
     prioritizedActions: [
       {
         priority: 1,
@@ -58,7 +55,7 @@ const context = {
         actionId: 'evacuate-harbor',
         impact: 'high',
         rationale: 'Move residents ahead of the surge.',
-        evidenceIds: ['forecast-1200', 'journey-1'],
+        evidenceIds: ['forecast-1000', 'journey-1'],
       },
     ],
     resourceAllocations: [
@@ -79,7 +76,7 @@ const context = {
       {
         sourceRole: 'weather-specialist',
         targetRole: 'logistics-specialist',
-        evidenceIds: ['forecast-1200'],
+        evidenceIds: ['forecast-1000'],
       },
       {
         sourceRole: 'logistics-specialist',
@@ -95,12 +92,12 @@ const context = {
     audit: {
       decisionId: 'decision-001',
       createdAt: '2026-09-25T15:00:00Z',
-      evidenceIds: ['forecast-1200', 'inventory-1'],
+      evidenceIds: ['forecast-1000', 'inventory-1'],
     },
     incidentModifierId: 'storm-surge-escalation',
     incidentModifierApplied: true,
     replan: {
-      failedTool: 'transport',
+      failedTool: 'weather',
       changedActionIds: ['evacuate-harbor'],
     },
     rejectedAlternatives: [
@@ -121,9 +118,9 @@ const context = {
         approved: true,
       },
     ],
-    totalToolCalls: 9,
+    totalToolCalls: observations.length,
   },
-  observedEvidence: [],
+  observedEvidence: observations,
 } as const;
 
 describe('Restore the Lighthouse', () => {
@@ -143,8 +140,8 @@ describe('Restore the Lighthouse', () => {
     );
 
     expect(result.outcome).toBe('passed');
-    expect(result.dimensionScores.reliability).toBe(100);
-    expect(result.checksRun).toBe(13);
+    expect(result.dimensionScores.reliability).toBe(1500);
+    expect(result.checksRun).toBe(14);
   });
 
   it('returns partial when allocation, review, and audit are missing', async () => {
@@ -179,5 +176,43 @@ describe('Restore the Lighthouse', () => {
         'auditable-package',
       ]),
     );
+  });
+
+  it('rejects declared traces without scoped server observations', async () => {
+    const result = await restoreTheLighthouseValidator.validate(
+      { ...context, observedEvidence: [] },
+      request,
+      new AbortController().signal,
+    );
+    expect(result.outcome).not.toBe('passed');
+    expect(
+      result.rules.find(({ ruleId }) => ruleId === 'tool-provenance')?.status,
+    ).toBe('failed');
+  });
+
+  it('checks total resource quantities against observed inventory and validates nested citations', async () => {
+    const allocation = context.submission.resourceAllocations[0];
+    const result = await restoreTheLighthouseValidator.validate(
+      {
+        ...context,
+        submission: {
+          ...context.submission,
+          resourceAllocations: [
+            { ...allocation, quantity: 4 },
+            { ...allocation, quantity: 4 },
+          ],
+          audit: { ...context.submission.audit, evidenceIds: ['made-up'] },
+        },
+      },
+      request,
+      new AbortController().signal,
+    );
+    expect(
+      result.rules.find(({ ruleId }) => ruleId === 'resource-allocation')
+        ?.status,
+    ).toBe('failed');
+    expect(
+      result.rules.find(({ ruleId }) => ruleId === 'auditable-package')?.status,
+    ).toBe('failed');
   });
 });

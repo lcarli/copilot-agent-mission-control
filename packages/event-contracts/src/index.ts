@@ -29,3 +29,27 @@ export {
   type EventContractIssue,
   type EventValidationResult,
 } from './validation.js';
+export {
+  PublicPresentationProjectionSchema,
+  MissionSubmissionFeedbackSchema,
+  decodePublicPresentationProjection,
+  decodeMissionSubmissionFeedback,
+  type PublicMissionSummary,
+  type PublicDistrictSummary,
+  type PublicRankingSummary,
+  type PublicRecognitionSummary,
+  type PublicPresentationProjection,
+  type MissionSubmissionFeedback,
+} from './workshop.js';
+export {
+  SimulatorInvocationSchema,
+  SimulatorObservationSchema,
+  SimulatorCatalogSchema,
+  decodeSimulatorInvocation,
+  decodeSimulatorObservation,
+  decodeSimulatorCatalog,
+  isSimulatorObservation,
+  type SimulatorInvocation,
+  type SimulatorObservation,
+  type SimulatorCatalog,
+} from './simulator.js';

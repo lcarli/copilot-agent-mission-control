@@ -1,0 +1,248 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "missionId": "signal-in-the-storm",
+    "evidence": {
+      "category": "flooding",
+      "severity": "high",
+      "location": "Harbor Pier 4",
+      "affectedServices": ["water-pumping"],
+      "missingInformation": ["current flood depth"],
+      "severityExplanation": "Floodwater is entering occupied homes."
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "missionId": "ground-truth",
+    "evidence": {
+      "facts": ["Transit Control reports the East Bank underpass closed."],
+      "assumptions": [],
+      "unknowns": ["current flood depth", "reopening time"],
+      "evidenceIds": ["incident-004", "incident-005", "bulletin-03"],
+      "recommendation": {
+        "supported": false,
+        "summary": "Do not dispatch through the underpass without clearance."
+      },
+      "nextInformationStep": "Request updated closure and route information from Transit Control.",
+      "contradictionResolution": "An unverified driver claim does not supersede the official closure bulletin.",
+      "confidence": 0.8,
+      "untrustedInstructionDetected": true
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "missionId": "connected-city",
+    "evidence": {
+      "toolTrace": [
+        {
+          "tool": "weather",
+          "status": "success",
+          "evidenceId": "fixture-forecast"
+        },
+        {
+          "tool": "shelter",
+          "status": "success",
+          "evidenceId": "fixture-shelter"
+        },
+        {
+          "tool": "transport",
+          "status": "failed",
+          "retryable": true,
+          "retries": 1
+        },
+        {
+          "tool": "transport",
+          "status": "success",
+          "evidenceId": "fixture-journey"
+        }
+      ],
+      "recommendation": {
+        "shelterId": "north-hills-school",
+        "routeIds": ["harbor-old-town", "old-town-north-hills"],
+        "evidenceIds": [
+          "fixture-forecast",
+          "fixture-shelter",
+          "fixture-journey"
+        ],
+        "alternatives": ["east-bank-arena"]
+      }
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "missionId": "specialist-network",
+    "evidence": {
+      "specialists": [
+        {
+          "roleId": "weather-specialist",
+          "responsibility": "Assess weather hazards.",
+          "inputFields": ["districtId"],
+          "outputFields": ["forecastEvidence"],
+          "latencyMs": 40,
+          "toolsUsed": ["weather"]
+        },
+        {
+          "roleId": "logistics-specialist",
+          "responsibility": "Assess shelters and routes.",
+          "inputFields": ["forecastEvidence"],
+          "outputFields": ["candidateDecision"],
+          "latencyMs": 55,
+          "toolsUsed": ["shelter", "transport"]
+        },
+        {
+          "roleId": "reviewer",
+          "responsibility": "Review the candidate independently.",
+          "inputFields": ["candidateDecision"],
+          "outputFields": ["approval"],
+          "latencyMs": 25,
+          "toolsUsed": []
+        }
+      ],
+      "handoffs": [
+        {
+          "sourceRole": "reviewer",
+          "targetRole": "weather-specialist",
+          "evidenceIds": ["incident-004"],
+          "payload": { "request": "Assess hazard." }
+        },
+        {
+          "sourceRole": "weather-specialist",
+          "targetRole": "logistics-specialist",
+          "evidenceIds": ["fixture-forecast"],
+          "payload": { "hazard": "storm-surge-warning" }
+        },
+        {
+          "sourceRole": "logistics-specialist",
+          "targetRole": "reviewer",
+          "evidenceIds": ["fixture-journey"],
+          "payload": { "recommendation": "north-hills-school" }
+        }
+      ],
+      "review": {
+        "proposerRoleId": "logistics-specialist",
+        "reviewerRoleId": "reviewer",
+        "approved": true
+      },
+      "concurrentAnalyses": [
+        { "roleId": "weather-specialist" },
+        { "roleId": "logistics-specialist" }
+      ],
+      "disagreements": [
+        { "detected": true, "resolved": false, "humanEscalationRequired": true }
+      ]
+    }
+  },
+  {
+    "schemaVersion": "1.0",
+    "missionId": "restore-the-lighthouse",
+    "evidence": {
+      "incidentAssessment": {
+        "hazards": ["grid-failure", "communications-loss", "storm-surge"]
+      },
+      "evidenceIds": [
+        "fixture-forecast",
+        "fixture-grid",
+        "fixture-shelter",
+        "fixture-journey",
+        "fixture-inventory"
+      ],
+      "toolTrace": [
+        {
+          "tool": "weather",
+          "status": "success",
+          "evidenceId": "fixture-forecast"
+        },
+        { "tool": "grid", "status": "success", "evidenceId": "fixture-grid" },
+        {
+          "tool": "shelter",
+          "status": "success",
+          "evidenceId": "fixture-shelter"
+        },
+        {
+          "tool": "transport",
+          "status": "success",
+          "evidenceId": "fixture-journey"
+        },
+        {
+          "tool": "resources",
+          "status": "success",
+          "evidenceId": "fixture-inventory"
+        }
+      ],
+      "prioritizedActions": [
+        {
+          "priority": 1,
+          "actionId": "restore-radio",
+          "impact": "high",
+          "rationale": "Restore emergency coordination.",
+          "evidenceIds": ["fixture-grid", "fixture-inventory"]
+        },
+        {
+          "priority": 2,
+          "actionId": "evacuate-harbor",
+          "impact": "high",
+          "rationale": "Move residents ahead of the surge.",
+          "evidenceIds": ["fixture-forecast", "fixture-journey"]
+        }
+      ],
+      "resourceAllocations": [
+        {
+          "resourceId": "portable-generators",
+          "quantity": 2,
+          "destinationDistrictId": "old-town",
+          "purpose": "Restore public safety radio."
+        },
+        {
+          "resourceId": "evacuation-buses",
+          "quantity": 3,
+          "destinationDistrictId": "harbor",
+          "purpose": "Evacuate residents."
+        }
+      ],
+      "specialistHandoffs": [
+        {
+          "sourceRole": "weather-specialist",
+          "targetRole": "logistics-specialist",
+          "evidenceIds": ["fixture-forecast"]
+        },
+        {
+          "sourceRole": "logistics-specialist",
+          "targetRole": "reviewer",
+          "evidenceIds": ["fixture-journey", "fixture-inventory"]
+        }
+      ],
+      "finalReview": {
+        "reviewerRoleId": "reviewer",
+        "planVersion": "2",
+        "approved": true
+      },
+      "audit": {
+        "decisionId": "synthetic-rehearsal-decision",
+        "createdAt": "2026-09-25T12:00:00Z",
+        "evidenceIds": ["fixture-forecast", "fixture-inventory"]
+      },
+      "incidentModifierId": "storm-surge-escalation",
+      "incidentModifierApplied": true,
+      "replan": {
+        "failedTool": "transport",
+        "changedActionIds": ["evacuate-harbor"]
+      },
+      "rejectedAlternatives": [
+        { "alternativeId": "harbor-east-bank", "reason": "Route is closed." }
+      ],
+      "humanApprovals": [
+        {
+          "actionId": "restore-radio",
+          "approverRole": "synthetic-reviewer",
+          "approved": true
+        },
+        {
+          "actionId": "evacuate-harbor",
+          "approverRole": "synthetic-reviewer",
+          "approved": true
+        }
+      ],
+      "totalToolCalls": 9
+    }
+  }
+]

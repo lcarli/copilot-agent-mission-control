@@ -1,5 +1,22 @@
 {
   "name": "@mission-control/tests-e2e",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint test playwright.config.ts"
+  },
+  "dependencies": {
+    "@mission-control/api": "workspace:*",
+    "@mission-control/event-contracts": "workspace:*",
+    "@mission-control/participant-cli": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "24.13.5",
+    "typescript": "6.0.3",
+    "vite": "8.0.0"
+  }
 }

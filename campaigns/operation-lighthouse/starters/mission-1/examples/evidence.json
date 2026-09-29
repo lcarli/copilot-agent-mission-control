@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "missionId": "signal-in-the-storm",
+  "evidence": {
+    "category": "flooding",
+    "severity": "high",
+    "location": "Harbor Pier 4",
+    "affectedServices": ["water-pumping"],
+    "missingInformation": [
+      "water depth",
+      "number of people needing evacuation"
+    ],
+    "severityExplanation": "Floodwater is entering occupied homes and the water-pumping service has stopped."
+  }
+}

@@ -193,9 +193,36 @@ importers:
 
   apps/api:
     dependencies:
+      '@mission-control/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@mission-control/campaign-operation-lighthouse':
+        specifier: workspace:*
+        version: link:../../campaigns/operation-lighthouse
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
+      '@mission-control/event-management':
+        specifier: workspace:*
+        version: link:../../packages/event-management
+      '@mission-control/hint-system':
+        specifier: workspace:*
+        version: link:../../packages/hint-system
+      '@mission-control/mission-management':
+        specifier: workspace:*
+        version: link:../../packages/mission-management
+      '@mission-control/scoring':
+        specifier: workspace:*
+        version: link:../../packages/scoring
+      '@mission-control/validation-worker':
+        specifier: workspace:*
+        version: link:../../packages/validation-worker
       fastify:
         specifier: ^5.12.5
         version: 5.12.5
+      uuid:
+        specifier: 14.0.2
+        version: 14.0.2
     devDependencies:
       '@types/node':
         specifier: 24.13.5
@@ -212,6 +239,9 @@ importers:
 
   apps/command-center:
     dependencies:
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
       '@mission-control/localization':
         specifier: workspace:*
         version: link:../../packages/localization
@@ -249,6 +279,9 @@ importers:
 
   apps/participant-cli:
     dependencies:
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
       '@mission-control/localization':
         specifier: workspace:*
         version: link:../../packages/localization
@@ -271,12 +304,22 @@ importers:
 
   campaigns/operation-lighthouse:
     dependencies:
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
       '@mission-control/localization':
         specifier: workspace:*
         version: link:../../packages/localization
       '@mission-control/validation-worker':
         specifier: workspace:*
         version: link:../../packages/validation-worker
+      '@sinclair/typebox':
+        specifier: 0.34.52
+        version: 0.34.52
+    devDependencies:
+      ajv:
+        specifier: 8.17.1
+        version: 8.17.1
 
   packages/auth:
     dependencies:
@@ -526,9 +569,49 @@ importers:
 
   tests/contract: {}
 
-  tests/e2e: {}
+  tests/e2e:
+    dependencies:
+      '@mission-control/api':
+        specifier: workspace:*
+        version: link:../../apps/api
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
+      '@mission-control/participant-cli':
+        specifier: workspace:*
+        version: link:../../apps/participant-cli
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.63.0
+        version: 1.63.0
+      '@types/node':
+        specifier: 24.13.5
+        version: 24.13.5
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite:
+        specifier: 8.0.0
+        version: 8.0.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@24.13.5)(yaml@2.8.1)
 
-  tests/load: {}
+  tests/load:
+    dependencies:
+      '@mission-control/api':
+        specifier: workspace:*
+        version: link:../../apps/api
+      '@mission-control/event-contracts':
+        specifier: workspace:*
+        version: link:../../packages/event-contracts
+    devDependencies:
+      '@types/node':
+        specifier: 24.13.5
+        version: 24.13.5
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: 5.0.1
+        version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
 
 packages:
 
@@ -671,6 +754,11 @@ packages:
 
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha1-w94GDdEmQNzIOFFqoqaAPMey6dY=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@pinojs/redact/-/redact-0.4.0.tgz}
+
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha1-gIAgxG6La5H51ijNDry7Mr39i2w=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@playwright/test/-/test-1.63.0.tgz}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@rolldown/binding-android-arm-eabi@1.2.9':
     resolution: {integrity: sha512-tNISae1QEf/vkb3xkRcjV5SEdzPE97We5IVaa2Z8jSszQPZ8U60B/YCYpw4QI7VidYsBtKavczXf+DyDs9WGxw==, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.9.tgz}
@@ -1438,6 +1526,16 @@ packages:
     resolution: {integrity: sha1-ZVLI+NhIGETJ5FLnvwvpC/8ZOc4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/pino/-/pino-10.3.1.tgz}
     hasBin: true
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha1-5XZlvDKEbCE6w5oeTVvGIo52s3Y=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/playwright-core/-/playwright-core-1.63.0.tgz}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha1-mbVvn2mxtwxE8Av4Sy/lI0iuJRE=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/playwright/-/playwright-1.63.0.tgz}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss@8.5.28:
     resolution: {integrity: sha1-2kVjqZoG5i1sHNGsrjYyJLyu1uk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/postcss/-/postcss-8.5.28.tgz}
     engines: {node: ^10 || ^12 || >=14}
@@ -1915,6 +2013,10 @@ snapshots:
   '@oxc-project/types@0.150.0': {}
 
   '@pinojs/redact@0.4.0': {}
+
+  '@playwright/test@1.63.0':
+    dependencies:
+      playwright: 1.63.0
 
   '@rolldown/binding-android-arm-eabi@1.2.9':
     optional: true
@@ -2584,6 +2686,12 @@ snapshots:
       safe-stable-stringify: 2.5.0
       sonic-boom: 4.2.1
       thread-stream: 4.2.0
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   postcss@8.5.28:
     dependencies:

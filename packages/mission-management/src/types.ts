@@ -29,5 +29,7 @@ export interface UnitMissionProgress {
 
 export interface InitializeMissionsInput {
   readonly eventSessionId: string;
-  readonly missions: Iterable<MissionDefinition>;
+  readonly missions: Iterable<
+    Pick<MissionDefinition, 'id' | 'version' | 'prerequisiteMissions'>
+  >;
 }

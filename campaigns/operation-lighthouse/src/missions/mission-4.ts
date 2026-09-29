@@ -9,6 +9,7 @@ import type { MissionContent } from './shared.js';
 import {
   isRecord,
   isStringArray,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './shared.js';
@@ -217,11 +218,7 @@ export const specialistNetworkValidator: VersionedValidator = {
       validatorOutput(
         rules,
         validationScores({
-          requiredOutcome:
-            rules.filter(
-              ({ severity, status }) =>
-                severity === 'required' && status === 'passed',
-            ).length * 18,
+          requiredOutcome: requiredRulePercentage(rules),
           evidenceAndGrounding: validHandoffs ? 95 : 30,
           reliability: independentReview ? 95 : 35,
           explainability: boundedSpecialists ? 90 : 35,

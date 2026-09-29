@@ -26,13 +26,17 @@ const createToken = (expiresAt: number): string =>
 
 function createHarness() {
   let credentials: ParticipantCredentials | undefined;
+  let currentConfig = config;
   const requests: { readonly init?: RequestInit; readonly url: string }[] = [];
   const tokenSource = createMutableTokenSource(
     createToken(Math.floor(Date.now() / 1000) + 3_600),
   );
   const configRepository: ParticipantConfigRepository = {
-    load: () => Promise.resolve(config),
-    save: () => Promise.resolve(),
+    load: () => Promise.resolve(currentConfig),
+    save: (value) => {
+      currentConfig = value;
+      return Promise.resolve();
+    },
   };
   const credentialRepository: ParticipantCredentialRepository = {
     load: () => Promise.resolve(credentials),
@@ -49,7 +53,10 @@ function createHarness() {
           ? input.href
           : input.url;
     requests.push(init === undefined ? { url } : { init, url });
-    if (url.endsWith('/api/v1/registrations')) {
+    if (
+      url.endsWith('/api/v1/registrations') ||
+      url.endsWith('/api/v1/auth/refresh')
+    ) {
       return Promise.resolve(
         Response.json({
           eventSession: { eventSessionId: 'event-1' },
@@ -72,6 +79,7 @@ function createHarness() {
   });
   return {
     client,
+    configRepository,
     credentials: () => credentials,
     fetch,
     requests,
@@ -79,6 +87,30 @@ function createHarness() {
 }
 
 describe('participant registration and connectivity', () => {
+  it('reconnects the same unit but never sends its reconnect secret to another configured server', async () => {
+    const harness = createHarness();
+    await harness.client.join({
+      displayName: 'Synthetic unit',
+      eventCode: 'LIGHT-123',
+      locale: 'en',
+    });
+    expect(await harness.client.reconnect()).toEqual({
+      eventSessionId: 'event-1',
+      unitId: 'unit-1',
+    });
+    expect(harness.requests[1]?.url).toBe(
+      'https://mission.example.test/api/v1/auth/refresh',
+    );
+    await harness.configRepository.save({
+      ...config,
+      apiUrl: 'https://another.example.test',
+    });
+    await expect(harness.client.reconnect()).rejects.toMatchObject({
+      code: 'credentials-server-mismatch',
+    });
+    expect(harness.fetch).toHaveBeenCalledTimes(2);
+  });
+
   it('joins an event and stores credentials without returning secrets', async () => {
     const harness = createHarness();
 

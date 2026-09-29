@@ -13,6 +13,7 @@ const correlationIdPattern =
 export interface BuildAppOptions {
   readonly config: ApiConfig;
   readonly eventProbes?: readonly HealthProbe[];
+  readonly errorHandler?: typeof handleRequestError;
   readonly logger?: boolean;
   readonly readinessProbes?: readonly HealthProbe[];
 }
@@ -52,6 +53,7 @@ function healthResponse(
 export function buildApp(options: BuildAppOptions): FastifyInstance {
   const { config } = options;
   const app = Fastify({
+    ajv: { customOptions: { removeAdditional: false, coerceTypes: false } },
     genReqId: requestCorrelationId,
     logger: options.logger ?? { level: config.logLevel },
   });
@@ -61,7 +63,7 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
     done();
   });
 
-  app.setErrorHandler(handleRequestError);
+  app.setErrorHandler(options.errorHandler ?? handleRequestError);
   app.setNotFoundHandler((request, reply) => {
     sendProblem(reply, request.id, {
       code: 'route-not-found',

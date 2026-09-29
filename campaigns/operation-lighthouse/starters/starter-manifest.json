@@ -2,12 +2,14 @@
   "schemaVersion": "1.0",
   "missions": [
     {
-      "missionId": "incident-intake",
+      "missionId": "signal-in-the-storm",
       "guidanceLevel": 5,
       "files": [
         "mission-1/README.md",
         "mission-1/src/agent.ts",
-        "mission-1/contracts/output.schema.json"
+        "mission-1/contracts/output.schema.json",
+        "mission-1/examples/incident-report.txt",
+        "mission-1/examples/evidence.json"
       ]
     },
     {
@@ -16,7 +18,8 @@
       "files": [
         "mission-2/README.md",
         "mission-2/src/agent.ts",
-        "mission-2/context/operational-bulletin.json"
+        "mission-2/context/operational-bulletin.json",
+        "mission-2/context/incident-reports.json"
       ]
     },
     {

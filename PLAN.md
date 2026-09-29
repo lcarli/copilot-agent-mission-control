@@ -1236,6 +1236,16 @@ A task is complete only when:
 
 ### Phase 8 — Quality, Security, and Event Readiness
 
+Local implementation evidence (2026-09-29): the
+[readiness handoff](docs/workshop-readiness-handoff.md) records a working
+loopback API/CLI/browser round trip, five mission submissions with actual
+server-observed simulator calls for Missions 3 and 5, and a 50-unit Mission 1
+local concurrency scenario. The
+[participant guide](docs/participant-guide.md) and
+[local operating guide](docs/local-workshop.md) are available. These are partial
+evidence for the tasks below, not completion of intended deployment, actual
+agent/tool authoring, full security/accessibility validation, rehearsal or pilot.
+
 - [ ] **TASK-800 — Add platform unit and contract test suites.** Cover domain, API, campaigns, events, and localization.
 - [ ] **TASK-801 — Add end-to-end event tests.** Cover instructor and participant journeys.
 - [ ] **TASK-802 — Add 50-participant load test.** Validate APIs, simulators, submissions, SignalR, and dashboard behavior.

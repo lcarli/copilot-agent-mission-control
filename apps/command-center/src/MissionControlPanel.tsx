@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type MissionControlStatus = 'locked' | 'open' | 'paused' | 'closed';
 export type MissionControlAction = 'open' | 'pause' | 'resume' | 'close';
@@ -36,6 +36,7 @@ export interface MissionControlPanelProps {
   readonly adapter?: MissionControlAdapter;
   readonly modifiers?: readonly IncidentModifierItem[];
   readonly missions?: readonly MissionControlItem[];
+  readonly showGuidanceControls?: boolean;
   readonly translate: (key: string) => string;
 }
 
@@ -132,6 +133,7 @@ export function MissionControlPanel({
   adapter = defaultAdapter,
   modifiers: initialModifiers = defaultModifiers,
   missions: initialMissions = defaultMissions,
+  showGuidanceControls = true,
   translate: t,
 }: MissionControlPanelProps) {
   const [missions, setMissions] = useState([...initialMissions]);
@@ -144,6 +146,9 @@ export function MissionControlPanel({
   const [hintTarget, setHintTarget] = useState('all');
   const [message, setMessage] = useState<string>();
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    setMissions([...initialMissions]);
+  }, [initialMissions]);
   const selectedMission = missions.find(
     ({ missionId }) => missionId === selectedMissionId,
   );
@@ -278,84 +283,88 @@ export function MissionControlPanel({
             </div>
           </section>
 
-          <section className="panel hint-panel">
-            <div className="panel-heading">
-              <h3>{t('controls.hints')}</h3>
-            </div>
-            <div className="control-form">
-              <label>
-                <span>{t('controls.hintLevel')}</span>
-                <select
-                  value={hintLevel}
-                  onChange={(event) => {
-                    setHintLevel(Number(event.target.value) as 1 | 2 | 3);
-                  }}
-                >
-                  {[1, 2, 3].map((level) => (
-                    <option key={level} value={level}>
-                      {t('controls.level')} {level}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <span>{t('controls.hintTarget')}</span>
-                <select
-                  value={hintTarget}
-                  onChange={(event) => {
-                    setHintTarget(event.target.value);
-                  }}
-                >
-                  <option value="all">{t('controls.allUnits')}</option>
-                  <option value="unit-1">Harbor Team</option>
-                  <option value="unit-2">North Star</option>
-                </select>
-              </label>
-              <button
-                className="primary-button"
-                disabled={busy || selectedMission.status === 'closed'}
-                onClick={() => {
-                  void publishHint();
-                }}
-                type="button"
-              >
-                {t('controls.publishHint')}
-              </button>
-            </div>
-          </section>
-
-          <section className="panel modifier-panel">
-            <div className="panel-heading">
-              <h3>{t('controls.modifiers')}</h3>
-            </div>
-            <ul>
-              {modifiers.map((modifier) => (
-                <li key={modifier.modifierId}>
-                  <div>
-                    <strong>{modifier.title}</strong>
-                    <p>{modifier.description}</p>
-                  </div>
-                  <button
-                    aria-pressed={modifier.active}
-                    className={
-                      modifier.active ? 'secondary-button' : 'primary-button'
-                    }
-                    disabled={busy}
-                    onClick={() => {
-                      void toggleModifier(modifier);
+          {showGuidanceControls ? (
+            <section className="panel hint-panel">
+              <div className="panel-heading">
+                <h3>{t('controls.hints')}</h3>
+              </div>
+              <div className="control-form">
+                <label>
+                  <span>{t('controls.hintLevel')}</span>
+                  <select
+                    value={hintLevel}
+                    onChange={(event) => {
+                      setHintLevel(Number(event.target.value) as 1 | 2 | 3);
                     }}
-                    type="button"
                   >
-                    {t(
-                      modifier.active
-                        ? 'controls.deactivate'
-                        : 'controls.activate',
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
+                    {[1, 2, 3].map((level) => (
+                      <option key={level} value={level}>
+                        {t('controls.level')} {level}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>{t('controls.hintTarget')}</span>
+                  <select
+                    value={hintTarget}
+                    onChange={(event) => {
+                      setHintTarget(event.target.value);
+                    }}
+                  >
+                    <option value="all">{t('controls.allUnits')}</option>
+                    <option value="unit-1">Harbor Team</option>
+                    <option value="unit-2">North Star</option>
+                  </select>
+                </label>
+                <button
+                  className="primary-button"
+                  disabled={busy || selectedMission.status === 'closed'}
+                  onClick={() => {
+                    void publishHint();
+                  }}
+                  type="button"
+                >
+                  {t('controls.publishHint')}
+                </button>
+              </div>
+            </section>
+          ) : null}
+
+          {showGuidanceControls ? (
+            <section className="panel modifier-panel">
+              <div className="panel-heading">
+                <h3>{t('controls.modifiers')}</h3>
+              </div>
+              <ul>
+                {modifiers.map((modifier) => (
+                  <li key={modifier.modifierId}>
+                    <div>
+                      <strong>{modifier.title}</strong>
+                      <p>{modifier.description}</p>
+                    </div>
+                    <button
+                      aria-pressed={modifier.active}
+                      className={
+                        modifier.active ? 'secondary-button' : 'primary-button'
+                      }
+                      disabled={busy}
+                      onClick={() => {
+                        void toggleModifier(modifier);
+                      }}
+                      type="button"
+                    >
+                      {t(
+                        modifier.active
+                          ? 'controls.deactivate'
+                          : 'controls.activate',
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </div>
       )}
     </section>

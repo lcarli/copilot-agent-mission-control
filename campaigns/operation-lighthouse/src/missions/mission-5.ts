@@ -6,19 +6,22 @@ import type {
 } from '@mission-control/validation-worker';
 
 import { resourceIds } from '../simulators/resources.js';
+import { districtIds } from '../world.js';
 import type { MissionContent } from './shared.js';
 import {
   isRecord,
   isStringArray,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './shared.js';
+import { observedToolEvidence } from './tool-evidence.js';
 
 export const restoreTheLighthouseContent: MissionContent = {
   missionId: 'restore-the-lighthouse',
   version: '1.0.0',
   validatorId: 'operation-lighthouse.restore-the-lighthouse',
-  validatorVersion: '1.0.0',
+  validatorVersion: '1.1.0',
   content: {
     en: {
       locale: 'en',
@@ -126,34 +129,46 @@ export const restoreTheLighthouseValidator: VersionedValidator = {
     const evidenceIds = isStringArray(submission.evidenceIds)
       ? submission.evidenceIds
       : [];
-    const toolSources = new Set(
-      Array.isArray(submission.toolTrace)
-        ? submission.toolTrace
-            .filter(isRecord)
-            .flatMap((entry) =>
-              typeof entry.tool === 'string' && entry.status === 'success'
-                ? [entry.tool]
-                : [],
-            )
-        : [],
+    const observed = observedToolEvidence(context);
+    const cited = observed.successful.filter(({ evidenceId }) =>
+      evidenceIds.includes(evidenceId),
     );
+    const toolSources = new Set(cited.map(({ tool }) => tool));
+    const grounded =
+      observed.traceValid &&
+      observed.grounded(evidenceIds, 5) &&
+      toolSources.size >= 4;
     const actions = Array.isArray(submission.prioritizedActions)
       ? submission.prioritizedActions.filter(isRecord)
       : [];
     const validPriorities =
+      Array.isArray(submission.prioritizedActions) &&
+      submission.prioritizedActions.length === actions.length &&
       actions.length > 0 &&
       actions.every(
         (action, index) =>
           action.priority === index + 1 &&
           typeof action.actionId === 'string' &&
           typeof action.rationale === 'string' &&
-          isStringArray(action.evidenceIds) &&
-          action.evidenceIds.length > 0,
+          observed.grounded(action.evidenceIds) &&
+          action.evidenceIds.every((id) => evidenceIds.includes(id)),
       );
     const allocations = Array.isArray(submission.resourceAllocations)
       ? submission.resourceAllocations.filter(isRecord)
       : [];
+    const inventory = cited
+      .filter(
+        ({ tool, operation }) =>
+          tool === 'resources' && operation === 'inventory',
+      )
+      .flatMap(({ result }) =>
+        result.ok && Array.isArray(result.value)
+          ? result.value.filter(isRecord)
+          : [],
+      );
     const validAllocations =
+      Array.isArray(submission.resourceAllocations) &&
+      submission.resourceAllocations.length === allocations.length &&
       allocations.length > 0 &&
       allocations.every(
         (allocation) =>
@@ -163,20 +178,39 @@ export const restoreTheLighthouseValidator: VersionedValidator = {
           Number.isInteger(allocation.quantity) &&
           allocation.quantity > 0 &&
           typeof allocation.destinationDistrictId === 'string' &&
-          typeof allocation.purpose === 'string',
+          districtIds.some((id) => id === allocation.destinationDistrictId) &&
+          typeof allocation.purpose === 'string' &&
+          allocation.purpose.trim().length > 0,
+      ) &&
+      [...new Set(allocations.map(({ resourceId }) => resourceId))].every(
+        (resourceId) => {
+          const available = inventory.find(
+            (item) => item.resourceId === resourceId,
+          )?.availableQuantity;
+          const requested = allocations
+            .filter((item) => item.resourceId === resourceId)
+            .reduce(
+              (sum, item) =>
+                sum + (typeof item.quantity === 'number' ? item.quantity : 0),
+              0,
+            );
+          return typeof available === 'number' && requested <= available;
+        },
       );
     const handoffs = Array.isArray(submission.specialistHandoffs)
       ? submission.specialistHandoffs.filter(isRecord)
       : [];
     const validHandoffs =
+      Array.isArray(submission.specialistHandoffs) &&
+      submission.specialistHandoffs.length === handoffs.length &&
       handoffs.length >= 2 &&
       handoffs.every(
         (handoff) =>
           typeof handoff.sourceRole === 'string' &&
           typeof handoff.targetRole === 'string' &&
           handoff.sourceRole !== handoff.targetRole &&
-          isStringArray(handoff.evidenceIds) &&
-          handoff.evidenceIds.length > 0,
+          observed.grounded(handoff.evidenceIds) &&
+          handoff.evidenceIds.every((id) => evidenceIds.includes(id)),
       );
     const review = isRecord(submission.finalReview)
       ? submission.finalReview
@@ -190,16 +224,23 @@ export const restoreTheLighthouseValidator: VersionedValidator = {
       audit !== undefined &&
       typeof audit.decisionId === 'string' &&
       typeof audit.createdAt === 'string' &&
-      isStringArray(audit.evidenceIds) &&
-      audit.evidenceIds.length > 0;
+      observed.grounded(audit.evidenceIds) &&
+      audit.evidenceIds.every((id) => evidenceIds.includes(id));
     const modifierHandled =
       typeof submission.incidentModifierId === 'string' &&
       submission.incidentModifierApplied === true;
+    const replan = isRecord(submission.replan) ? submission.replan : undefined;
     const replanned =
-      isRecord(submission.replan) &&
-      typeof submission.replan.failedTool === 'string' &&
-      isStringArray(submission.replan.changedActionIds) &&
-      submission.replan.changedActionIds.length > 0;
+      replan !== undefined &&
+      typeof replan.failedTool === 'string' &&
+      isStringArray(replan.changedActionIds) &&
+      replan.changedActionIds.length > 0 &&
+      replan.changedActionIds.every((id) =>
+        actions.some((action) => action.actionId === id),
+      ) &&
+      observed.observations.some(
+        (item) => !item.result.ok && item.tool === replan.failedTool,
+      );
     const rejectedAlternatives =
       Array.isArray(submission.rejectedAlternatives) &&
       submission.rejectedAlternatives
@@ -228,15 +269,14 @@ export const restoreTheLighthouseValidator: VersionedValidator = {
       );
     const efficient =
       typeof submission.totalToolCalls === 'number' &&
-      submission.totalToolCalls > 0 &&
-      submission.totalToolCalls <= 16;
+      submission.totalToolCalls === observed.observations.length &&
+      observed.observations.length > 0 &&
+      observed.observations.length <= 16;
 
     const rules = [
       rule('combined-assessment', hazards.length >= 3),
-      rule(
-        'multiple-tool-evidence',
-        evidenceIds.length >= 5 && toolSources.size >= 4,
-      ),
+      rule('multiple-tool-evidence', grounded),
+      rule('tool-provenance', observed.traceValid),
       rule('prioritized-plan', validPriorities),
       rule('resource-allocation', validAllocations),
       rule('specialist-routing', validHandoffs),
@@ -258,13 +298,8 @@ export const restoreTheLighthouseValidator: VersionedValidator = {
       validatorOutput(
         rules,
         validationScores({
-          requiredOutcome:
-            rules.filter(
-              ({ severity, status }) =>
-                severity === 'required' && status === 'passed',
-            ).length * 14,
-          evidenceAndGrounding:
-            evidenceIds.length >= 5 && toolSources.size >= 4 ? 100 : 30,
+          requiredOutcome: requiredRulePercentage(rules),
+          evidenceAndGrounding: grounded ? 100 : 30,
           reliability:
             validatedPlan && auditable && highImpactApproved ? 100 : 40,
           explainability: validPriorities && rejectedAlternatives ? 95 : 45,

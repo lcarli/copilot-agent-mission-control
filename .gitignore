@@ -1,7 +1,16 @@
 node_modules/
 dist/
 coverage/
+playwright-report/
+test-results/
 .turbo/
+
+# Local video drafts are deferred and are not part of the portable workshop kit.
+campaigns/operation-lighthouse/media/**/*.mp4
+campaigns/operation-lighthouse/media/**/*.mov
+campaigns/operation-lighthouse/media/**/*.webm
+campaigns/operation-lighthouse/media/**/*.mkv
+campaigns/operation-lighthouse/media/**/*.avi
 
 .env
 .env.*

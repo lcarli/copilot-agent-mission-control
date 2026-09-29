@@ -1,10 +1,191 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
+  "additionalProperties": false,
   "required": ["schemaVersion", "missionId", "evidence"],
   "properties": {
     "schemaVersion": { "const": "1.0" },
     "missionId": { "const": "restore-the-lighthouse" },
-    "evidence": { "type": "object" }
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "incidentAssessment",
+        "evidenceIds",
+        "toolTrace",
+        "prioritizedActions",
+        "resourceAllocations",
+        "specialistHandoffs",
+        "finalReview",
+        "audit"
+      ],
+      "properties": {
+        "incidentAssessment": {
+          "type": "object",
+          "required": ["hazards"],
+          "properties": {
+            "hazards": {
+              "type": "array",
+              "$ref": "#/$defs/textList",
+              "minItems": 3
+            }
+          }
+        },
+        "evidenceIds": {
+          "type": "array",
+          "$ref": "#/$defs/textList",
+          "minItems": 5
+        },
+        "toolTrace": {
+          "type": "array",
+          "minItems": 4,
+          "items": {
+            "type": "object",
+            "required": ["tool", "status", "evidenceId"],
+            "properties": {
+              "tool": {
+                "enum": [
+                  "weather",
+                  "grid",
+                  "shelter",
+                  "transport",
+                  "resources",
+                  "incidents"
+                ]
+              },
+              "status": { "enum": ["success", "failed"] },
+              "evidenceId": { "$ref": "#/$defs/text" }
+            }
+          }
+        },
+        "prioritizedActions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["priority", "actionId", "rationale", "evidenceIds"],
+            "properties": {
+              "priority": { "type": "integer", "minimum": 1 },
+              "actionId": { "$ref": "#/$defs/text" },
+              "rationale": { "$ref": "#/$defs/text" },
+              "evidenceIds": {
+                "type": "array",
+                "$ref": "#/$defs/textList",
+                "minItems": 1
+              },
+              "impact": { "enum": ["low", "moderate", "high"] }
+            }
+          }
+        },
+        "resourceAllocations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "resourceId",
+              "quantity",
+              "destinationDistrictId",
+              "purpose"
+            ],
+            "properties": {
+              "resourceId": { "$ref": "#/$defs/text" },
+              "quantity": { "type": "integer", "minimum": 1 },
+              "destinationDistrictId": {
+                "enum": [
+                  "harbor",
+                  "old-town",
+                  "north-hills",
+                  "east-bank",
+                  "civic-center"
+                ]
+              },
+              "purpose": { "$ref": "#/$defs/text" }
+            }
+          }
+        },
+        "specialistHandoffs": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["sourceRole", "targetRole", "evidenceIds"],
+            "properties": {
+              "sourceRole": { "$ref": "#/$defs/text" },
+              "targetRole": { "$ref": "#/$defs/text" },
+              "evidenceIds": {
+                "type": "array",
+                "$ref": "#/$defs/textList",
+                "minItems": 1
+              }
+            }
+          }
+        },
+        "finalReview": {
+          "type": "object",
+          "required": ["reviewerRoleId", "planVersion", "approved"],
+          "properties": {
+            "reviewerRoleId": { "$ref": "#/$defs/text" },
+            "planVersion": { "$ref": "#/$defs/text" },
+            "approved": { "type": "boolean" }
+          }
+        },
+        "audit": {
+          "type": "object",
+          "required": ["decisionId", "createdAt", "evidenceIds"],
+          "properties": {
+            "decisionId": { "$ref": "#/$defs/text" },
+            "createdAt": { "$ref": "#/$defs/text" },
+            "evidenceIds": {
+              "type": "array",
+              "$ref": "#/$defs/textList",
+              "minItems": 1
+            }
+          }
+        },
+        "incidentModifierId": { "$ref": "#/$defs/text" },
+        "incidentModifierApplied": { "type": "boolean" },
+        "replan": {
+          "type": "object",
+          "required": ["failedTool", "changedActionIds"],
+          "properties": {
+            "failedTool": { "$ref": "#/$defs/text" },
+            "changedActionIds": {
+              "type": "array",
+              "$ref": "#/$defs/textList",
+              "minItems": 1
+            }
+          }
+        },
+        "rejectedAlternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["alternativeId", "reason"],
+            "properties": {
+              "alternativeId": { "$ref": "#/$defs/text" },
+              "reason": { "$ref": "#/$defs/text" }
+            }
+          }
+        },
+        "humanApprovals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["actionId", "approverRole", "approved"],
+            "properties": {
+              "actionId": { "$ref": "#/$defs/text" },
+              "approverRole": { "$ref": "#/$defs/text" },
+              "approved": { "type": "boolean" }
+            }
+          }
+        },
+        "totalToolCalls": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "textList": { "type": "array", "items": { "$ref": "#/$defs/text" } }
   }
 }

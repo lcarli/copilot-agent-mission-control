@@ -28,13 +28,13 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Progresso das unidades');
   });
 
-  it('renders the guided setup flow by default', () => {
+  it('renders real local event connection controls by default', () => {
     const markup = renderToStaticMarkup(<CommandCenterApp />);
 
-    expect(markup).toContain('Prepare a new event');
-    expect(markup).toContain('Operation Lighthouse 1.0');
-    expect(markup).toContain('Participant languages');
-    expect(markup).toContain('Event setup progress');
+    expect(markup).toContain('Local workshop rehearsal');
+    expect(markup).toContain('Create local event');
+    expect(markup).toContain('type="password"');
+    expect(markup).not.toContain('24 / 25');
   });
 
   it('renders the lobby and connectivity projection', () => {
@@ -78,16 +78,14 @@ describe('CommandCenterApp', () => {
     expect(markup).toContain('Coordination activity');
   });
 
-  it('renders the multilingual public presentation projection', () => {
+  it('keeps the public-only page disconnected and free of private controls', () => {
     const markup = renderToStaticMarkup(
       <CommandCenterApp initialLocale="fr" initialView="presentation" />,
     );
 
-    expect(markup).toContain('Affichage public en direct');
-    expect(markup).toContain('Operation Lighthouse');
-    expect(markup).toContain('Rétablissement collectif');
-    expect(markup).toContain(
-      'les données personnelles et opérationnelles sensibles ne sont pas affichées',
-    );
+    expect(markup).toContain('Aucune projection connectée.');
+    expect(markup).not.toContain('<nav');
+    expect(markup).not.toContain('type="password"');
+    expect(markup).not.toContain('Harbor Team');
   });
 });

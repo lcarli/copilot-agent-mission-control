@@ -9,15 +9,17 @@ import type { MissionContent } from './shared.js';
 import {
   isRecord,
   isStringArray,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './shared.js';
+import { observedToolEvidence } from './tool-evidence.js';
 
 export const connectedCityContent: MissionContent = {
   missionId: 'connected-city',
   version: '1.0.0',
   validatorId: 'operation-lighthouse.connected-city',
-  validatorVersion: '1.0.0',
+  validatorVersion: '1.1.0',
   content: {
     en: {
       locale: 'en',
@@ -112,12 +114,9 @@ export const connectedCityValidator: VersionedValidator = {
     const toolTrace = Array.isArray(submission.toolTrace)
       ? submission.toolTrace.filter(isRecord)
       : [];
+    const observed = observedToolEvidence(context);
     const successfulTools = new Set(
-      toolTrace.flatMap((entry) =>
-        typeof entry.tool === 'string' && entry.status === 'success'
-          ? [entry.tool]
-          : [],
-      ),
+      observed.successful.map(({ tool }) => tool),
     );
     const recommendation = isRecord(submission.recommendation)
       ? submission.recommendation
@@ -135,14 +134,43 @@ export const connectedCityValidator: VersionedValidator = {
       recommendation !== undefined && isStringArray(recommendation.evidenceIds)
         ? recommendation.evidenceIds
         : [];
-    const handledFailure = toolTrace.some(
-      (entry) =>
-        entry.status === 'failed' &&
-        entry.retryable === true &&
-        typeof entry.retries === 'number' &&
-        entry.retries >= 0 &&
-        entry.retries <= 2,
+    const cited = observed.successful.filter(({ evidenceId }) =>
+      evidenceIds.includes(evidenceId),
     );
+    const shelter = cited
+      .filter(
+        ({ tool, operation }) => tool === 'shelter' && operation === 'list',
+      )
+      .flatMap(({ result }) =>
+        result.ok && Array.isArray(result.value)
+          ? result.value.filter(isRecord)
+          : [],
+      )
+      .find((item) => item.shelterId === shelterId);
+    const validShelter =
+      shelter?.status === 'open' &&
+      typeof shelter.capacity === 'number' &&
+      typeof shelter.occupancy === 'number' &&
+      shelter.occupancy < shelter.capacity;
+    const validRoute =
+      routeIds.length > 0 &&
+      cited.some(
+        ({ tool, operation, result }) =>
+          tool === 'transport' &&
+          operation === 'journey' &&
+          result.ok &&
+          isRecord(result.value) &&
+          isStringArray(result.value.routeIds) &&
+          result.value.destinationDistrictId === shelter?.districtId &&
+          result.value.routeIds.length === routeIds.length &&
+          result.value.routeIds.every((id, index) => routeIds[index] === id),
+      );
+    const grounded =
+      observed.grounded(evidenceIds, 3) &&
+      [...requiredTools].every((tool) =>
+        cited.some((item) => item.tool === tool),
+      );
+    const handledFailure = observed.traceValid && observed.recoveredFailure;
     const comparedRoutes =
       recommendation !== undefined &&
       Array.isArray(recommendation.alternatives) &&
@@ -152,23 +180,22 @@ export const connectedCityValidator: VersionedValidator = {
         'required-tools',
         [...requiredTools].every((tool) => successfulTools.has(tool)),
       ),
-      rule('shelter-recommendation', shelterId.length > 0),
-      rule('route-recommendation', routeIds.length > 0),
-      rule('evidence-grounding', evidenceIds.length >= 3),
+      rule('tool-provenance', observed.traceValid),
+      rule('shelter-recommendation', validShelter),
+      rule('route-recommendation', validRoute),
+      rule('evidence-grounding', grounded),
       rule('failure-handling', handledFailure),
       rule('route-comparison', comparedRoutes, 'advanced'),
       rule(
         'bounded-retries',
-        toolTrace.every(
-          (entry) =>
-            typeof entry.retries !== 'number' ||
-            (entry.retries >= 0 && entry.retries <= 2),
-        ),
+        observed.observations.length > 0 && observed.boundedRetries,
         'advanced',
       ),
       rule(
         'concise-trace',
-        toolTrace.length > 0 && toolTrace.length <= 8,
+        observed.traceValid &&
+          toolTrace.length <= 8 &&
+          observed.observations.length <= 8,
         'advanced',
       ),
       rule(
@@ -182,15 +209,12 @@ export const connectedCityValidator: VersionedValidator = {
       validatorOutput(
         rules,
         validationScores({
-          requiredOutcome:
-            rules.filter(
-              ({ severity, status }) =>
-                severity === 'required' && status === 'passed',
-            ).length * 18,
-          evidenceAndGrounding: evidenceIds.length >= 3 ? 95 : 35,
+          requiredOutcome: requiredRulePercentage(rules),
+          evidenceAndGrounding: grounded ? 95 : 35,
           reliability: handledFailure ? 90 : 45,
-          explainability: routeIds.length > 0 && shelterId.length > 0 ? 85 : 30,
-          efficiency: toolTrace.length > 0 && toolTrace.length <= 8 ? 90 : 40,
+          explainability: validRoute && validShelter ? 85 : 30,
+          efficiency:
+            observed.traceValid && observed.observations.length <= 8 ? 90 : 40,
         }),
       ),
     );

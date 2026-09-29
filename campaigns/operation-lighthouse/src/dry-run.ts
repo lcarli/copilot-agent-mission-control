@@ -19,6 +19,7 @@ import { cloneFrozen, type SimulatorResult } from './simulators/shared.js';
 import { ShelterSimulator } from './simulators/shelter.js';
 import { TransportSimulator } from './simulators/transport.js';
 import { WeatherSimulator } from './simulators/weather.js';
+import { LighthouseSimulatorSession } from './simulators/tools.js';
 import { portAzureWorld } from './world.js';
 
 export const campaignFinaleRecoveryThreshold = 80;
@@ -99,6 +100,45 @@ const runMissionValidations = async (): Promise<
   readonly CampaignDryRunMissionResult[]
 > => {
   const abortSignal = new AbortController().signal;
+  const observeTools = (missionId: string) => {
+    const session = new LighthouseSimulatorSession({
+      eventSessionId: 'dry-run-event',
+      unitId: 'dry-run-unit',
+      missionId,
+    });
+    const invoke = (
+      tool: string,
+      operation: string,
+      evidenceId: string,
+      args: Record<string, unknown> = {},
+    ) =>
+      session.invoke(
+        { tool, operation, arguments: args },
+        evidenceId,
+        '2026-09-25T10:00:00Z',
+      );
+    invoke('weather', 'forecast', 'forecast-failed');
+    invoke('weather', 'forecast', 'forecast-1000');
+    invoke('shelter', 'list', 'shelter-state');
+    invoke('transport', 'journey', 'journey-1', {
+      originDistrictId: 'harbor',
+      destinationDistrictId: 'north-hills',
+      mode: 'emergency',
+    });
+    if (missionId === 'restore-the-lighthouse') {
+      invoke('grid', 'health', 'harbor-loop-health');
+      invoke('resources', 'inventory', 'inventory-1');
+    }
+    const observations = session.observations();
+    return {
+      observations,
+      trace: observations.map(({ tool, evidenceId, result }) => ({
+        tool,
+        evidenceId,
+        status: result.ok ? 'success' : 'failed',
+      })),
+    };
+  };
   const mission1 = await signalInTheStormValidator.validate(
     missionContext(1, 'signal-in-the-storm', {
       category: 'flooding',
@@ -146,30 +186,22 @@ const runMissionValidations = async (): Promise<
     ),
     abortSignal,
   );
+  const cityTools = observeTools('connected-city');
   const mission3 = await connectedCityValidator.validate(
-    missionContext(3, 'connected-city', {
-      toolTrace: [
-        { tool: 'weather', status: 'success', evidenceId: 'forecast-1000' },
-        {
-          tool: 'shelter',
-          status: 'success',
-          evidenceId: 'north-hills-school',
+    missionContext(
+      3,
+      'connected-city',
+      {
+        toolTrace: cityTools.trace,
+        recommendation: {
+          shelterId: 'north-hills-school',
+          routeIds: ['harbor-old-town', 'old-town-north-hills'],
+          evidenceIds: ['forecast-1000', 'shelter-state', 'journey-1'],
+          alternatives: ['east-bank-arena'],
         },
-        {
-          tool: 'transport',
-          status: 'failed',
-          retryable: true,
-          retries: 1,
-        },
-        { tool: 'transport', status: 'success', evidenceId: 'journey-1' },
-      ],
-      recommendation: {
-        shelterId: 'north-hills-school',
-        routeIds: ['harbor-old-town', 'old-town-north-hills'],
-        evidenceIds: ['forecast-1000', 'north-hills-school', 'journey-1'],
-        alternatives: ['east-bank-arena'],
       },
-    }),
+      cityTools.observations,
+    ),
     validationRequest(
       3,
       'connected-city',
@@ -251,103 +283,103 @@ const runMissionValidations = async (): Promise<
     ),
     abortSignal,
   );
+  const finaleTools = observeTools('restore-the-lighthouse');
   const mission5 = await restoreTheLighthouseValidator.validate(
-    missionContext(5, 'restore-the-lighthouse', {
-      incidentAssessment: {
-        hazards: ['grid-failure', 'communications-loss', 'storm-surge'],
-      },
-      evidenceIds: [
-        'forecast-1000',
-        'harbor-loop-health',
-        'shelter-state',
-        'journey-1',
-        'inventory-1',
-      ],
-      toolTrace: [
-        { tool: 'weather', status: 'success' },
-        { tool: 'grid', status: 'success' },
-        { tool: 'shelter', status: 'success' },
-        { tool: 'transport', status: 'success' },
-        { tool: 'resources', status: 'success' },
-      ],
-      prioritizedActions: [
-        {
-          priority: 1,
-          actionId: 'restore-radio',
-          impact: 'high',
-          rationale: 'Restore emergency coordination.',
-          evidenceIds: ['harbor-loop-health', 'inventory-1'],
+    missionContext(
+      5,
+      'restore-the-lighthouse',
+      {
+        incidentAssessment: {
+          hazards: ['grid-failure', 'communications-loss', 'storm-surge'],
         },
-        {
-          priority: 2,
-          actionId: 'evacuate-harbor',
-          impact: 'high',
-          rationale: 'Move residents ahead of the surge.',
-          evidenceIds: ['forecast-1000', 'journey-1'],
-        },
-      ],
-      resourceAllocations: [
-        {
-          resourceId: 'portable-generators',
-          quantity: 2,
-          destinationDistrictId: 'old-town',
-          purpose: 'Restore public safety radio.',
-        },
-        {
-          resourceId: 'evacuation-buses',
-          quantity: 3,
-          destinationDistrictId: 'harbor',
-          purpose: 'Evacuate residents.',
-        },
-      ],
-      specialistHandoffs: [
-        {
-          sourceRole: 'weather-specialist',
-          targetRole: 'logistics-specialist',
-          evidenceIds: ['forecast-1000'],
-        },
-        {
-          sourceRole: 'logistics-specialist',
-          targetRole: 'reviewer',
-          evidenceIds: ['journey-1', 'inventory-1'],
-        },
-      ],
-      finalReview: {
-        reviewerRoleId: 'reviewer',
-        planVersion: '2',
-        approved: true,
-      },
-      audit: {
-        decisionId: 'decision-001',
-        createdAt: '2026-09-25T12:00:00Z',
-        evidenceIds: ['forecast-1000', 'inventory-1'],
-      },
-      incidentModifierId: 'storm-surge-escalation',
-      incidentModifierApplied: true,
-      replan: {
-        failedTool: 'transport',
-        changedActionIds: ['evacuate-harbor'],
-      },
-      rejectedAlternatives: [
-        {
-          alternativeId: 'harbor-east-bank',
-          reason: 'Route is closed.',
-        },
-      ],
-      humanApprovals: [
-        {
-          actionId: 'restore-radio',
-          approverRole: 'mission-commander',
+        evidenceIds: [
+          'forecast-1000',
+          'harbor-loop-health',
+          'shelter-state',
+          'journey-1',
+          'inventory-1',
+        ],
+        toolTrace: finaleTools.trace,
+        prioritizedActions: [
+          {
+            priority: 1,
+            actionId: 'restore-radio',
+            impact: 'high',
+            rationale: 'Restore emergency coordination.',
+            evidenceIds: ['harbor-loop-health', 'inventory-1'],
+          },
+          {
+            priority: 2,
+            actionId: 'evacuate-harbor',
+            impact: 'high',
+            rationale: 'Move residents ahead of the surge.',
+            evidenceIds: ['forecast-1000', 'journey-1'],
+          },
+        ],
+        resourceAllocations: [
+          {
+            resourceId: 'portable-generators',
+            quantity: 2,
+            destinationDistrictId: 'old-town',
+            purpose: 'Restore public safety radio.',
+          },
+          {
+            resourceId: 'evacuation-buses',
+            quantity: 3,
+            destinationDistrictId: 'harbor',
+            purpose: 'Evacuate residents.',
+          },
+        ],
+        specialistHandoffs: [
+          {
+            sourceRole: 'weather-specialist',
+            targetRole: 'logistics-specialist',
+            evidenceIds: ['forecast-1000'],
+          },
+          {
+            sourceRole: 'logistics-specialist',
+            targetRole: 'reviewer',
+            evidenceIds: ['journey-1', 'inventory-1'],
+          },
+        ],
+        finalReview: {
+          reviewerRoleId: 'reviewer',
+          planVersion: '2',
           approved: true,
         },
-        {
-          actionId: 'evacuate-harbor',
-          approverRole: 'mission-commander',
-          approved: true,
+        audit: {
+          decisionId: 'decision-001',
+          createdAt: '2026-09-25T12:00:00Z',
+          evidenceIds: ['forecast-1000', 'inventory-1'],
         },
-      ],
-      totalToolCalls: 9,
-    }),
+        incidentModifierId: 'storm-surge-escalation',
+        incidentModifierApplied: true,
+        replan: {
+          failedTool: 'weather',
+          changedActionIds: ['evacuate-harbor'],
+        },
+        rejectedAlternatives: [
+          {
+            alternativeId: 'harbor-east-bank',
+            reason: 'Route is closed.',
+          },
+        ],
+        humanApprovals: [
+          {
+            actionId: 'restore-radio',
+            approverRole: 'mission-commander',
+            approved: true,
+          },
+          {
+            actionId: 'evacuate-harbor',
+            approverRole: 'mission-commander',
+            approved: true,
+          },
+        ],
+        totalToolCalls: finaleTools.observations.length,
+      },
+      finaleTools.observations,
+    ),
     validationRequest(
       5,
       'restore-the-lighthouse',

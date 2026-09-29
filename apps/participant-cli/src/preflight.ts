@@ -103,9 +103,15 @@ export async function runParticipantPreflight({
     executableCheck(probe, 'vscode', 'code', ['--version']),
     probe.run('code', ['--list-extensions']),
   ]);
-  const copilotInstalled = extensions.stdout
+  const installedExtensions = extensions.stdout
     .split(/\r?\n/u)
-    .some((extension) => extension.toLowerCase() === 'github.copilot');
+    .map((extension) => extension.toLowerCase());
+  const copilotInstalled =
+    extensions.exitCode === 0 &&
+    installedExtensions.some(
+      (extension) =>
+        extension === 'github.copilot' || extension === 'github.copilot-chat',
+    );
   const diagnostics = await runParticipantDiagnostics({
     auth,
     configRepository,
@@ -124,7 +130,9 @@ export async function runParticipantPreflight({
     vscode,
     {
       check: 'copilot',
-      detail: copilotInstalled ? 'GitHub.copilot' : 'not found',
+      detail: copilotInstalled
+        ? 'Copilot extension detected; confirm account access and agent availability in VS Code'
+        : 'not found',
       status: copilotInstalled ? 'pass' : 'fail',
     },
     ...diagnostics

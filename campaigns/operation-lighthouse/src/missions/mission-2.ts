@@ -9,6 +9,7 @@ import type { MissionContent } from './shared.js';
 import {
   isRecord,
   isStringArray,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './shared.js';
@@ -170,11 +171,7 @@ export const groundTruthValidator: VersionedValidator = {
       validatorOutput(
         rules,
         validationScores({
-          requiredOutcome:
-            rules.filter(
-              ({ severity, status }) =>
-                severity === 'required' && status === 'passed',
-            ).length * 15,
+          requiredOutcome: requiredRulePercentage(rules),
           evidenceAndGrounding: evidenceIds.length > 0 ? 95 : 20,
           reliability: supported !== undefined && unknowns.length > 0 ? 90 : 35,
           explainability: facts.length > 0 && assumptions.length >= 0 ? 85 : 30,

@@ -1,101 +1,32 @@
-export interface PublicMissionSummary {
-  readonly title: string;
-  readonly phase: string;
-  readonly progressPercent: number;
-}
+import type { PublicPresentationProjection } from '@mission-control/event-contracts';
 
-export interface PublicDistrictSummary {
-  readonly districtId: string;
-  readonly displayName: string;
-  readonly recoveryPercent: number;
-  readonly status: 'critical' | 'stabilizing' | 'recovered';
-}
-
-export interface PublicRankingSummary {
-  readonly rank: number;
-  readonly moderatedUnitName: string;
-  readonly score: number;
-}
-
-export interface PublicRecognitionSummary {
-  readonly recognitionId: string;
-  readonly moderatedUnitName: string;
-  readonly title: string;
-}
-
-export interface PublicPresentationProjection {
-  readonly eventName: string;
-  readonly activeMission: PublicMissionSummary;
-  readonly collectiveRecoveryPercent: number;
-  readonly connectedUnitCount: number;
-  readonly districts: readonly PublicDistrictSummary[];
-  readonly rankings: readonly PublicRankingSummary[];
-  readonly recognitions: readonly PublicRecognitionSummary[];
-}
+export type {
+  PublicMissionSummary,
+  PublicDistrictSummary,
+  PublicRankingSummary,
+  PublicRecognitionSummary,
+  PublicPresentationProjection,
+} from '@mission-control/event-contracts';
 
 export interface PublicPresentationViewProps {
   readonly projection?: PublicPresentationProjection;
   readonly translate: (key: string) => string;
 }
 
-const defaultProjection: PublicPresentationProjection = {
-  activeMission: {
-    phase: 'Specialist coordination',
-    progressPercent: 72,
-    title: 'Mission 4 · Unified Response',
-  },
-  collectiveRecoveryPercent: 68,
-  connectedUnitCount: 24,
-  districts: [
-    {
-      displayName: 'Harbor',
-      districtId: 'harbor',
-      recoveryPercent: 82,
-      status: 'stabilizing',
-    },
-    {
-      displayName: 'Old Town',
-      districtId: 'old-town',
-      recoveryPercent: 61,
-      status: 'stabilizing',
-    },
-    {
-      displayName: 'North Grid',
-      districtId: 'north-grid',
-      recoveryPercent: 43,
-      status: 'critical',
-    },
-    {
-      displayName: 'University',
-      districtId: 'university',
-      recoveryPercent: 100,
-      status: 'recovered',
-    },
-  ],
-  eventName: 'Operation Lighthouse',
-  rankings: [
-    { moderatedUnitName: 'Beacon Builders', rank: 1, score: 485 },
-    { moderatedUnitName: 'Coastal Coders', rank: 2, score: 462 },
-    { moderatedUnitName: 'Signal Crew', rank: 3, score: 451 },
-  ],
-  recognitions: [
-    {
-      moderatedUnitName: 'Beacon Builders',
-      recognitionId: 'reliability',
-      title: 'Reliability leader',
-    },
-    {
-      moderatedUnitName: 'Signal Crew',
-      recognitionId: 'evidence',
-      title: 'Evidence champion',
-    },
-  ],
-};
-
 export function PublicPresentationView({
-  projection = defaultProjection,
+  projection,
   translate: t,
 }: PublicPresentationViewProps) {
+  if (projection === undefined) {
+    return (
+      <section
+        className="public-presentation"
+        aria-label={t('nav.presentation')}
+      >
+        <p role="status">{t('presentation.disconnected')}</p>
+      </section>
+    );
+  }
   return (
     <section
       className="public-presentation"
@@ -103,20 +34,39 @@ export function PublicPresentationView({
     >
       <header className="presentation-header">
         <div>
-          <p className="eyebrow">{t('presentation.live')}</p>
+          <p className="eyebrow">
+            {t(
+              projection.source === 'local-event'
+                ? 'presentation.local'
+                : 'presentation.supplied',
+            )}
+          </p>
           <h2 id="public-presentation-title">{projection.eventName}</h2>
         </div>
         <div className="presentation-units">
           <strong>{projection.connectedUnitCount}</strong>
-          <span>{t('presentation.unitsConnected')}</span>
+          <span>
+            {t(
+              projection.activityWindowSeconds === undefined
+                ? 'presentation.unitsConnected'
+                : 'presentation.recentActivity',
+            )}
+          </span>
         </div>
       </header>
-
+      {projection.activityWindowSeconds === undefined ? null : (
+        <p>
+          {t('presentation.activityWindow')} {projection.activityWindowSeconds}s
+        </p>
+      )}
+      {projection.recoverySource === 'scenario-baseline' ? (
+        <p className="runtime-notice">{t('presentation.baseline')}</p>
+      ) : null}
       <div className="presentation-hero">
         <article className="presentation-mission">
           <p>{t('presentation.activeMission')}</p>
           <h3>{projection.activeMission.title}</h3>
-          <span>{projection.activeMission.phase}</span>
+          <span>{t(`controls.status.${projection.activeMission.phase}`)}</span>
           <div className="presentation-progress">
             <progress
               aria-label={t('presentation.missionProgress')}
@@ -131,7 +81,6 @@ export function PublicPresentationView({
           <strong>{projection.collectiveRecoveryPercent}%</strong>
         </article>
       </div>
-
       <div className="presentation-columns">
         <section
           className="presentation-panel"
@@ -148,9 +97,7 @@ export function PublicPresentationView({
                   </span>
                 </div>
                 <progress
-                  aria-label={`${district.displayName} ${t(
-                    'presentation.recovery',
-                  )}`}
+                  aria-label={`${district.displayName} ${t('presentation.recovery')}`}
                   max="100"
                   value={district.recoveryPercent}
                 />
@@ -159,9 +106,11 @@ export function PublicPresentationView({
             ))}
           </ul>
         </section>
-
         <section className="presentation-panel" aria-labelledby="ranking-title">
           <h3 id="ranking-title">{t('presentation.leaderboard')}</h3>
+          {projection.rankings.length === 0 ? (
+            <p>{t('presentation.noScores')}</p>
+          ) : null}
           <ol className="presentation-ranking">
             {projection.rankings.map((unit) => (
               <li key={unit.rank}>
@@ -173,16 +122,17 @@ export function PublicPresentationView({
           </ol>
         </section>
       </div>
-
       <section
         className="presentation-recognition"
         aria-labelledby="recognition-title"
       >
         <h3 id="recognition-title">{t('presentation.recognition')}</h3>
+        {projection.recognitions.length === 0 ? (
+          <p>{t('scores.noAchievements')}</p>
+        ) : null}
         <ul>
           {projection.recognitions.map((recognition) => (
             <li key={recognition.recognitionId}>
-              <span aria-hidden="true">★</span>
               <div>
                 <strong>{recognition.title}</strong>
                 <p>{recognition.moderatedUnitName}</p>
@@ -191,7 +141,6 @@ export function PublicPresentationView({
           ))}
         </ul>
       </section>
-
       <footer className="presentation-footer">
         {t('presentation.redactedNotice')}
       </footer>

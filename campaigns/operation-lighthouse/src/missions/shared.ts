@@ -22,15 +22,45 @@ export interface MissionContent {
   readonly content: Readonly<Record<SupportedLocale, LocalizedMissionContent>>;
 }
 
+export const lighthouseScoreWeights = {
+  requiredOutcome: 4000,
+  evidenceAndGrounding: 2000,
+  reliability: 1500,
+  explainability: 1500,
+  efficiency: 1000,
+} as const satisfies Readonly<Record<ValidationDimension, number>>;
+
+export const requiredRulePercentage = (
+  rules: readonly ValidationRuleResult[],
+): number => {
+  const required = rules.filter(({ severity }) => severity === 'required');
+  if (required.length === 0) {
+    throw new RangeError('A mission must define at least one required rule.');
+  }
+  return (
+    (required.filter(({ status }) => status === 'passed').length * 100) /
+    required.length
+  );
+};
+
 export const validationScores = (
-  values: Partial<Readonly<Record<ValidationDimension, number>>>,
-): Readonly<Record<ValidationDimension, number>> => ({
-  requiredOutcome: values.requiredOutcome ?? 0,
-  evidenceAndGrounding: values.evidenceAndGrounding ?? 0,
-  reliability: values.reliability ?? 0,
-  explainability: values.explainability ?? 0,
-  efficiency: values.efficiency ?? 0,
-});
+  percentages: Partial<Readonly<Record<ValidationDimension, number>>>,
+): Readonly<Record<ValidationDimension, number>> => {
+  const weighted = (dimension: ValidationDimension): number => {
+    const percentage = percentages[dimension] ?? 0;
+    if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
+      throw new RangeError(`Invalid percentage for ${dimension}.`);
+    }
+    return Math.floor((percentage * lighthouseScoreWeights[dimension]) / 100);
+  };
+  return {
+    requiredOutcome: weighted('requiredOutcome'),
+    evidenceAndGrounding: weighted('evidenceAndGrounding'),
+    reliability: weighted('reliability'),
+    explainability: weighted('explainability'),
+    efficiency: weighted('efficiency'),
+  };
+};
 
 export const validatorOutput = (
   rules: readonly ValidationRuleResult[],

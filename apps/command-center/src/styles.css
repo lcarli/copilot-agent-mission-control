@@ -78,6 +78,35 @@ a {
   color: var(--cp-link);
 }
 
+.runtime-notice {
+  padding: 1rem;
+  border: 1px solid var(--cp-border-strong);
+  border-radius: 0.625rem;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+}
+
+.local-connection {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  margin-block: 1rem;
+}
+
+.local-connection label {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.local-connection input {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--cp-bg-elevated);
+  color: var(--cp-text);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: 0.625rem;
+}
+
 button,
 select,
 input {

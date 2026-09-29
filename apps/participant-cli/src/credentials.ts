@@ -2,6 +2,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 export interface ParticipantCredentials {
+  readonly apiUrl?: string;
   readonly eventCode: string;
   readonly eventSessionId: string;
   readonly reconnectSecret: string;
@@ -32,6 +33,9 @@ const validateCredentials = (value: unknown): ParticipantCredentials => {
     throw new ParticipantCredentialError('credentials-invalid');
   }
   const candidate = value as Record<string, unknown>;
+  if (candidate.apiUrl !== undefined && typeof candidate.apiUrl !== 'string') {
+    throw new ParticipantCredentialError('credentials-invalid');
+  }
   for (const key of [
     'eventCode',
     'eventSessionId',
@@ -44,6 +48,9 @@ const validateCredentials = (value: unknown): ParticipantCredentials => {
     }
   }
   return {
+    ...(typeof candidate.apiUrl === 'string'
+      ? { apiUrl: candidate.apiUrl }
+      : {}),
     eventCode: candidate.eventCode as string,
     eventSessionId: candidate.eventSessionId as string,
     reconnectSecret: candidate.reconnectSecret as string,

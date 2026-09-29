@@ -105,6 +105,19 @@ export function handleRequestError(
     return;
   }
 
+  if (
+    error.statusCode !== undefined &&
+    [400, 413, 415].includes(error.statusCode)
+  ) {
+    sendProblem(reply, request.id, {
+      code: error.statusCode === 413 ? 'payload-too-large' : 'request-invalid',
+      messageKey: 'errors.validation.failed',
+      status: error.statusCode,
+      title: 'The request body could not be accepted',
+    });
+    return;
+  }
+
   request.log.error(
     { correlationId: request.id, err: error },
     'Unhandled request failure',

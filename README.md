@@ -12,6 +12,12 @@ pnpm build
 pnpm test
 ```
 
+Browser end-to-end scenarios require Chromium once per development machine:
+`pnpm --filter @mission-control/tests-e2e exec playwright install chromium`.
+For the no-cloud rehearsal, use `pnpm build:local` and the
+[local workshop instructions](docs/local-workshop.md); this does not certify
+the production deployment or presentation/media assets.
+
 | Path | Purpose |
 |---|---|
 | `apps/api` | Mission Control API and validation runtime |
@@ -26,6 +32,12 @@ pnpm test
 ## Project documentation
 
 - [Product and delivery plan](PLAN.md)
+- [Visual identity and logo production prompts](docs/brand/visual-identity.md)
+- [Workshop PowerPoint production plan](docs/presentations/powerpoint-plan.md)
+- [Workshop decks and facilitator guide](campaigns/operation-lighthouse/presentations/README.md)
+- [Workshop readiness and conversation handoff](docs/workshop-readiness-handoff.md)
+- [Local workshop rehearsal](docs/local-workshop.md)
+- [Participant guide](docs/participant-guide.md)
 - [Contributing](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security policy](SECURITY.md)

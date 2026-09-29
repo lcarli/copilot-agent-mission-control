@@ -1,6 +1,14 @@
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 
-import { EVENT_SCHEMA_VERSION, domainEventSchemas } from '../dist/index.js';
+import {
+  EVENT_SCHEMA_VERSION,
+  domainEventSchemas,
+  MissionSubmissionFeedbackSchema,
+  PublicPresentationProjectionSchema,
+  SimulatorInvocationSchema,
+  SimulatorObservationSchema,
+  SimulatorCatalogSchema,
+} from '../dist/index.js';
 
 const schemaDirectory = new URL(
   `../dist/schemas/v${EVENT_SCHEMA_VERSION.split('.')[0]}/`,
@@ -38,3 +46,24 @@ await writeFile(
   `${JSON.stringify(catalog, null, 2)}\n`,
   'utf8',
 );
+
+for (const [name, schema] of Object.entries({
+  'mission-submission-feedback': MissionSubmissionFeedbackSchema,
+  'public-presentation': PublicPresentationProjectionSchema,
+  'simulator-invocation': SimulatorInvocationSchema,
+  'simulator-observation': SimulatorObservationSchema,
+  'simulator-catalog': SimulatorCatalogSchema,
+})) {
+  await writeFile(
+    new URL(`${name}.schema.json`, schemaDirectory),
+    `${JSON.stringify(
+      {
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        ...schema,
+      },
+      null,
+      2,
+    )}\n`,
+    'utf8',
+  );
+}

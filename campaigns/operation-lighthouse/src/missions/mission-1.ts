@@ -9,6 +9,7 @@ import type { MissionContent } from './shared.js';
 import {
   isRecord,
   isStringArray,
+  requiredRulePercentage,
   validationScores,
   validatorOutput,
 } from './shared.js';
@@ -96,6 +97,15 @@ const categories = new Set([
   'communications',
 ]);
 const severities = new Set(['low', 'moderate', 'high', 'critical']);
+const outputFields = new Set([
+  'category',
+  'severity',
+  'location',
+  'affectedServices',
+  'missingInformation',
+  'severityExplanation',
+  'duplicateOf',
+]);
 
 const rule = (
   ruleId: string,
@@ -120,7 +130,15 @@ export const signalInTheStormValidator: VersionedValidator = {
       throw signal.reason;
     }
     const submission = context.submission;
-    const validObject = isRecord(submission);
+    const validObject =
+      isRecord(submission) &&
+      Object.keys(submission).every((field) => outputFields.has(field)) &&
+      ['severityExplanation', 'duplicateOf'].every(
+        (field) =>
+          submission[field] === undefined ||
+          (typeof submission[field] === 'string' &&
+            submission[field].trim().length > 0),
+      );
     const category =
       validObject && typeof submission.category === 'string'
         ? submission.category
@@ -134,7 +152,9 @@ export const signalInTheStormValidator: VersionedValidator = {
         ? submission.location.trim()
         : '';
     const affectedServices =
-      validObject && isStringArray(submission.affectedServices)
+      validObject &&
+      isStringArray(submission.affectedServices) &&
+      submission.affectedServices.every((service) => service.trim().length > 0)
         ? submission.affectedServices
         : [];
     const missingInformation =
@@ -176,11 +196,7 @@ export const signalInTheStormValidator: VersionedValidator = {
       validatorOutput(
         rules,
         validationScores({
-          requiredOutcome:
-            rules.filter(
-              ({ severity: importance, status }) =>
-                importance === 'required' && status === 'passed',
-            ).length * 16,
+          requiredOutcome: requiredRulePercentage(rules),
           evidenceAndGrounding: explanation.length > 0 ? 70 : 35,
           reliability:
             category !== undefined &&

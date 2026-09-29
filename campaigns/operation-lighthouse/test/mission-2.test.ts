@@ -56,7 +56,7 @@ describe('Ground Truth', () => {
     );
 
     expect(result.outcome).toBe('passed');
-    expect(result.dimensionScores.evidenceAndGrounding).toBe(95);
+    expect(result.dimensionScores.evidenceAndGrounding).toBe(1900);
   });
 
   it('returns partial when citations and next steps are missing', async () => {

@@ -9,16 +9,15 @@ import {
 const translate = (key: string) => key;
 
 describe('PublicPresentationView', () => {
-  it('renders large-screen public event status', () => {
+  it('does not invent participant achievements when no event is connected', () => {
     const markup = renderToStaticMarkup(
       <PublicPresentationView translate={translate} />,
     );
 
-    expect(markup).toContain('Operation Lighthouse');
-    expect(markup).toContain('Mission 4 · Unified Response');
-    expect(markup).toContain('Beacon Builders');
-    expect(markup).toContain('presentation.collectiveRecovery');
-    expect(markup).toContain('<progress');
+    expect(markup).toContain('presentation.disconnected');
+    expect(markup).not.toContain('Beacon Builders');
+    expect(markup).not.toContain('presentation.live');
+    expect(markup).not.toContain('<progress');
   });
 
   it('renders only the explicit public projection allowlist', () => {
