@@ -8,6 +8,7 @@ on:
       - 'scripts/deploy.ps1'
       - 'scripts/destroy.ps1'
       - 'scripts/validate-infra.ps1'
+      - 'tests/infra/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
 

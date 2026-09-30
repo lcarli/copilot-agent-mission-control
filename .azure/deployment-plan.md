@@ -161,7 +161,7 @@ deploying it; multi-replica high availability is not part of this pass.
 | Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Shared composition complete; hosted assembly is supplied by the identity/real-time delivery. Existing local behavior is preserved. |
 | Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Adapter and offline scope complete: atomic Cosmos batches, encrypted replies, coherent snapshots and preserved evidence. File-transport restart/concurrency and SDK-boundary checks pass; live Cosmos and retention/restore operations remain open. |
 | Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Complete for adapter/offline scope: Entra ownership/role checks, memory-only MSAL, pinned Key Vault/Blob loading, scoped SignalR and conditional publication acknowledgment. Real browser coverage uses synthetic identity and SignalR protocol frames. Popup sign-in is an assumption for review, not an additional user approval. Live services remain unverified. |
-| Hosted packaging | Build real images, immutable campaign descriptors and single-replica configuration, without provisioning. | Pending; separate commit after identity and real-time integration. |
+| Hosted packaging | Build real images, immutable campaign descriptors and single-replica configuration, without provisioning. | Prepared and exercised offline: portable API dependencies, compiled browser/static proxy, deterministic descriptor, typed Bicep profiles and guarded staged publication. Linux image workflow execution remains to be recorded; the local Docker engine was unavailable. |
 | Rehearsal kit and final validation | Reconcile operating guides, prepare reproducible clean-setup rehearsal steps and run applicable offline validation. Keep human and live-service gates open. | Pending |
 
 ### Proposed implementation design
@@ -177,8 +177,17 @@ deploying it; multi-replica high availability is not part of this pass.
 | Packaging | Build actual API and dashboard images rather than treating the bootstrap hello-world image as workshop readiness. Prepare Bicep/configuration changes without executing a deployment or modifying live RBAC. |
 | Evidence | Exercise the same contracts with local adapters and transport doubles, clearly labeled. Live Cosmos/Entra/SignalR, real human authoring and the pilot remain separate gates. |
 
-The current SignalR template uses `Default` mode and the `SignalR App Server`
-role. Official service documentation confirms that Default mode requires a
+Packaging keeps the existing Bicep/PowerShell approach. A typed `bootstrap`
+versus `workshop` configuration prevents incomplete hosted settings from being
+mistaken for a working application. Future execution separates bootstrap,
+artifact publication and workshop promotion; none of these stages is executed
+by this preparation. Dashboard origin is resolved from the existing foundation
+before promotion, avoiding a Container Apps/SignalR CORS dependency cycle.
+The dashboard serves its built assets and proxies only `/api/` to a fixed API
+origin. Both application images run as the Node image's non-root user.
+
+Before this extension the SignalR template used `Default` mode and the `SignalR App Server`
+role. The prepared template now uses Serverless. Official service documentation confirms that Default mode requires a
 connected hub server; a standalone Node REST publisher does not supply that
 server connection. The proposed Node-compatible Serverless negotiation path
 requires authentication and REST permissions. The current built-in-role

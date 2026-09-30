@@ -10,8 +10,7 @@ param keyVaultSoftDeleteRetentionInDays = 7
 param keyVaultPurgeProtectionEnabled = false
 param storageSku = 'Standard_LRS'
 param blobDeleteRetentionInDays = 7
-param apiImage = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-param dashboardImage = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+param runtimeConfiguration = { mode: 'bootstrap' }
 param additionalTags = {
   purpose: 'workshop'
 }

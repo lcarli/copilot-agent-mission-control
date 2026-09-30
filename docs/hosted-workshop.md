@@ -9,9 +9,124 @@ loopback-only, memory-backed mode.
 Vault signing material, the immutable Blob campaign descriptor, durable Cosmos
 repositories, Entra instructor authorization and public-only SignalR delivery.
 Missing configuration or unavailable startup dependencies fail closed; there is
-no memory or random-signing fallback. Packaging and live-service verification
-remain separate deliveries. The file transport used by offline tests is not a
+no memory or random-signing fallback. Application packaging and guarded promotion
+are prepared; actual image execution and live-service verification remain separate
+evidence gates. The file transport used by offline tests is not a
 production storage option.
+
+## Build and packaging
+
+```powershell
+pnpm build:hosted
+```
+
+This compiles the API/CLI dependencies, writes the reviewed catalog to
+`campaigns\operation-lighthouse\dist\runtime.json` and `runtime.sha256`, and
+builds the dashboard plus its Node static/proxy server. Descriptor serialization
+is deterministic UTF-8 with LF endings, without timestamps or secret values.
+Only this bounded JSON is loaded from Blob Storage; the campaign archive is not
+executable runtime configuration.
+
+The API Dockerfile produces an isolated production-dependency package with
+`pnpm deploy --prod --legacy`, matching this repository's non-injected pnpm 11
+workspace. The final image has compiled workspace libraries, not links back
+to the checkout. The dashboard image contains built browser assets and a
+dependency-free Node server. Both images use Node 24, run as `node`, and have
+no embedded Azure credentials. The build context excludes local configuration,
+Git metadata, dependencies, recordings and approved presentation/certificate assets.
+
+| Workload | Port | Startup/liveness | Readiness |
+| --- | --- | --- | --- |
+| API | 3000 | `/api/v1/health/live` | `/api/v1/health/ready` |
+| Dashboard | 8080 | `/health/live` | `/health/ready` |
+
+The dashboard requires `MISSION_CONTROL_API_URL`: an explicit HTTPS API origin
+(loopback HTTP is allowed for isolated local checks). It forwards only `/api/`
+to that fixed origin, preserves request bytes/authorization/idempotency keys,
+does not retry mutations, bounds bodies to 1 MiB and upstream requests to
+15 seconds, and never forwards cookies or untrusted proxy headers. Static paths
+are checked against the real build directory, including symlink resolution.
+Missing files do not fall back to HTML. The auth bridge is uncached and supports
+MSAL popup/iframe communication. Dashboard readiness means its static build is
+available; it remains available when the API is down.
+
+IP budgets may aggregate at the reverse proxy or Container Apps ingress.
+Do not enable unrestricted forwarded-header trust to disguise that limitation.
+The trusted-hop/admission policy and real classroom traffic remain live gates;
+these limits are not distributed perimeter protection.
+
+The Windows Linux Docker engine was unavailable during local preparation.
+The portable API package and compiled dashboard/proxy were exercised without
+containers. `Container validation` adds Linux image builds, non-root checks,
+isolated API imports, fail-closed startup and dashboard/outage smoke checks.
+An actual successful workflow run is required before claiming image-build evidence.
+
+## Future authorized publication and promotion
+
+These commands **are not executed by preparation**. Confirm a subscription,
+region, ownership, budget and authorization before any live command. The script
+requires an explicit stage/subscription/region and passes the subscription on
+each Azure command instead of changing the CLI's selected subscription.
+
+| Stage | Effect | Safety boundary |
+| --- | --- | --- |
+| `Bootstrap` | Creates foundation resources and clearly non-operational public placeholder apps. | Refuses to replace a non-bootstrap app; validates ARM and rejects what-if deletes. It does not create instructor registrations or signing material. |
+| `Artifacts` | Builds both real Linux images with ACR and uploads/verifies a checksum-addressed descriptor. | Requires a clean commit; archives an allowlisted committed snapshot, never the live worktree or ignored credentials. Writes a new release manifest only after digest verification. Does not promote Container Apps. |
+| `Workshop` | Applies the immutable image/descriptor references, identity settings, exact CORS and single API replica. | Requires a complete closed settings file and a release for the same destination. Rechecks registry/Blob digests before ARM validation, what-if and confirmation. Never rebuilds the release or falls back to bootstrap. |
+
+Start with a preview, replacing the placeholders:
+
+```powershell
+$subscription = '<approved-subscription-uuid>'
+$location = '<approved-region>'
+pnpm deploy:azure -- -Stage Bootstrap -SubscriptionId $subscription -Location $location -EnvironmentName workshop -Owner workshop-team -PreviewOnly
+```
+
+Remove `-PreviewOnly` only after the separate authorization. Interactive execution
+requires typing the lower-case stage name. `-Force` is solely for already-approved
+automation. `Artifacts -PreviewOnly` describes the build/upload plan without
+creating images, blobs or a manifest.
+
+After authorized bootstrap and the instructor/signing setup below, create
+the ignored `.azure\hosted-settings.json` with **only** these references:
+
+```json
+{
+  "entraTenantId": "<tenant-uuid>",
+  "entraApiClientId": "<API-app-uuid>",
+  "entraSpaClientId": "<SPA-app-uuid>",
+  "unitSigningSecretName": "participant-signing",
+  "unitSigningSecretVersion": "<32-lowercase-hex-secret-version>"
+}
+```
+
+Never put the signing value, access tokens or application secrets in that file.
+The API and SPA must be distinct and the instructor tenant must match the
+subscription tenant. Bootstrap grants the creator campaign-seeding access;
+another publisher needs separately authorized Blob write and ACR build/push
+permissions. RBAC propagation or build/upload failures stop the stage. An
+interrupted publication does not authorize promotion; rerun with a new release
+path after resolving the cause. Existing descriptor bytes are re-downloaded
+conditionally and compared rather than overwritten.
+
+```powershell
+pnpm deploy:azure -- -Stage Artifacts -SubscriptionId $subscription -Location $location -EnvironmentName workshop -Owner workshop-team -ReleaseManifestPath .azure\hosted-release.json
+pnpm deploy:azure -- -Stage Workshop -SubscriptionId $subscription -Location $location -EnvironmentName workshop -Owner workshop-team -ReleaseManifestPath .azure\hosted-release.json -HostedSettingsPath .azure\hosted-settings.json -PreviewOnly
+```
+
+The default foundation deployment name is `mission-control-<environment>-bootstrap`.
+An existing, reviewed foundation can be selected explicitly using
+`-FoundationDeploymentName`; its resource-group ownership/location must match.
+The script resolves the dashboard origin before promotion, so SignalR and API
+configuration do not form an infrastructure dependency cycle. Register that exact
+origin's `/auth.html` redirect before the hosted login rehearsal.
+
+The API receives campaign **Blob Data Reader**, not Blob Data Contributor, and
+resource-scoped **SignalR REST API Owner**. Incremental Bicep deployment does not
+automatically remove historical Contributor/App Server grants. Inventory and
+revoke superseded grants only through a separately authorized migration.
+Custom-domain setup, signing-key rotation, retention/restore and incompatible
+campaign/schema migration are not automated by these stages.
 
 ## Required runtime configuration
 
@@ -208,11 +323,13 @@ logs. Instructor credentials never enter these URLs.
 Offline evidence:
 
 ```powershell
-pnpm build:local
+pnpm build:hosted
 pnpm --filter @mission-control/api test
 pnpm --filter @mission-control/command-center test
 pnpm --filter @mission-control/tests-e2e exec playwright test durable-workshop.spec.ts
 pnpm --filter @mission-control/tests-e2e exec playwright test hosted-workshop.spec.ts
+pnpm --filter @mission-control/tests-e2e exec playwright test hosted-packaging.spec.ts
+pnpm validate:infra -- -Offline
 ```
 
 The five-mission scenario reconstructs API repositories and signing services
@@ -233,3 +350,6 @@ Official storage references:
 - [MSAL cache behavior](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/caching)
 - [SignalR REST API](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-reference-data-plane-rest-api)
 - [Current SignalR REST API Owner permissions](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/web-and-mobile#signalr-rest-api-owner)
+- [Blob Data Reader permissions](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/storage#storage-blob-data-reader)
+- [Bicep discriminated configuration types](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/user-defined-data-types#tagged-union-data-type)
+- [ACR builds](https://learn.microsoft.com/en-us/cli/azure/acr#az-acr-build)

@@ -10,6 +10,9 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+if ($Offline -and -not [string]::IsNullOrWhiteSpace($ResourceGroupName)) {
+  throw 'Offline validation cannot inspect a deployed resource group. Omit ResourceGroupName.'
+}
 
 $workspace = Split-Path -Parent $PSScriptRoot
 $temporaryDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "mission-control-infra-$([guid]::NewGuid())"
@@ -113,6 +116,17 @@ function Test-HttpEndpoint {
   }
 }
 
+function Get-TemplateResources {
+  param([object] $Template)
+  $resources = if ($Template.resources -is [array]) { $Template.resources } else { $Template.resources.PSObject.Properties.Value }
+  foreach ($resource in $resources) {
+    $resource
+    if ($resource.type -eq 'Microsoft.Resources/deployments') {
+      Get-TemplateResources $resource.properties.template
+    }
+  }
+}
+
 if (-not (Get-Command 'az' -ErrorAction SilentlyContinue)) {
   throw "Required command 'az' was not found on PATH."
 }
@@ -149,6 +163,10 @@ try {
       '--outfile', $mainParameters
     ) -AllowEmpty | Out-Null
     Invoke-AzureCli -Arguments @(
+      'bicep', 'build-params', '--file', (Join-Path $workspace 'infra\workshop.bicepparam'),
+      '--outfile', (Join-Path $temporaryDirectory 'workshop.parameters.json')
+    ) -AllowEmpty | Out-Null
+    Invoke-AzureCli -Arguments @(
       'bicep', 'build-params',
       '--file', (Join-Path $workspace 'infra\deploy.bicepparam'),
       '--outfile', $deployParameters
@@ -172,9 +190,43 @@ try {
     Assert-NoMatch -Check 'No Owner role assignment' -Text $compiledTemplate -Pattern '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
     Assert-NoMatch -Check 'No generic Contributor assignment' -Text $compiledTemplate -Pattern 'b24988ac-6180-42a0-ab88-20f7382dd24c'
     Assert-NoMatch -Check 'No SQL administrator password' -Text $compiledTemplate -Pattern 'administratorLoginPassword'
+    Assert-Match -Check 'SignalR Serverless profile' -Text $compiledTemplate -Pattern '"value"\s*:\s*"Serverless"'
+    Assert-Match -Check 'SignalR REST role' -Text $compiledTemplate -Pattern 'fd53cd77-2268-407a-8f46-7e7863d0f521'
+    Assert-NoMatch -Check 'No Default-mode App Server role' -Text $compiledTemplate -Pattern '420fcaa2-552c-430f-98ca-3264be4806c7'
+    Assert-Match -Check 'Campaign read-only runtime role' -Text $compiledTemplate -Pattern '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    Assert-Match -Check 'API operational health probes' -Text $compiledTemplate -Pattern '/api/v1/health/(live|ready)' -MinimumCount 3
+    Assert-Match -Check 'Dashboard operational health probes' -Text $compiledTemplate -Pattern "'/health/(live|ready)'" -MinimumCount 3
+    $resources = @(Get-TemplateResources ($compiledTemplate | ConvertFrom-Json))
+    $api = @($resources | Where-Object { $_.type -eq 'Microsoft.App/containerApps' -and $_.properties.template.containers[0].name -eq 'mission-control-api' })
+    if ($api.Count -eq 1 -and $api[0].properties.template.scale.minReplicas -eq 1 -and $api[0].properties.template.scale.maxReplicas -eq 1) {
+      Add-Result -Check 'Bounded API replica count' -Status PASS -Detail 'Exactly one API replica is configured.'
+    } else { Add-Result -Check 'Bounded API replica count' -Status FAIL -Detail 'The API must have minReplicas=maxReplicas=1.' }
+
+    $negativeDirectory = Join-Path $temporaryDirectory 'negative-infra'
+    Copy-Item -LiteralPath (Join-Path $workspace 'infra') -Destination $negativeDirectory -Recurse
+    $example = Get-Content -LiteralPath (Join-Path $negativeDirectory 'workshop.bicepparam') -Raw
+    foreach ($required in @('apiImage', 'unitSigningSecretVersion')) {
+      $invalid = [regex]::Replace($example, "(?m)^\s*${required}:.*\r?\n", '')
+      $invalidPath = Join-Path $negativeDirectory "missing-$required.bicepparam"
+      Set-Content -LiteralPath $invalidPath -Value $invalid -Encoding utf8
+      $failure = & az bicep build-params --file $invalidPath --outfile (Join-Path $temporaryDirectory "invalid-$required.json") 2>&1
+      if ($LASTEXITCODE -ne 0 -and ($failure -join ' ') -match $required) {
+        Add-Result -Check "Hosted requires $required" -Status PASS -Detail 'The incomplete workshop profile is rejected at compilation.'
+      } else {
+        Add-Result -Check "Hosted requires $required" -Status FAIL -Detail 'Missing hosted configuration was not rejected for the expected reason.'
+      }
+    }
   }
   else {
     Add-Result -Check 'Static security assertions' -Status SKIP -Detail 'Skipped because Bicep compilation failed.'
+  }
+
+  try {
+    & pwsh -NoProfile -File (Join-Path $workspace 'tests\infra\deployment.test.ps1')
+    if ($LASTEXITCODE -ne 0) { throw 'Offline deployment orchestration scenarios failed.' }
+    Add-Result -Check 'Deployment orchestration' -Status PASS -Detail '12 offline scenarios cover stage separation, source snapshots, immutable artifacts and rejection gates.'
+  } catch {
+    Add-Result -Check 'Deployment orchestration' -Status FAIL -Detail $_.Exception.Message
   }
 
   if ($Offline) {
@@ -244,6 +296,9 @@ try {
         '--query', 'properties.outputs',
         '--output', 'json'
       ) | ConvertFrom-Json
+      if ($outputs.runtime.value.PSObject.Properties.Name -notcontains 'mode' -or $outputs.runtime.value.mode -ne 'workshop') {
+        throw 'Bootstrap or legacy foundation outputs are not operational workshop evidence.'
+      }
       Add-Result -Check 'Environment ownership' -Status PASS -Detail $resourceGroup.id
 
       $registry = Invoke-AzureCli -Arguments @(
@@ -279,6 +334,15 @@ try {
         else {
           Add-Result -Check "Container App $appName" -Status PASS -Detail 'Succeeded with user identity and HTTPS-only ingress.'
         }
+        if ($appName -eq $outputs.names.value.missionControlApiContainerApp) {
+          if ($app.properties.template.scale.minReplicas -ne 1 -or $app.properties.template.scale.maxReplicas -ne 1) {
+            throw 'The deployed API is not the bounded single-replica profile.'
+          }
+          $apiEnvironment = @{}
+          foreach ($variable in $app.properties.template.containers[0].env) {
+            if ($variable.PSObject.Properties.Name -contains 'value') { $apiEnvironment[$variable.name] = $variable.value }
+          }
+        }
       }
 
       $storage = Invoke-AzureCli -Arguments @(
@@ -308,23 +372,40 @@ try {
         Add-Result -Check 'Live campaign privacy' -Status FAIL -Detail "publicAccess=$($container.properties.publicAccess)"
       }
 
-      $campaignBlobs = Invoke-AzureCli -Arguments @(
-        'storage', 'blob', 'list',
-        '--auth-mode', 'login',
-        '--account-name', $outputs.data.value.campaigns.storageAccountName,
-        '--container-name', $outputs.data.value.campaigns.containerName,
-        '--query', "[?ends_with(name, '.tgz')].name",
-        '--output', 'json'
-      ) | ConvertFrom-Json
-      if (@($campaignBlobs).Count -gt 0) {
-        Add-Result -Check 'Campaign seed' -Status PASS -Detail "$(@($campaignBlobs).Count) archive(s) found."
+      $blobPrefix = "$($outputs.data.value.campaigns.blobEndpoint.TrimEnd('/'))/$($outputs.data.value.campaigns.containerName)/"
+      $digest = $apiEnvironment['CAMPAIGN_RUNTIME_SHA256']
+      $blobUrl = $apiEnvironment['CAMPAIGN_RUNTIME_BLOB_URL']
+      if ($digest -cnotmatch '^[0-9a-f]{64}$' -or $blobUrl -cne "${blobPrefix}operation-lighthouse/1.0.0/$digest/runtime.json") {
+        throw 'The API does not reference its checksum-addressed campaign descriptor.'
       }
-      else {
-        Add-Result -Check 'Campaign seed' -Status FAIL -Detail 'No .tgz campaign archive found.'
-      }
+      $blob = $blobUrl.Substring($blobPrefix.Length)
+      $blobArguments = @('--auth-mode', 'login', '--account-name', $outputs.data.value.campaigns.storageAccountName,
+        '--container-name', $outputs.data.value.campaigns.containerName, '--name', $blob)
+      $metadata = Invoke-AzureCli -Arguments (@('storage', 'blob', 'show') + $blobArguments + @('--output', 'json')) | ConvertFrom-Json
+      if ($metadata.properties.contentLength -lt 1 -or $metadata.properties.contentLength -gt 1000000) { throw 'Campaign descriptor length is invalid.' }
+      $download = Join-Path $temporaryDirectory 'runtime.json'
+      Invoke-AzureCli -Arguments (@('storage', 'blob', 'download') + $blobArguments +
+        @('--file', $download, '--if-match', $metadata.properties.etag, '--output', 'none')) -AllowEmpty | Out-Null
+      if ((Get-FileHash -LiteralPath $download -Algorithm SHA256).Hash.ToLowerInvariant() -cne $digest) { throw 'Live campaign descriptor digest does not match.' }
+      Add-Result -Check 'Campaign runtime artifact' -Status PASS -Detail 'Exact configured descriptor downloaded conditionally and verified by SHA-256.'
 
-      Test-HttpEndpoint -Check 'API HTTPS smoke' -Uri $outputs.runtime.value.apiUrl
+      $runtime = Invoke-RestMethod -Uri "$($outputs.runtime.value.apiUrl)/api/v1/workshop" -TimeoutSec 15
+      if ($runtime.mode -ne 'hosted' -or $runtime.persistence -ne 'cosmos' -or $runtime.transport -ne 'signalr') {
+        throw 'The public runtime metadata does not describe the hosted implementation.'
+      }
+      $signalR = Invoke-AzureCli -Arguments @('signalr', 'show', '--name', $outputs.realtime.value.name,
+        '--resource-group', $ResourceGroupName, '--output', 'json') | ConvertFrom-Json
+      $mode = @($signalR.features | Where-Object flag -eq 'ServiceMode')
+      if ($mode.Count -ne 1 -or $mode[0].value -ne 'Serverless' -or -not $signalR.disableLocalAuth -or
+          @($signalR.cors.allowedOrigins).Count -ne 1 -or $signalR.cors.allowedOrigins[0] -cne $outputs.runtime.value.dashboardUrl) {
+        throw 'Live SignalR mode, authentication or dashboard CORS differs from the hosted profile.'
+      }
+      Add-Result -Check 'Live SignalR configuration' -Status PASS -Detail 'Serverless, local auth disabled and exact dashboard CORS. Actual client-token/publication permission remains a rehearsal gate.'
+      Test-HttpEndpoint -Check 'API readiness smoke' -Uri "$($outputs.runtime.value.apiUrl)/api/v1/health/ready"
+      Test-HttpEndpoint -Check 'Event transport smoke' -Uri "$($outputs.runtime.value.apiUrl)/api/v1/health/event"
       Test-HttpEndpoint -Check 'Dashboard HTTPS smoke' -Uri $outputs.runtime.value.dashboardUrl
+      Test-HttpEndpoint -Check 'Dashboard proxy smoke' -Uri "$($outputs.runtime.value.dashboardUrl)/api/v1/workshop"
+      Test-HttpEndpoint -Check 'Dashboard auth bridge smoke' -Uri "$($outputs.runtime.value.dashboardUrl)/auth.html"
     }
     catch {
       Add-Result -Check 'Deployed environment smoke' -Status FAIL -Detail $_.Exception.Message

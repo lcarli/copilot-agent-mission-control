@@ -1,7 +1,8 @@
 # End-to-End Tests
 
 This workspace runs a real loopback HTTP API, the compiled participant CLI in
-isolated temporary homes, and a Vite-served Chromium browser.
+isolated temporary homes, and Chromium against Vite and the built production
+dashboard server.
 
 ```powershell
 pnpm --filter @mission-control/tests-e2e exec playwright install chromium
@@ -82,3 +83,10 @@ held behind, reject cross-event frames and recover from an HTTP outage.
 The public page never initializes instructor identity or sends its token.
 Sign-out removes private controls, and axe checks the hosted instructor view.
 These are clearly bounded service doubles, not an Entra/SignalR deployment.
+
+`hosted-packaging.spec.ts` checks the generated descriptor's exact catalog,
+byte limit and SHA-256, then exercises the compiled browser assets and auth
+bridge through the actual Node static/proxy server. Its API fixture is explicitly
+local: this verifies packaging, real mutation forwarding and public/private UI
+separation, not live Microsoft login. `pnpm test:workshop` builds the hosted
+artifacts first; individual packaging scenarios require `pnpm build:hosted`.

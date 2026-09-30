@@ -1,5 +1,7 @@
 targetScope = 'resourceGroup'
 
+import { WorkshopRuntime } from '../runtime-types.bicep'
+
 metadata description = 'Azure Container Registry and Container Apps runtime.'
 
 param location string
@@ -9,20 +11,33 @@ param apiIdentityId string
 param apiIdentityClientId string
 param apiIdentityPrincipalId string
 param dashboardIdentityId string
-param dashboardIdentityClientId string
 param dashboardIdentityPrincipalId string
 param logAnalyticsWorkspaceName string
 param applicationInsightsConnectionString string
 param keyVaultUri string
 param cosmosEndpoint string
 param cosmosDatabaseName string
-param eventsContainerName string
 param stateContainerName string
-param storageAccountName string
-param campaignContainerName string
 param signalRServiceUri string
-param apiImage string
-param dashboardImage string
+param runtimeConfiguration WorkshopRuntime
+
+var isWorkshop = runtimeConfiguration.mode == 'workshop'
+var bootstrapImage = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+var apiPort = isWorkshop ? 3000 : 80
+var dashboardPort = isWorkshop ? 8080 : 80
+var hostedEnvironment = runtimeConfiguration.mode == 'workshop' ? [
+  { name: 'WORKSHOP_RUNTIME', value: 'hosted' }
+  { name: 'HOST', value: '0.0.0.0' }
+  { name: 'PORT', value: '3000' }
+  { name: 'ENTRA_TENANT_ID', value: runtimeConfiguration.entraTenantId }
+  { name: 'ENTRA_API_CLIENT_ID', value: runtimeConfiguration.entraApiClientId }
+  { name: 'ENTRA_SPA_CLIENT_ID', value: runtimeConfiguration.entraSpaClientId }
+  { name: 'DASHBOARD_ORIGIN', value: runtimeConfiguration.dashboardOrigin }
+  { name: 'UNIT_SIGNING_SECRET_NAME', value: runtimeConfiguration.unitSigningSecretName }
+  { name: 'UNIT_SIGNING_SECRET_VERSION', value: runtimeConfiguration.unitSigningSecretVersion }
+  { name: 'CAMPAIGN_RUNTIME_BLOB_URL', value: runtimeConfiguration.campaignRuntimeBlobUrl }
+  { name: 'CAMPAIGN_RUNTIME_SHA256', value: runtimeConfiguration.campaignRuntimeSha256 }
+] : []
 
 var acrPullRoleId = '7f951dda-4ed3-4680-a7ca-43fe172d538d'
 
@@ -101,7 +116,7 @@ resource api 'Microsoft.App/containerApps@2024-03-01' = {
       ingress: {
         allowInsecure: false
         external: true
-        targetPort: 80
+        targetPort: apiPort
         traffic: [
           {
             latestRevision: true
@@ -110,48 +125,46 @@ resource api 'Microsoft.App/containerApps@2024-03-01' = {
         ]
         transport: 'auto'
       }
-      registries: [
+      registries: isWorkshop ? [
         {
           identity: apiIdentityId
           server: registry.properties.loginServer
         }
-      ]
+      ] : []
     }
     template: {
       containers: [
         {
           name: 'mission-control-api'
-          image: apiImage
-          env: [
+          image: runtimeConfiguration.mode == 'workshop' ? runtimeConfiguration.apiImage : bootstrapImage
+          env: concat([
             { name: 'NODE_ENV', value: 'production' }
             { name: 'AZURE_CLIENT_ID', value: apiIdentityClientId }
             { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: applicationInsightsConnectionString }
             { name: 'KEY_VAULT_URI', value: keyVaultUri }
             { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
             { name: 'COSMOS_DATABASE', value: cosmosDatabaseName }
-            { name: 'COSMOS_EVENTS_CONTAINER', value: eventsContainerName }
             { name: 'COSMOS_STATE_CONTAINER', value: stateContainerName }
-            { name: 'CAMPAIGN_STORAGE_ACCOUNT', value: storageAccountName }
-            { name: 'CAMPAIGN_STORAGE_CONTAINER', value: campaignContainerName }
             { name: 'SIGNALR_SERVICE_URI', value: signalRServiceUri }
-          ]
+          ], hostedEnvironment)
           probes: [
             {
               type: 'Startup'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/api/v1/health/live' : '/', port: apiPort }
               periodSeconds: 10
               failureThreshold: 30
             }
             {
               type: 'Liveness'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/api/v1/health/live' : '/', port: apiPort }
               initialDelaySeconds: 10
               periodSeconds: 30
               failureThreshold: 3
             }
             {
               type: 'Readiness'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/api/v1/health/ready' : '/', port: apiPort }
+              timeoutSeconds: 5
               initialDelaySeconds: 5
               periodSeconds: 10
               failureThreshold: 3
@@ -165,17 +178,7 @@ resource api 'Microsoft.App/containerApps@2024-03-01' = {
       ]
       scale: {
         minReplicas: 1
-        maxReplicas: 3
-        rules: [
-          {
-            name: 'http'
-            http: {
-              metadata: {
-                concurrentRequests: '50'
-              }
-            }
-          }
-        ]
+        maxReplicas: 1
       }
     }
   }
@@ -198,7 +201,7 @@ resource dashboard 'Microsoft.App/containerApps@2024-03-01' = {
       ingress: {
         allowInsecure: false
         external: true
-        targetPort: 80
+        targetPort: dashboardPort
         traffic: [
           {
             latestRevision: true
@@ -207,39 +210,40 @@ resource dashboard 'Microsoft.App/containerApps@2024-03-01' = {
         ]
         transport: 'auto'
       }
-      registries: [
+      registries: isWorkshop ? [
         {
           identity: dashboardIdentityId
           server: registry.properties.loginServer
         }
-      ]
+      ] : []
     }
     template: {
       containers: [
         {
           name: 'command-center'
-          image: dashboardImage
+          image: runtimeConfiguration.mode == 'workshop' ? runtimeConfiguration.dashboardImage : bootstrapImage
           env: [
             { name: 'MISSION_CONTROL_API_URL', value: 'https://${api.properties.configuration.ingress.fqdn}' }
-            { name: 'AZURE_CLIENT_ID', value: dashboardIdentityClientId }
+            { name: 'NODE_ENV', value: 'production' }
+            { name: 'PORT', value: string(dashboardPort) }
           ]
           probes: [
             {
               type: 'Startup'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/health/live' : '/', port: dashboardPort }
               periodSeconds: 10
               failureThreshold: 30
             }
             {
               type: 'Liveness'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/health/live' : '/', port: dashboardPort }
               initialDelaySeconds: 10
               periodSeconds: 30
               failureThreshold: 3
             }
             {
               type: 'Readiness'
-              httpGet: { path: '/', port: 80 }
+              httpGet: { path: isWorkshop ? '/health/ready' : '/', port: dashboardPort }
               initialDelaySeconds: 5
               periodSeconds: 10
               failureThreshold: 3

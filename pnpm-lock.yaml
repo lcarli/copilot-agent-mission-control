@@ -601,6 +601,9 @@ importers:
       '@mission-control/api':
         specifier: workspace:*
         version: link:../../apps/api
+      '@mission-control/command-center':
+        specifier: workspace:*
+        version: link:../../apps/command-center
       '@mission-control/event-contracts':
         specifier: workspace:*
         version: link:../../packages/event-contracts

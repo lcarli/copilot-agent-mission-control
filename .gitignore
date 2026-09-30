@@ -1,5 +1,6 @@
 node_modules/
 dist/
+server-dist/
 coverage/
 playwright-report/
 test-results/
@@ -24,6 +25,7 @@ Thumbs.db
 
 deployment-summary*.json
 .azure/validate-status.json
+.azure/hosted-*.json
 infra/main.json
 infra/main.parameters.json
 infra/deploy.json

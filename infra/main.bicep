@@ -1,5 +1,7 @@
 targetScope = 'resourceGroup'
 
+import { WorkshopRuntime } from './runtime-types.bicep'
+
 metadata description = 'Resource-group-scoped foundation for Copilot Agent Mission Control.'
 
 @description('Short workload identifier. Use lowercase letters, numbers, and hyphens.')
@@ -52,11 +54,8 @@ param storageSku string = 'Standard_LRS'
 @maxValue(365)
 param blobDeleteRetentionInDays int = 7
 
-@description('Bootstrap or immutable API image reference.')
-param apiImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-
-@description('Bootstrap or immutable dashboard image reference.')
-param dashboardImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+@description('Explicit bootstrap or fully configured workshop profile. Contains references, never secret values.')
+param runtimeConfiguration WorkshopRuntime = { mode: 'bootstrap' }
 
 @description('Principal allowed to seed immutable campaign packages.')
 param campaignSeederPrincipalId string = ''
@@ -121,23 +120,18 @@ module containerRuntime './modules/container-runtime.bicep' = {
     apiIdentityClientId: identitySecrets.outputs.apiIdentityClientId
     apiIdentityId: identitySecrets.outputs.apiIdentityId
     apiIdentityPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
-    apiImage: apiImage
     applicationInsightsConnectionString: monitoring.outputs.applicationInsightsConnectionString
-    campaignContainerName: dataStorage.outputs.campaignContainerName
     cosmosDatabaseName: dataStorage.outputs.cosmosDatabaseName
     cosmosEndpoint: dataStorage.outputs.cosmosEndpoint
-    dashboardIdentityClientId: identitySecrets.outputs.dashboardIdentityClientId
     dashboardIdentityId: identitySecrets.outputs.dashboardIdentityId
     dashboardIdentityPrincipalId: identitySecrets.outputs.dashboardIdentityPrincipalId
-    dashboardImage: dashboardImage
-    eventsContainerName: dataStorage.outputs.eventsContainerName
     keyVaultUri: identitySecrets.outputs.keyVaultUri
     location: location
     logAnalyticsWorkspaceName: naming.outputs.names.logAnalyticsWorkspace
     names: naming.outputs.names
+    runtimeConfiguration: runtimeConfiguration
     signalRServiceUri: realtime.outputs.serviceUri
     stateContainerName: dataStorage.outputs.stateContainerName
-    storageAccountName: dataStorage.outputs.storageAccountName
     tags: tagging.outputs.tags
   }
 }
@@ -146,6 +140,7 @@ module realtime './modules/realtime.bicep' = {
   name: 'mission-control-realtime'
   params: {
     apiPrincipalId: identitySecrets.outputs.apiIdentityPrincipalId
+    allowedOrigins: runtimeConfiguration.mode == 'workshop' ? [runtimeConfiguration.dashboardOrigin] : []
     location: location
     logAnalyticsWorkspaceId: monitoring.outputs.logAnalyticsWorkspaceId
     names: naming.outputs.names
@@ -200,6 +195,7 @@ output realtime object = {
   serviceUri: realtime.outputs.serviceUri
 }
 output runtime object = {
+  mode: runtimeConfiguration.mode
   apiUrl: 'https://${containerRuntime.outputs.apiFqdn}'
   containerAppsEnvironmentId: containerRuntime.outputs.environmentId
   dashboardUrl: 'https://${containerRuntime.outputs.dashboardFqdn}'

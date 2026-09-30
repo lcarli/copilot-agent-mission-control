@@ -24,7 +24,8 @@
     "ajv": "8.17.1"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/validate-assets.mjs && node scripts/validate-media-localization.mjs && node scripts/validate-starters.mjs",
+    "build": "tsc -p tsconfig.build.json && node scripts/generate-runtime.mjs && node scripts/validate-assets.mjs && node scripts/validate-media-localization.mjs && node scripts/validate-starters.mjs",
+    "generate:runtime": "node scripts/generate-runtime.mjs",
     "generate:reviewed-media": "node scripts/generate-reviewed-media.mjs",
     "lint": "eslint src test",
     "test": "vitest run && node scripts/validate-starters.mjs",

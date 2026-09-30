@@ -14,10 +14,14 @@ param tags object
 @description('Principal ID of the Mission Control API managed identity.')
 param apiPrincipalId string
 
+@description('Exact dashboard origins, resolved before promotion. Empty for non-operational bootstrap.')
+@maxLength(1)
+param allowedOrigins string[]
+
 @description('Log Analytics workspace resource ID for SignalR diagnostics.')
 param logAnalyticsWorkspaceId string
 
-var signalRAppServerRoleId = '420fcaa2-552c-430f-98ca-3264be4806c7'
+var signalRRestApiOwnerRoleId = 'fd53cd77-2268-407a-8f46-7e7863d0f521'
 
 resource signalR 'Microsoft.SignalRService/signalR@2024-03-01' = {
   name: names.signalRService
@@ -30,13 +34,13 @@ resource signalR 'Microsoft.SignalRService/signalR@2024-03-01' = {
     tier: 'Standard'
   }
   properties: {
-    cors: {}
+    cors: { allowedOrigins: allowedOrigins }
     disableAadAuth: false
     disableLocalAuth: true
     features: [
       {
         flag: 'ServiceMode'
-        value: 'Default'
+        value: 'Serverless'
       }
       {
         flag: 'EnableConnectivityLogs'
@@ -58,13 +62,13 @@ resource signalR 'Microsoft.SignalRService/signalR@2024-03-01' = {
   }
 }
 
-resource apiSignalRAppServer 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(signalR.id, apiPrincipalId, signalRAppServerRoleId)
+resource apiSignalRRestApiOwner 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(signalR.id, apiPrincipalId, signalRRestApiOwnerRoleId)
   scope: signalR
   properties: {
     principalId: apiPrincipalId
     principalType: 'ServicePrincipal'
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', signalRAppServerRoleId)
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', signalRRestApiOwnerRoleId)
   }
 }
 

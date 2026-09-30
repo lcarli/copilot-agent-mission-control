@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mission-control/api": "workspace:*",
+    "@mission-control/command-center": "workspace:*",
     "@mission-control/event-contracts": "workspace:*",
     "@mission-control/participant-cli": "workspace:*"
   },

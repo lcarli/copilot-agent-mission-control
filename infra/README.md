@@ -12,6 +12,8 @@ resource names, and common tags so capability modules remain consistent.
 | `deploy.bicepparam` | Safe subscription-scoped development parameter example |
 | `main.bicep` | Resource-group orchestration and shared deployment contract |
 | `main.bicepparam` | Safe development parameter example |
+| `runtime-types.bicep` | Closed bootstrap/workshop configuration with required hosted references |
+| `workshop.bicepparam` | Synthetic hosted-profile example for offline compilation, not deployment |
 | `modules/naming.bicep` | Deterministic names for resources added by later tasks |
 | `modules/tags.bicep` | Required tags merged with caller-supplied tags |
 | `modules/monitoring.bicep` | Log Analytics and workspace-based Application Insights |
@@ -91,16 +93,23 @@ protect reviewed packages from accidental replacement.
 The API identity receives:
 
 - Cosmos DB Built-in Data Contributor at the Cosmos account.
-- Storage Blob Data Contributor at the `campaigns` container only.
+- Storage Blob Data Reader at the `campaigns` container only.
+
+The separately authorized campaign publisher receives Blob Data Contributor.
+Incremental deployment does not revoke historical workload Contributor grants;
+review and remove superseded assignments only through an approved migration.
 
 The `data` root output contains endpoints, resource IDs, and logical names but
 never account keys or connection strings.
 
 ## Real-time messaging
 
-Azure SignalR Service runs in `Default` mode on one `Standard_S1` unit. Local
-access-key authentication is disabled; the API identity receives only the
-`SignalR App Server` role at the SignalR resource scope.
+Azure SignalR Service is prepared in `Serverless` mode on one `Standard_S1`
+unit. Local access-key authentication is disabled; the API identity receives
+`SignalR REST API Owner` at the SignalR resource scope. Its current actions
+include client-token generation and REST publication. The hosted profile allows
+exactly the dashboard origin resolved before promotion; bootstrap is not an
+operational workshop. Actual permission/CORS verification remains a live gate.
 
 Connectivity and HTTP request logs flow to the shared Log Analytics workspace.
 Messaging logs and live trace remain disabled to control cost and avoid
@@ -116,40 +125,40 @@ Container Apps Environment, and externally accessible API and dashboard apps.
 Both apps use their dedicated user-assigned identities and receive `AcrPull`
 only at registry scope. ACR admin credentials and anonymous pull are disabled.
 
-Until the API and dashboard HTTP runtimes are implemented, both apps run the
-Microsoft Container Apps hello-world bootstrap image on port 80. TASK-206
-replaces these references after publishing immutable images. The root `runtime`
-output exposes the registry login server and both HTTPS application URLs.
+The explicit `bootstrap` profile runs Microsoft hello-world images on port 80,
+without a registry link. The `workshop` profile requires all image, identity,
+signing-version and campaign-digest references. Its API runs on port 3000 with
+one replica; its dashboard runs on 8080 with a fixed same-origin API proxy.
+Operational health paths replace the placeholder root probes. Managed-identity
+registry links are enabled only for workshop images. The `runtime` output includes
+the profile mode, registry login server and application URLs.
 
-## One-command deployment
+## Staged deployment
 
-Run the complete preflight, what-if, deployment, image promotion, campaign
-seeding, and output summary with:
+The current approval covers preparation only, not executing Azure commands.
+Future live work requires a separately confirmed subscription, region and scope.
+Start each infrastructure/promotion stage with a preview:
 
 ```powershell
-pnpm deploy:azure -- -Owner <owner>
+pnpm deploy:azure -- -Stage Bootstrap -SubscriptionId <approved-uuid> -Location <approved-region> -Owner <team> -PreviewOnly
 ```
 
-The script defaults to the approved development subscription and Canada East.
-Override any script parameter after `--`, including `-SubscriptionId`,
-`-Location`, `-EnvironmentName`, and `-ResourceGroupName`.
-Development deployments leave Key Vault purge protection disabled so TASK-207
-can remove disposable environments; pass
-`-KeyVaultPurgeProtectionEnabled $true` for retained environments.
+`Bootstrap` creates foundation resources but refuses to replace an existing
+non-bootstrap app. `Artifacts` snapshots allowlisted committed sources, builds
+real API/dashboard images in ACR, verifies the immutable runtime JSON in private
+Blob Storage, and writes a new release manifest without changing Container Apps.
+`Workshop` consumes that release plus closed Entra/signing-reference settings,
+rechecks digests, validates ARM, rejects what-if deletes and promotes the hosted
+configuration. It never silently restores placeholder images.
 
-Before changing Azure, the script validates the subscription-scoped template,
-prints the ARM what-if, and requires typing `deploy`. `-Force` is intended only
-for already-approved non-interactive automation; `-PreviewOnly` stops after
-what-if without changing resources. The signed-in principal
-receives Storage Blob Data Contributor at the private `campaigns` container so
-it can upload the selected archive with Entra authentication.
+Each stage has an explicit confirmation; `-Force` is only for already-approved
+automation. `Artifacts -PreviewOnly` performs no build/upload or manifest creation.
+No registrations, secret values, provider registrations or signing-key migrations
+are automatically created. Purge protection now defaults to enabled; use the
+development exception only for an explicitly disposable environment.
 
-Because the API and dashboard runtimes are not implemented yet, the script
-imports the reviewed Microsoft bootstrap image into ACR under a commit-SHA tag,
-resolves its digest, and promotes that immutable digest to both Container Apps.
-It packages the selected campaign directory, uploads the archive and SHA-256
-sidecar under a checksum-addressed blob path, and prints only non-sensitive
-deployment outputs.
+See [the hosted operating guide](../docs/hosted-workshop.md) for exact stages,
+settings, publisher permissions, partial-failure handling and the live gates.
 
 ## Safe environment destruction
 
@@ -184,8 +193,18 @@ environment; this enables read-only smoke tests for resource provisioning,
 managed identities, passwordless settings, campaign privacy/seeding, and both
 HTTPS endpoints.
 
+`-Offline` cannot be combined with a resource group. Live smoke checks reject
+bootstrap/legacy output as workshop evidence and check the operational health
+paths, proxy/auth bridge, hosted metadata, exact campaign digest and SignalR
+configuration. They do not replace a real instructor login or public push rehearsal.
+
 The validator compiles all Bicep and parameter entrypoints into a temporary
 directory, checks security invariants in the compiled ARM template, emits a
 PASS/FAIL/SKIP table, and exits nonzero on any required failure. The
 `Infrastructure validation` GitHub Actions workflow runs offline checks on
 infrastructure-related pull requests and requires no Azure credentials.
+Negative configuration examples and twelve strictly offline command-double
+scenarios cover required hosted settings, no-op previews, immutable source/artifact
+publication, destination isolation and prevention of bootstrap downgrades.
+`Container validation` builds and smoke-checks real Linux images without
+publishing to a registry or deploying Azure.

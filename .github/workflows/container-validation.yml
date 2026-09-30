@@ -1,0 +1,49 @@
+name: Container validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/container-validation.yml'
+      - '.dockerignore'
+      - 'apps/**'
+      - 'packages/**'
+      - 'campaigns/operation-lighthouse/src/**'
+      - 'campaigns/operation-lighthouse/scripts/generate-runtime.mjs'
+      - 'campaigns/operation-lighthouse/package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - 'tsconfig.base.json'
+
+permissions:
+  contents: read
+
+jobs:
+  containers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build application images
+        run: |
+          docker build --file apps/api/Dockerfile --build-arg VCS_REF="$GITHUB_SHA" --tag mission-control-api:check .
+          docker build --file apps/command-center/Dockerfile --build-arg VCS_REF="$GITHUB_SHA" --tag command-center:check .
+      - name: Verify isolated API package and fail-closed startup
+        run: |
+          test "$(docker image inspect --format '{{.Config.User}}' mission-control-api:check)" = node
+          docker run --rm --entrypoint node mission-control-api:check --input-type=module -e "await import('./dist/hosted-runtime.js')"
+          status=0
+          docker run --rm mission-control-api:check > startup.log 2>&1 || status=$?
+          test "$status" -ne 0
+          grep -q AZURE_CLIENT_ID startup.log
+      - name: Verify dashboard serving and explicit upstream outage
+        run: |
+          test "$(docker image inspect --format '{{.Config.User}}' command-center:check)" = node
+          container=$(docker run --rm --detach --publish 127.0.0.1:18080:8080 --env MISSION_CONTROL_API_URL=http://127.0.0.1:1 command-center:check)
+          trap 'docker stop "$container" >/dev/null' EXIT
+          curl --fail --silent --retry 10 --retry-all-errors --retry-delay 1 http://127.0.0.1:18080/health/ready
+          curl --fail --silent http://127.0.0.1:18080/ | grep -q 'id="root"'
+          curl --fail --silent http://127.0.0.1:18080/auth.html | grep -q '/assets/auth-'
+          test "$(curl --silent --output problem.json --write-out '%{http_code}' http://127.0.0.1:18080/api/v1/workshop)" = 503
+          grep -q dashboard-api-unavailable problem.json

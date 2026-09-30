@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json && vite build",
+    "build": "tsc -p tsconfig.json && vite build && tsc -p server/tsconfig.json",
     "dev": "vite",
-    "lint": "eslint src test",
+    "lint": "eslint src server test",
+    "start": "node server-dist/index.js",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
   },

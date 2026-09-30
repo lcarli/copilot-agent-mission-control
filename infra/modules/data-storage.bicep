@@ -32,6 +32,7 @@ param blobDeleteRetentionInDays int = 7
 var cosmosDatabaseName = 'mission-control'
 var cosmosDataContributorRoleId = '00000000-0000-0000-0000-000000000002'
 var storageBlobDataContributorRoleId = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+var storageBlobDataReaderRoleId = '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
 
 resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
   name: names.cosmosAccount
@@ -195,15 +196,15 @@ resource campaignContainer 'Microsoft.Storage/storageAccounts/blobServices/conta
   }
 }
 
-resource campaignBlobContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(campaignContainer.id, apiPrincipalId, storageBlobDataContributorRoleId)
+resource campaignBlobReader 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(campaignContainer.id, apiPrincipalId, storageBlobDataReaderRoleId)
   scope: campaignContainer
   properties: {
     principalId: apiPrincipalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
-      storageBlobDataContributorRoleId
+      storageBlobDataReaderRoleId
     )
   }
 }

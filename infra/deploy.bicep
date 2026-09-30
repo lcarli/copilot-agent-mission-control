@@ -1,5 +1,7 @@
 targetScope = 'subscription'
 
+import { WorkshopRuntime } from './runtime-types.bicep'
+
 metadata description = 'Subscription-scoped deployment entrypoint for Mission Control.'
 
 @description('Resource group that contains the environment.')
@@ -23,11 +25,8 @@ param campaignSeederPrincipalId string = ''
 @description('Protect the Key Vault from purge during the soft-delete retention period.')
 param keyVaultPurgeProtectionEnabled bool = false
 
-@description('API image reference.')
-param apiImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
-
-@description('Dashboard image reference.')
-param dashboardImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
+@description('Explicit bootstrap or fully configured workshop profile. Contains references, never secret values.')
+param runtimeConfiguration WorkshopRuntime = { mode: 'bootstrap' }
 
 @description('Additional non-sensitive tags.')
 param additionalTags object = {}
@@ -48,13 +47,12 @@ module platform './main.bicep' = {
   scope: environmentResourceGroup
   params: {
     additionalTags: additionalTags
-    apiImage: apiImage
     campaignSeederPrincipalId: campaignSeederPrincipalId
-    dashboardImage: dashboardImage
     environmentName: environmentName
     keyVaultPurgeProtectionEnabled: keyVaultPurgeProtectionEnabled
     location: location
     owner: owner
+    runtimeConfiguration: runtimeConfiguration
     workloadName: workloadName
   }
 }
