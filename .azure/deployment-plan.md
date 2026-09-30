@@ -136,8 +136,9 @@ deploying it; multi-replica high availability is not part of this pass.
 
 - The local workshop has complete simulator observations and a versioned
   pedagogical decision-recovery model.
-- The normal API entry point still exposes configuration and health routes,
-  not the operational workshop routes.
+- Operational routes now have shared runtime ports and separate local/hosted
+  builders. The normal entry point fails readiness until the hosted adapters
+  are assembled; it does not expose the memory adapter publicly.
 - Runtime repositories, simulator observations, idempotency and recovery
   contributions are currently in memory.
 - ADR 0001 selects Container Apps, Cosmos DB, Blob Storage, Key Vault,
@@ -154,7 +155,7 @@ deploying it; multi-replica high availability is not part of this pass.
 | Expanded local scenarios | Fifty logical units exercise actual simulator calls, evaluated submissions and public dashboard updates, including bounded retries and scope isolation. | Complete locally: 250 core passes, 550 scoped simulator observations and a real public browser; no live Azure evidence claimed. |
 | Operational guardrails | Request budgets, safe failure handling and explicit operational limits preserve legitimate classroom traffic. | Complete locally: scoped fixed windows, bounded queues, explicit Retry-After and 50-unit workload evidence. Distributed limits remain outside the single-replica profile. |
 | Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Complete for local automated scope: three locales, both themes, keyboard/focus, narrow public viewport, reduced motion and unfiltered WCAG A/AA scans. Human checks remain open. |
-| Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Design proposed below |
+| Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Shared composition complete; injected identity/repositories/probes and existing HTTP/browser/CLI paths verified locally. Hosted adapter assembly remains pending. |
 | Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Design proposed below |
 | Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Design proposed below |
 | Rehearsal kit and final validation | Reconcile operating guides, prepare reproducible clean-setup rehearsal steps and run applicable offline validation. Keep human and live-service gates open. | Pending |

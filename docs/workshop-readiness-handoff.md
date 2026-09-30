@@ -213,8 +213,9 @@ L07 has reconciled the handoff, presentation gates and Phase 8 evidence without
 checking off the broader event-readiness criteria.
 
 Use `pnpm build:local`, `pnpm start:local`, `pnpm test:workshop` and
-`pnpm test:workshop:load` as documented in the local guide. The normal production
-server remains unchanged; do not deploy the local in-memory entry point.
+`pnpm test:workshop:load` as documented in the local guide. The normal server
+now reports operational readiness as unavailable until its hosted adapters are
+wired; do not deploy the local in-memory entry point.
 
 ## 10. Next technical tasks
 
@@ -250,8 +251,8 @@ references are recorded in
 | S03 - Classroom-scale local scenarios | Complete locally | Fifty logical units complete all five missions alongside a real public browser. Actual scoped receipts, planned failures, phase latency, concurrent replays, borrowed-receipt rejection, reconnects, inventory preservation and public-data isolation are exercised. |
 | S04 - Operational guardrails | Complete locally | Fixed-window budgets by IP, authentication entry, verified unit/event and instructor; bounded queues and tracking tables; explicit 429/503 with Retry-After. The 50-unit five-mission workload remains within budget. These are single-process controls, not distributed protection. |
 | S05 - Accessibility | Complete for the local automated scope | Axe WCAG A/AA rules cover real setup/mission/public/error states in three locales and both themes. Keyboard, focus, narrow reflow and reduced motion are exercised; language metadata, progress labels and contrast were corrected using existing theme tokens. Manual screen-reader/projector and full-event checks remain open. |
-| S06 - Runtime composition | Next | Share operational behavior through explicit runtime dependencies; do not expose the local rehearsal adapter publicly. |
-| S07 - Durable state | Pending | Prepare persistence, restart recovery and idempotent mutations against the accepted Azure data architecture. |
+| S06 - Runtime composition | Complete for the shared composition | Local and hosted builders share routes through explicit repository, state, asynchronous identity, transaction and health ports. Local access remains loopback-only; the hosted builder rejects a local runtime. The normal server fails operational readiness until hosted assembly is delivered. Existing HTTP/browser/CLI behavior is preserved. |
+| S07 - Durable state | Next | Prepare persistence, restart recovery and idempotent mutations against the accepted Azure data architecture. |
 | S08 - Identity and real time | Pending | Prepare scoped instructor identity and redacted real-time/reconnect behavior, without a deployment. |
 | S09 - Rehearsal operations | Pending | Reconcile the operating guides and make clean-setup authoring, full rehearsal and pilot steps executable by the facilitator. |
 | S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |

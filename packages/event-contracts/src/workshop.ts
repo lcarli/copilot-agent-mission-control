@@ -72,7 +72,9 @@ export const PublicPresentationProjectionSchema = Type.Object(
     recognitions: Type.Array(PublicRecognitionSummarySchema, { maxItems: 100 }),
     schemaVersion: Type.Optional(Type.Literal('1.0')),
     eventSessionId: Type.Optional(text()),
-    source: Type.Optional(Type.Literal('local-event')),
+    source: Type.Optional(
+      Type.Union([Type.Literal('local-event'), Type.Literal('hosted-event')]),
+    ),
     recoverySource: Type.Optional(
       Type.Union([
         Type.Literal('scenario-baseline'),

@@ -2,7 +2,15 @@ import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
 
 const config = loadConfig();
-const app = buildApp({ config });
+const app = buildApp({
+  config,
+  readinessProbes: [
+    { name: 'workshop-runtime-not-configured', check: () => 'down' },
+  ],
+  eventProbes: [
+    { name: 'workshop-runtime-not-configured', check: () => 'down' },
+  ],
+});
 
 async function shutdown(signal: NodeJS.Signals): Promise<void> {
   app.log.info({ signal }, 'Shutting down Mission Control API');

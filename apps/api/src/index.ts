@@ -3,6 +3,13 @@ export {
   buildLocalWorkshopApp,
   type LocalWorkshopOptions,
 } from './local-workshop.js';
+export { buildHostedWorkshopApp } from './hosted-workshop.js';
+export type {
+  WorkshopRuntime,
+  WorkshopState,
+  WorkshopRequests,
+  WorkshopProfile,
+} from './workshop-runtime.js';
 export {
   ConfigurationError,
   loadConfig,
