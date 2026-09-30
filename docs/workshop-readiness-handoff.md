@@ -2,7 +2,7 @@
 
 Snapshot: **2026-09-30, local integration complete; hosted adapters exercised offline and Linux images verified in CI**
 
-Next objective: **complete the approved local-quality and production-preparation deliveries, without Azure provisioning; keep human rehearsal explicit**.
+Next objective: **execute clean human authoring/rehearsal and separately authorized hosted validation, then the controlled pilot. Approved offline preparation is complete; no Azure deployment has occurred**.
 
 The main visual and presentation deliverables are complete. That does not mean
 the full event integration has been rehearsed or approved for public delivery.
@@ -123,8 +123,9 @@ expanded five-mission scenario with 50 logical HTTP units and one real public
 browser. The expanded run produced **250 core passes**, **550 scoped simulator
 observations**, **100 planned retryable failures**, and **250 recovery
 contributions**. Its **2,729 measured driver requests** exclude browser polling;
-the highest phase p95 was **2,670 ms**, below the 5,000 ms local regression
-limit. Phase-specific limits include registration and reconnects.
+the highest phase p95 in the final 2026-09-30 run was **3,301 ms**, below the
+5,000 ms local regression limit. Phase-specific limits include registration
+and reconnects.
 
 This is not a deployed-service SLO or proof of Azure/SignalR capacity, 50 real
 browser clients or human authoring. TASK-800 through TASK-804 remain open for
@@ -181,6 +182,9 @@ instructions.
 > Preserve approved artwork, presentations, certificates and unrelated working
 > changes. Keep intended deployment, clean VS Code rehearsal and the human pilot
 > explicit rather than marking the entire event ready from synthetic fixtures.
+> S03-S10 preparation is complete for its recorded offline/document scope.
+> Use `docs\facilitator-runbook.md` for actual human execution. Do not repeat the
+> implementation or deploy Azure without a new destination/authorization.
 
 ## 9. Accepted execution plan: local first
 
@@ -265,11 +269,28 @@ references are recorded in
 | S08 - Identity and real time | Complete for adapter/offline scope | Single-tenant Entra ownership/roles, explicit memory-only MSAL sign-in, pinned Key Vault signing and Blob descriptor, scoped SignalR, conditional durable publication and exact uncertain-action retries. The real browser exercises synthetic identity and SignalR protocol frames; live Entra/MFA/consent/Cosmos/Blob/Key Vault/SignalR verification remains open. |
 | S08b - Hosted packaging | Complete for image/offline scope | Non-root API/dashboard Linux images, isolated production dependencies, compiled static proxy, exact descriptor generation, typed single-replica/Serverless Bicep and guarded bootstrap/artifact/promotion stages. [Container run 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593) passed for `a350020`; the lockfile correction preserves versions/integrities. No Azure publication or deployment was performed. |
 | S09 - Rehearsal operations | Complete for operating-document scope | Private runtime companion for I01-I18, source-backed participant setup with isolated paths, local/hosted recovery, unchanged full agenda, concrete authoring/failure/pilot steps and safe evidence/go-no-go criteria. Actual human execution and intended-environment approval remain pending. |
-| S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |
+| S10 - Preparation validation | Complete for approved offline scope | Final formatting and 70 workspace tasks pass, including 13 browser scenarios and both 50-unit workloads; offline infrastructure has 22 passes and two explicit live skips. Real Linux image evidence is linked above. The formal Azure workflow stops before authenticated core/policy stages and the plan remains `Ready for Validation`, not `Validated`. |
 
 These technical deliveries do not replace R08/L08. The S02 commit has already
-been published; subsequent commits must preserve the excluded video drafts
-and the approved visual/presentation materials.
+been published, and the sequential S03-S09 source/operating-guide commits are
+also on `main`. Preserve the excluded video drafts and approved visual,
+presentation and certificate materials.
+
+### Final evidence and limitations
+
+The [preparation proof](../.azure/deployment-plan.md#final-preparation-proof---2026-09-30)
+records exact commands, source/image revisions, scenario counts, static
+principal/role/scope review and remaining gates. The first final run had an
+unexplained native Windows test-worker exit. Twenty isolated server-file
+repetitions, ten complete dashboard repetitions and the final full workspace
+run subsequently passed unchanged; no native-crash fix is claimed.
+
+No real Azure service, consent/MFA, permissions/CORS, retention/restore or
+rollback procedure has been certified by these results. The hosted participant
+delivery still needs clean-machine exercise. Actual Copilot/specialist
+authoring, manual accessibility/projector checks, the complete workshop rehearsal,
+pilot and go/no-go remain required; TASK-800 through TASK-810 are not blanket
+completed by S10.
 
 ## 11. Continuing on another computer
 

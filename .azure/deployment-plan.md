@@ -1,9 +1,11 @@
 # Azure Deployment Plan
 
-> **Status:** In Progress
+> **Status:** Ready for Validation
 >
 > **Current scope:** Workshop quality and production integration preparation.
 > No Azure provisioning or deployment is authorized for this extension.
+> This status starts the final validation phase; it is not deployed-environment
+> approval or permission to reuse the historical Azure destination.
 
 Generated: 2026-09-25
 Preparation extension: 2026-09-29
@@ -163,7 +165,7 @@ deploying it; multi-replica high availability is not part of this pass.
 | Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Complete for adapter/offline scope: Entra ownership/role checks, memory-only MSAL, pinned Key Vault/Blob loading, scoped SignalR and conditional publication acknowledgment. Real browser coverage uses synthetic identity and SignalR protocol frames. Popup sign-in is an assumption for review, not an additional user approval. Live services remain unverified. |
 | Hosted packaging | Build real images, immutable campaign descriptors and single-replica configuration, without provisioning. | Complete for image/offline scope: portable API dependencies, compiled browser/static proxy, deterministic descriptor, typed Bicep profiles and guarded staged publication. Both Linux builds and runtime smoke checks passed in [run 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593), commit `a350020`, on 2026-09-30. No Azure publication or deployment. |
 | Rehearsal kit | Reconcile operating guides and prepare reproducible clean-setup authoring, full rehearsal and pilot steps. | Complete for operating-document scope: [private facilitator runbook](../docs/facilitator-runbook.md) supplements I01-I18, participant paths are isolated, local/hosted behavior is explicit, and the agenda, failure drills and evidence/go-no-go criteria are preserved. Human execution remains pending. |
-| Final preparation validation | Run applicable offline validation and retain the live-service/human boundary. | Pending |
+| Final preparation validation | Run applicable offline validation and retain the live-service/human boundary. | Complete for the approved offline scope on 2026-09-30. Source checks, thirteen browser scenarios, both fifty-unit workloads and twenty-two infrastructure checks pass. Full Azure validation is gated; the plan remains `Ready for Validation`, not `Validated` or ready to deploy. |
 
 ### Proposed implementation design
 
@@ -236,3 +238,84 @@ No new deployment, ARM what-if, Azure resource mutation, role assignment or
 subscription selection has been performed. Local fixtures and transport
 doubles will be labeled as such; they are not evidence of live Cosmos DB,
 Entra ID, SignalR or a human-led workshop.
+
+### Final validation checklist for this extension
+
+This is a new validation cycle; the checked historical TASK-208 steps above do
+not apply to the hosted workshop. The standalone Bicep recipe requires:
+
+- [ ] All validation checks pass.
+  - [ ] Core validation: CLI, authentication, Bicep build, ARM validation and what-if.
+  - [x] Bicep linting.
+  - [ ] Azure Policy validation.
+- [x] Final applicable formatting, build, lint, types, unit/contract/browser checks.
+- [x] Final fifty-unit simulator and dashboard workload evidence.
+- [x] Offline Bicep/configuration/deployment-orchestration checks.
+- [x] Static resource-role review for the prepared workload identities.
+- [x] Real Linux API/dashboard image builds and bounded runtime checks: run `36670155593`.
+- [x] Record final preparation proof and explicit unresolved gates.
+
+Only the offline subset is authorized in this pass. The full azure-validate
+workflow cannot pass its core/policy stages without a separately confirmed
+Azure destination and live validation authorization. Do not mark those stages
+complete, reuse historical approval or set the plan to `Validated`.
+
+### Final preparation proof - 2026-09-30
+
+Source revision: `dc613a6` (subsequent readiness-record edits are documentation
+only). The image check used `a350020`; intervening commits changed only guides
+and evidence records. No Azure resources were created, authenticated against
+for validation, promoted or modified by these commands.
+
+| Check | Command or evidence | Actual result |
+| --- | --- | --- |
+| Formatting | `pnpm format:check` | Passed. |
+| Workspace build/lint/types/tests | `pnpm exec turbo run build lint typecheck test --concurrency=1 --output-logs=errors-only` | 70 tasks successful across 19 workspaces; 38 valid cached results reused. Includes API 66, dashboard 50 and campaign 99 tests. |
+| Browser/CLI/durability/packaging/accessibility | `@mission-control/tests-e2e` test task in the command above | 13 scenarios passed, including the compiled dashboard/proxy and the five-mission fifty-unit scenario. External Azure/identity/SignalR transports remain doubles. |
+| Fifty-unit Mission 1 workload | `@mission-control/tests-load` test task in the command above | 457 measured driver requests; p95 2,596 ms. |
+| Fifty-unit five-mission workload | `local-workshop-scale.spec.ts` in the E2E task above | 250 core passes, 550 simulator observations, 100 planned retryable failures, 250 decision contributions, one real public browser and 2,729 measured driver requests. Highest phase p95 3,301 ms; every phase below 5,000 ms. |
+| Campaign artifact | Campaign build and packaging E2E | 17,064 bytes; SHA-256 `62ed619b7e6c5061777852fa510037ba3a064afbe9b9761b5177a139dd69d4dd`. Asset, localization and starter checks passed without regenerating approved materials. |
+| Infrastructure | `pnpm validate:infra -- -Offline` | 22 passed, 2 skipped: ARM preflight and deployed smoke. Includes positive/negative hosted Bicep compilation and 12 command-double deployment scenarios; no real Azure commands executed by the doubles. |
+| Linux images | [Container validation 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593) | API/dashboard builds, non-root users, isolated API import, missing-identity startup failure and dashboard/proxy-outage checks passed. No image publication or Azure deployment. |
+| Formal Azure validation | `workflow.ps1 -WorkspacePath <repo>` through `-CompletedStep AddValidationSteps` | New checklist recorded; stopped before the recipe's authenticated core/policy stages. These are not passed or waived. |
+
+The first workspace attempt had a Windows Vitest worker exit with native code
+`3221226505` while starting `server.test.ts`. The isolated six-test file then
+passed 20 repetitions, the complete dashboard suite passed 10 repetitions,
+and the complete workspace command passed unchanged. The crash was not
+reproduced or diagnosed; no assertion was disabled and no fix is claimed.
+Retain this runner caveat and investigate with a native crash record if it
+recurs. The runner also reported using Turbo 2.10.13's global fallback, matching
+the pinned version; a clean-machine run remains part of participant readiness.
+
+These are local regression thresholds, not Azure latency/capacity SLOs or
+evidence of fifty real browsers, human authoring or pilot attendance.
+
+### Static role review for this extension
+
+| Principal | Resource scope and assigned role | Code operation |
+| --- | --- | --- |
+| API managed identity | Dedicated registry: AcrPull | Pull the pinned API image without registry passwords. |
+| Dashboard managed identity | Dedicated registry: AcrPull | Pull the pinned dashboard image; no workshop data access is assigned. |
+| API managed identity | Dedicated Cosmos account: Built-in Data Contributor | Metadata/readiness, queries and conditional transactional state batches. Account-level data scope is retained from the foundation; this is not a claim of per-container RBAC. |
+| API managed identity | Dedicated vault: Key Vault Secrets User | Read the explicitly pinned signing secret/version. Vault-level scope is retained; no secret-writing role is added. |
+| API managed identity | `campaigns` Blob container: Storage Blob Data Reader | Read properties and conditionally download the immutable descriptor. |
+| API managed identity | Dedicated SignalR service: SignalR REST API Owner | Health, scoped client-token generation and public projection publication. |
+| Optional campaign publisher | `campaigns` Blob container: Storage Blob Data Contributor | Separately authorized immutable artifact upload and verification, not API runtime writes. ACR publishing permissions remain an operator prerequisite. |
+
+Review covered `identity-secrets.bicep`, `data-storage.bicep`,
+`container-runtime.bicep`, `realtime.bicep` and hosted assembly. No Owner or
+generic Contributor assignment was introduced. Actual effective permissions,
+propagation, historical-grant revocation and live service behavior remain
+unverified; incremental deployment does not revoke old grants automatically.
+
+### Remaining release gates
+
+Confirm the live Azure destination and authorize the new ARM/policy/service
+validation separately. Verify real Entra consent/MFA/renewal and the popup UX,
+resource access/CORS, durable restart/uncertain-write recovery, classroom ingress
+budgets, retention and consistent backup/restore/compatible rollback. Then
+execute clean human VS Code/Copilot authoring, manual accessibility/projector
+checks, the full 455-minute rehearsal and the controlled pilot of up to 20
+participants. Resolve findings and record the actual go/no-go. The approved
+offline preparation is complete; these external/human gates are not.

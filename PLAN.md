@@ -1236,7 +1236,7 @@ A task is complete only when:
 
 ### Phase 8 — Quality, Security, and Event Readiness
 
-Local implementation evidence (2026-09-29): the
+Local implementation and hosted-preparation evidence (2026-09-30): the
 [readiness handoff](docs/workshop-readiness-handoff.md) records a working
 loopback API/CLI/browser round trip, five mission submissions with actual
 server-observed simulator calls for Missions 3 and 5, versioned pedagogical
@@ -1247,8 +1247,13 @@ browser. The expanded scenario enforces phase-specific latency limits, scoped
 receipts, retry safety and public-data isolation. Recovery is
 not a points conversion or execution of proposed allocations. The
 [participant guide](docs/participant-guide.md) and
-[local operating guide](docs/local-workshop.md) are available. These are partial
-evidence for the tasks below, not completion of intended deployment, actual
+[local operating guide](docs/local-workshop.md) are available. The
+[private facilitator runbook](docs/facilitator-runbook.md) reconciles the
+approved facilitator material with current runtime behavior and supplies
+authoring, failure, full-rehearsal and pilot procedures. Hosted adapters have
+offline persistence/identity/realtime evidence, and real Linux application
+images have CI build/runtime evidence; no Azure deployment occurred.
+These are partial evidence for the tasks below, not completion of intended deployment, actual
 agent/tool authoring, full security/accessibility validation, rehearsal or pilot.
 
 - [ ] **TASK-800 — Add platform unit and contract test suites.** Cover domain, API, campaigns, events, and localization.
