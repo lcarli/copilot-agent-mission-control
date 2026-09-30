@@ -1,7 +1,7 @@
 # Operation Lighthouse - Workshop Readiness Handoff
 
 Snapshot: **2026-09-29, local integration, simulator evidence and decision recovery complete**  
-Next objective: **rehearse the participant authoring workflow from a clean VS Code setup, excluding videos**.
+Next objective: **complete the approved local-quality and production-preparation deliveries, without Azure provisioning; keep human rehearsal explicit**.
 
 The main visual and presentation deliverables are complete. That does not mean
 the full event integration has been rehearsed or approved for public delivery.
@@ -230,6 +230,31 @@ The next step is R08 and L08: a clean, human-led VS Code/Copilot authoring
 rehearsal using the participant guide. It requires the actual participant
 account, approved tools and facilitator observation; synthetic fixtures do not
 complete it. Intended deployment and the broader quality/pilot gates remain open.
+
+### Approved continuation: sequential technical deliveries
+
+The user authorized local-quality work and production integration preparation,
+with a separate commit per delivery and **no Azure provisioning or deployment**.
+The accepted first hosted profile uses one API replica, durable state and
+Azure SignalR Serverless for the existing Node backend. Multi-replica high
+availability is not claimed. The implementation plan and official-service
+references are recorded in
+[the preparation extension](../.azure/deployment-plan.md#11-workshop-runtime-preparation-extension).
+
+| Step | Status | Bounded deliverable |
+| --- | --- | --- |
+| S03 - Classroom-scale local scenarios | Next | Fifty logical participant units, actual simulator receipts and a real public browser; explicit latency, retry, isolation and privacy assertions. |
+| S04 - Operational guardrails | Pending | Bounded request handling and safe failures that preserve legitimate workshop traffic. |
+| S05 - Accessibility | Pending | Automated accessibility/keyboard evidence, without claiming the human screen-reader/projector rehearsal is complete. |
+| S06 - Runtime composition | Pending | Share operational behavior through explicit runtime dependencies; do not expose the local rehearsal adapter publicly. |
+| S07 - Durable state | Pending | Prepare persistence, restart recovery and idempotent mutations against the accepted Azure data architecture. |
+| S08 - Identity and real time | Pending | Prepare scoped instructor identity and redacted real-time/reconnect behavior, without a deployment. |
+| S09 - Rehearsal operations | Pending | Reconcile the operating guides and make clean-setup authoring, full rehearsal and pilot steps executable by the facilitator. |
+| S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |
+
+These technical deliveries do not replace R08/L08. The S02 commit has already
+been published; subsequent commits must preserve the excluded video drafts
+and the approved visual/presentation materials.
 
 ## 11. Continuing on another computer
 
