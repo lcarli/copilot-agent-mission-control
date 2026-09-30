@@ -581,6 +581,9 @@ importers:
         specifier: workspace:*
         version: link:../../apps/participant-cli
     devDependencies:
+      '@axe-core/playwright':
+        specifier: 4.13.0
+        version: 4.13.0(playwright-core@1.63.0)
       '@playwright/test':
         specifier: ^1.63.0
         version: 1.63.0
@@ -614,6 +617,11 @@ importers:
         version: 5.0.1(@types/node@24.13.5)(vite@8.3.0(@types/node@24.13.5)(yaml@2.8.1))
 
 packages:
+
+  '@axe-core/playwright@4.13.0':
+    resolution: {integrity: sha1-SCZGfJYi3ybw11tMF0fI2S7lmd4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@axe-core/playwright/-/playwright-4.13.0.tgz}
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
 
   '@cacheable/memory@2.2.0':
     resolution: {integrity: sha1-cq64sFH21ZfRCshZW5StgwK9Ijk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@cacheable/memory/-/memory-2.2.0.tgz}
@@ -1148,6 +1156,10 @@ packages:
 
   avvio@9.3.0:
     resolution: {integrity: sha1-5LwzzikakIhzrq1ybHOqtv82TxI=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/avvio/-/avvio-9.3.0.tgz}
+
+  axe-core@4.13.0:
+    resolution: {integrity: sha1-+Gjssb1h2YIyF2DlHYQatJerhtA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/axe-core/-/axe-core-4.13.0.tgz}
+    engines: {node: '>=4'}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha1-v7EGYv7tgZaixi58aOF3IMJ0F5o=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/balanced-match/-/balanced-match-4.0.4.tgz}
@@ -1873,6 +1885,11 @@ packages:
 
 snapshots:
 
+  '@axe-core/playwright@4.13.0(playwright-core@1.63.0)':
+    dependencies:
+      axe-core: 4.13.0
+      playwright-core: 1.63.0
+
   '@cacheable/memory@2.2.0':
     dependencies:
       '@cacheable/utils': 2.5.0
@@ -2321,6 +2338,8 @@ snapshots:
     dependencies:
       '@fastify/error': 4.2.0
       fastq: 1.20.3
+
+  axe-core@4.13.0: {}
 
   balanced-match@4.0.4: {}
 

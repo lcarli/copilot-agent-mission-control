@@ -75,7 +75,7 @@ body {
 }
 
 a {
-  color: var(--cp-link);
+  color: var(--cp-accent);
 }
 
 .runtime-notice {
@@ -182,7 +182,7 @@ h2 {
 .preferences label {
   display: grid;
   gap: 0.25rem;
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
   font-size: 0.75rem;
 }
 
@@ -218,7 +218,7 @@ input {
   min-height: 2.75rem;
   padding: 0.75rem 1rem;
   background: transparent;
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -782,7 +782,7 @@ progress {
 .control-heading p:last-child {
   max-width: 46rem;
   margin-bottom: 0;
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
 }
 
 .command-message {
@@ -827,7 +827,7 @@ progress {
 }
 
 .mission-timeline small {
-  color: var(--cp-text-muted);
+  color: var(--cp-text);
 }
 
 .mission-timeline progress {
@@ -897,11 +897,13 @@ progress {
 }
 
 .status-open {
-  color: var(--cp-success);
+  color: var(--cp-text);
+  border-inline-start: 0.25rem solid var(--cp-success);
 }
 
 .status-paused {
-  color: var(--cp-warning);
+  color: var(--cp-text);
+  border-inline-start: 0.25rem solid var(--cp-warning);
 }
 
 .status-locked,
@@ -1456,7 +1458,7 @@ progress {
 }
 
 .presentation-units span {
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
   font-size: clamp(0.875rem, 1.6vw, 1.25rem);
 }
 
@@ -1484,7 +1486,7 @@ progress {
 .presentation-mission p,
 .presentation-recovery p {
   margin: 0;
-  color: var(--cp-text-muted);
+  color: var(--cp-text);
   font-size: clamp(0.875rem, 1.5vw, 1.25rem);
   font-weight: 700;
   text-transform: uppercase;
@@ -1496,7 +1498,7 @@ progress {
 }
 
 .presentation-mission > span {
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
   font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
@@ -1581,15 +1583,18 @@ progress {
 }
 
 .status-critical {
-  color: var(--cp-danger);
+  color: var(--cp-text);
+  border-inline-start: 0.25rem solid var(--cp-danger);
 }
 
 .status-stabilizing {
-  color: var(--cp-warning);
+  color: var(--cp-text);
+  border-inline-start: 0.25rem solid var(--cp-warning);
 }
 
 .status-recovered {
-  color: var(--cp-success);
+  color: var(--cp-text);
+  border-inline-start: 0.25rem solid var(--cp-success);
 }
 
 .presentation-ranking li {
@@ -1646,7 +1651,7 @@ progress {
 }
 
 .presentation-footer {
-  color: var(--cp-text-muted);
+  color: var(--cp-text-soft);
   text-align: center;
 }
 

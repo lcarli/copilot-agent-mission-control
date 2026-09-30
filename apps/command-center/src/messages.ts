@@ -32,6 +32,8 @@ const messages = {
     'shell.controlsDescription':
       'Open, pause, and close missions from this workspace.',
     'shell.locale': 'Language',
+    'shell.preferences': 'Display preferences',
+    'shell.navigation': 'Primary navigation',
     'shell.theme': 'Theme',
     'theme.auto': 'Automatic',
     'theme.light': 'Light',
@@ -282,6 +284,8 @@ const messages = {
     'shell.controlsDescription':
       'Ouvrez, suspendez et fermez les missions ici.',
     'shell.locale': 'Langue',
+    'shell.preferences': 'Préférences d’affichage',
+    'shell.navigation': 'Navigation principale',
     'shell.theme': 'Thème',
     'theme.auto': 'Automatique',
     'theme.light': 'Clair',
@@ -532,6 +536,8 @@ const messages = {
     'shell.controls': 'Controles de missão',
     'shell.controlsDescription': 'Abra, pause e encerre missões neste espaço.',
     'shell.locale': 'Idioma',
+    'shell.preferences': 'Preferências de exibição',
+    'shell.navigation': 'Navegação principal',
     'shell.theme': 'Tema',
     'theme.auto': 'Automático',
     'theme.light': 'Claro',

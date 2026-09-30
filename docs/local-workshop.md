@@ -271,6 +271,23 @@ contributions, and checks that proposed allocations leave inventory unchanged.
 Browser traces, screenshots and videos are disabled to avoid retaining
 credentials from the private page.
 
+The accessibility journey uses axe-core WCAG 2 A/AA, 2.1 A/AA and 2.2 AA rules
+against the actual setup, active/paused mission, populated public display and
+error states. It covers English, French and Brazilian Portuguese in both
+themes, keyboard-only access to the skip link and lifecycle controls, visible
+focus, a 320-pixel public viewport and reduced motion. Locale selection updates
+the document language, and public links carry the selected locale. Status text
+uses readable theme text colors while semantic border colors remain visible.
+
+```powershell
+pnpm --filter @mission-control/tests-e2e exec playwright test accessibility.spec.ts
+```
+
+The runner does not preserve output artifacts, including failed-test snapshots.
+Automated scans do not establish full WCAG conformance, intelligible
+screen-reader announcements, real projector readability or human usability.
+Those remain facilitator rehearsal checks.
+
 The load command runs two scenarios sequentially. The original Mission 1
 scenario requires exactly 50 contributions after concurrent retries and
 reconnects, without inflating its 59% collective indicator. The expanded

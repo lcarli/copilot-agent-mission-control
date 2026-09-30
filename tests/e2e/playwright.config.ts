@@ -6,6 +6,7 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   reporter: 'list',
+  preserveOutput: 'never',
   use: {
     browserName: 'chromium',
     headless: true,

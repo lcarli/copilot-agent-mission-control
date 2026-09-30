@@ -53,3 +53,10 @@ adapters, SignalR, 50 separate browser clients, a complete screen-reader audit
 or a human-led workshop.
 TASK-801 remains open for that intended-event coverage. No credentials,
 screenshots, videos or traces are retained by the test runner.
+
+`accessibility.spec.ts` exercises live setup, mission controls, public results
+and failure states with axe-core WCAG A/AA checks. It verifies three locales,
+both themes, real keyboard navigation, visible focus, narrow-screen reflow and
+reduced-motion behavior. Public document language follows the selected locale.
+No axe rules are disabled to accommodate the app. This is bounded automated
+evidence, not a complete manual accessibility audit or certification.

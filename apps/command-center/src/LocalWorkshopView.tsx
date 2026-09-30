@@ -278,7 +278,7 @@ export function LocalWorkshopView({
           </p>
           <p>
             <a
-              href={`?view=presentation&eventSessionId=${encodeURIComponent(snapshot.eventSession.eventSessionId)}`}
+              href={`?view=presentation&eventSessionId=${encodeURIComponent(snapshot.eventSession.eventSessionId)}&locale=${locale}`}
               target="_blank"
               rel="noopener noreferrer"
             >

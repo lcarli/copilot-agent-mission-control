@@ -243,7 +243,11 @@ export function MissionControlPanel({
               <span>{index + 1}</span>
               <strong>{mission.title}</strong>
               <small>{t(`controls.status.${mission.status}`)}</small>
-              <progress max="100" value={mission.completionPercent} />
+              <progress
+                aria-label={`${mission.title}: ${t('presentation.missionProgress')}`}
+                max="100"
+                value={mission.completionPercent}
+              />
             </button>
           </li>
         ))}

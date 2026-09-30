@@ -153,7 +153,7 @@ deploying it; multi-replica high availability is not part of this pass.
 | --- | --- | --- |
 | Expanded local scenarios | Fifty logical units exercise actual simulator calls, evaluated submissions and public dashboard updates, including bounded retries and scope isolation. | Complete locally: 250 core passes, 550 scoped simulator observations and a real public browser; no live Azure evidence claimed. |
 | Operational guardrails | Request budgets, safe failure handling and explicit operational limits preserve legitimate classroom traffic. | Complete locally: scoped fixed windows, bounded queues, explicit Retry-After and 50-unit workload evidence. Distributed limits remain outside the single-replica profile. |
-| Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Pending |
+| Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Complete for local automated scope: three locales, both themes, keyboard/focus, narrow public viewport, reduced motion and unfiltered WCAG A/AA scans. Human checks remain open. |
 | Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Design proposed below |
 | Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Design proposed below |
 | Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Design proposed below |

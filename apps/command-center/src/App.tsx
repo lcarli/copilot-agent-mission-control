@@ -3,7 +3,7 @@ import {
   createLocalizer,
   type SupportedLocale,
 } from '@mission-control/localization';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { catalogs } from './messages.js';
 import { LocalWorkshopView } from './LocalWorkshopView.js';
@@ -71,6 +71,9 @@ export function CommandCenterApp({
     [],
   );
   const t = (key: string): string => localizer.format(key, {}, locale).message;
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const updateTheme = (choice: ThemeChoice) => {
     setTheme(choice);
@@ -105,7 +108,11 @@ export function CommandCenterApp({
             <p className="eyebrow">{t('app.title')}</p>
             <h1>{t('app.subtitle')}</h1>
           </div>
-          <div className="preferences" aria-label="Display preferences">
+          <div
+            className="preferences"
+            aria-label={t('shell.preferences')}
+            role="group"
+          >
             <label>
               <span>{t('shell.locale')}</span>
               <select
@@ -137,7 +144,7 @@ export function CommandCenterApp({
           </div>
         </header>
 
-        <nav className="primary-nav" aria-label="Primary">
+        <nav className="primary-nav" aria-label={t('shell.navigation')}>
           {[
             'setup',
             'overview',
