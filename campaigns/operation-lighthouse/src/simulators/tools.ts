@@ -199,4 +199,23 @@ export class LighthouseSimulatorSession {
   observations(): readonly SimulatorObservation[] {
     return cloneFrozen(this.#observations);
   }
+
+  static restore(
+    scope: SimulatorScope,
+    observations: readonly SimulatorObservation[],
+  ): LighthouseSimulatorSession {
+    const session = new LighthouseSimulatorSession(scope);
+    for (const observed of observations) {
+      const replayed = session.invoke(
+        observed,
+        observed.evidenceId,
+        observed.recordedAt,
+      );
+      if (!Value.Equal(replayed, observed))
+        throw new Error(
+          'Persisted simulator evidence is inconsistent with this simulator version.',
+        );
+    }
+    return session;
+  }
 }

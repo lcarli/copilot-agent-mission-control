@@ -24,7 +24,7 @@ export const campaignFinaleRecoveryThreshold =
 
 type RecoveryMissionId = keyof typeof lighthouseRecoveryPolicy.missionWeights;
 
-interface RecoveryDecision {
+export interface RecoveryDecision {
   readonly eventSessionId: string;
   readonly unitId: string;
   readonly missionId: RecoveryMissionId;
@@ -131,6 +131,23 @@ const attributedDistricts = (
 
 export class LighthouseRecovery {
   readonly #decisions = new Map<string, RecoveryDecision>();
+
+  constructor(decisions: readonly RecoveryDecision[] = []) {
+    for (const decision of decisions) {
+      this.#decisions.set(
+        JSON.stringify([
+          decision.eventSessionId,
+          decision.unitId,
+          decision.missionId,
+        ]),
+        cloneFrozen(decision),
+      );
+    }
+  }
+
+  decisions(): readonly RecoveryDecision[] {
+    return cloneFrozen([...this.#decisions.values()]);
+  }
 
   recordValidation(
     context: ResolvedValidationContext,

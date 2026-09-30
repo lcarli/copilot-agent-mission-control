@@ -35,3 +35,8 @@ operational workshop. Liveness still reports process health.
 only for local compatibility. The public schema reserves `hosted-event`
 separately from `local-event`; this does not enable a hosted deployment or
 remove the dashboard's current local-only integration boundary.
+
+The `durable` adapters implement the same domain interfaces using versioned
+Cosmos documents and a per-event atomic transaction boundary. Read the
+[hosted preparation guide](../../docs/hosted-workshop.md) before extending
+repository writes, idempotency, simulator restoration or retention.

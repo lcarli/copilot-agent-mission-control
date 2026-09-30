@@ -4,6 +4,17 @@ export {
   type LocalWorkshopOptions,
 } from './local-workshop.js';
 export { buildHostedWorkshopApp } from './hosted-workshop.js';
+export { createDurableWorkshopData } from './durable/runtime-data.js';
+export { DurableWorkshopStore } from './durable/store.js';
+export { StateConflict } from './durable/values.js';
+export type {
+  DocumentBackend,
+  DocumentFilter,
+  DocumentKind,
+  DocumentWrite,
+  StateDocument,
+  VersionedDocument,
+} from './durable/documents.js';
 export type {
   WorkshopRuntime,
   WorkshopState,

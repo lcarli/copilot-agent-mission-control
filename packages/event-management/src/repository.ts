@@ -5,6 +5,9 @@ export interface EventUnitRepository {
   createEventSession(eventSession: EventSession): Promise<void>;
   getEventSession(eventSessionId: string): Promise<EventSession | undefined>;
   listEventSessions(): Promise<readonly EventSession[]>;
+  findEventSessionsByCodeLookup?(
+    lookup: string,
+  ): Promise<readonly EventSession[]>;
   updateEventSession(
     eventSession: EventSession,
     expectedVersion: number,

@@ -29,6 +29,14 @@ export class InMemoryHintUsageRepository implements HintUsageRepository {
   readonly #usages: HintUsage[] = [];
   readonly #idempotency = new Map<string, HintUsage>();
 
+  public constructor(usages: readonly HintUsage[] = []) {
+    for (const usage of usages) {
+      const restored = clone(usage);
+      this.#usages.push(restored);
+      this.#idempotency.set(this.#idempotencyScope(restored), restored);
+    }
+  }
+
   public getReplay(input: RequestHintInput): Promise<HintUsage | undefined> {
     const replay = this.#idempotency.get(this.#idempotencyScope(input));
     return Promise.resolve(replay === undefined ? undefined : clone(replay));

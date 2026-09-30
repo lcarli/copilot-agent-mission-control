@@ -45,6 +45,20 @@ const recordAll = (recovery: LighthouseRecovery, unitId = 'unit-1') => {
 };
 
 describe('Lighthouse decision recovery policy', () => {
+  it('restores private decisions without stacking them or exposing mutable state', () => {
+    const original = new LighthouseRecovery();
+    recordAll(original);
+    const persisted = original.decisions();
+    const restored = new LighthouseRecovery(persisted);
+    expect(restored.project('event-1', ['unit-1'])).toEqual(
+      original.project('event-1', ['unit-1']),
+    );
+    recordAll(restored);
+    expect(restored.decisions()).toHaveLength(5);
+    expect(Object.isFrozen(persisted)).toBe(true);
+    expect(Object.isFrozen(persisted[0])).toBe(true);
+  });
+
   it('preserves the baseline without eligible contributions', () => {
     const recovery = new LighthouseRecovery();
     for (const units of [[], ['unit-1']]) {

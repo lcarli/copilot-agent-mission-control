@@ -139,8 +139,10 @@ deploying it; multi-replica high availability is not part of this pass.
 - Operational routes now have shared runtime ports and separate local/hosted
   builders. The normal entry point fails readiness until the hosted adapters
   are assembled; it does not expose the memory adapter publicly.
-- Runtime repositories, simulator observations, idempotency and recovery
-  contributions are currently in memory.
+- Local mode remains in memory. The durable adapters now store separately
+  versioned state, observations, idempotency and recovery documents in the
+  accepted Cosmos partition, with atomic ETag-guarded batches. Hosted assembly
+  and live-service validation remain pending.
 - ADR 0001 selects Container Apps, Cosmos DB, Blob Storage, Key Vault,
   managed identity and Azure SignalR. Do not replace these choices with an
   unrelated stack or initialize the existing project from a template.
@@ -156,7 +158,7 @@ deploying it; multi-replica high availability is not part of this pass.
 | Operational guardrails | Request budgets, safe failure handling and explicit operational limits preserve legitimate classroom traffic. | Complete locally: scoped fixed windows, bounded queues, explicit Retry-After and 50-unit workload evidence. Distributed limits remain outside the single-replica profile. |
 | Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Complete for local automated scope: three locales, both themes, keyboard/focus, narrow public viewport, reduced motion and unfiltered WCAG A/AA scans. Human checks remain open. |
 | Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Shared composition complete; injected identity/repositories/probes and existing HTTP/browser/CLI paths verified locally. Hosted adapter assembly remains pending. |
-| Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Design proposed below |
+| Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Adapter and offline scope complete: atomic Cosmos batches, encrypted replies, coherent snapshots and preserved evidence. File-transport restart/concurrency and SDK-boundary checks pass; live Cosmos and retention/restore operations remain open. |
 | Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Design proposed below |
 | Rehearsal kit and final validation | Reconcile operating guides, prepare reproducible clean-setup rehearsal steps and run applicable offline validation. Keep human and live-service gates open. | Pending |
 
@@ -193,6 +195,8 @@ Official references reviewed for the design:
 - [SignalR managed-identity permissions](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-howto-authorize-managed-identity)
 - [SignalR data-plane REST API](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-reference-data-plane-rest-api)
 - [Cosmos transactional batches](https://learn.microsoft.com/en-us/azure/cosmos-db/transactional-batch)
+- [Cosmos JavaScript batch API](https://learn.microsoft.com/en-us/javascript/api/@azure/cosmos/items?view=azure-node-latest)
+- [Cosmos conditional replacement](https://learn.microsoft.com/en-us/javascript/api/@azure/cosmos/replaceoperationinput?view=azure-node-latest)
 
 ### Planning gate
 
@@ -200,7 +204,8 @@ Official references reviewed for the design:
 - [x] Preserve the accepted architecture and existing infrastructure workflow.
 - [x] Inspect existing runtime interfaces and finish the implementation design.
 - [x] Confirm the bounded implementation plan before production integration.
-- [ ] Research official service/SDK guidance before generating Azure adapters.
+- [x] Research official Cosmos SDK batch, ETag, token-credential and limit guidance before generating the storage adapter.
+- [ ] Finish identity/SignalR SDK and permission research before generating the remaining adapters.
 
 ### Validation boundary
 

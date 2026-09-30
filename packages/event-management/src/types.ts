@@ -23,6 +23,7 @@ export interface EventSession {
   readonly status: EventSessionStatus;
   readonly registrationEnabled: boolean;
   readonly eventCodeVerifier: string;
+  readonly eventCodeLookup?: string;
   readonly scenarioSeed: string;
   readonly scoringPolicyVersion: string;
   readonly createdBy: string;

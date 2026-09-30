@@ -1,7 +1,4 @@
-import {
-  AuthenticationError,
-  type InstructorAction,
-} from '@mission-control/auth';
+import type { InstructorAction } from '@mission-control/auth';
 import {
   connectedCityContent,
   connectedCityValidator,
@@ -27,7 +24,6 @@ import {
   type PublicPresentationProjection,
 } from '@mission-control/event-contracts';
 import {
-  EventManagementError,
   EventUnitService,
   type AuthenticatedUnit,
   type EventSession,
@@ -35,11 +31,8 @@ import {
   type ReconnectUnitInput,
   type SupportedLocale,
 } from '@mission-control/event-management';
-import { HintService, HintSystemError } from '@mission-control/hint-system';
-import {
-  MissionLifecycleService,
-  MissionManagementError,
-} from '@mission-control/mission-management';
+import { HintService } from '@mission-control/hint-system';
+import { MissionLifecycleService } from '@mission-control/mission-management';
 import { ScoringEngine, scoreDimensions } from '@mission-control/scoring';
 import {
   InMemoryValidatorRegistry,
@@ -56,6 +49,7 @@ import { workshopProblem } from './local-requests.js';
 import { handleRequestError } from './problems.js';
 import { RequestBudget, workshopRequestLimits } from './request-budget.js';
 import type { WorkshopRuntime } from './workshop-runtime.js';
+import { knownWorkshopProblem } from './workshop-errors.js';
 
 const catalog: readonly {
   readonly content: MissionContent;
@@ -155,6 +149,12 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
   const events = new EventUnitService({
     repository: eventRepository,
     unitTokens: runtime.unitTokens,
+    ...(runtime.newEventSessionId === undefined
+      ? {}
+      : { newEventSessionId: runtime.newEventSessionId }),
+    ...(runtime.eventCodeLookup === undefined
+      ? {}
+      : { eventCodeLookup: runtime.eventCodeLookup }),
   });
   const missions = new MissionLifecycleService({
     repository: missionRepository,
@@ -237,24 +237,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
     eventProbes: runtime.eventProbes,
     readinessProbes: runtime.readinessProbes,
     errorHandler(error, request, reply) {
-      if (
-        error instanceof AuthenticationError ||
-        error instanceof EventManagementError ||
-        error instanceof MissionManagementError ||
-        error instanceof HintSystemError
-      ) {
-        const code = error.code;
-        const status = code.endsWith('not-found')
-          ? 404
-          : code === 'unit-token-invalid'
-            ? 401
-            : code.includes('denied') || error instanceof AuthenticationError
-              ? 403
-              : 409;
-        handleRequestError(workshopProblem(code, status), request, reply);
-        return;
-      }
-      handleRequestError(error, request, reply);
+      handleRequestError(knownWorkshopProblem(error) ?? error, request, reply);
     },
   });
 
@@ -342,7 +325,15 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
       ],
       request.headers['idempotency-key'],
       request.body,
-      () => operation(unit),
+      async () => {
+        const authorization = request.headers.authorization;
+        if (!authorization?.startsWith('Bearer '))
+          throw workshopProblem('unit-token-required', 401);
+        const current = await events.authenticateUnit(authorization.slice(7));
+        if (['muted', 'withdrawn'].includes(current.unit.status))
+          throw workshopProblem('unit-scope-denied', 403);
+        return operation(current);
+      },
     );
   };
   const eventSnapshot = async (eventSessionId: string) => {
@@ -422,7 +413,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
       void reply.code(201);
       return requests.mutate(
         'create-event',
-        [actor.actorId, 'create-event'],
+        [actor.tenantId, actor.actorId, 'create-event'],
         request.headers['idempotency-key'],
         request.body,
         async () => {
@@ -636,9 +627,10 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
     },
     async (request, reply) => {
       void reply.code(201);
+      const event = await events.resolveEventCode(request.body.eventCode);
       return requests.mutate(
-        'registration',
-        ['registration'],
+        event.eventSessionId,
+        [event.eventSessionId, 'registration'],
         request.headers['idempotency-key'],
         request.body,
         async () => {
@@ -670,10 +662,11 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
         },
       },
     },
-    async (request) =>
-      requests.mutate(
-        'registration',
-        ['refresh', request.body.unitId],
+    async (request) => {
+      const event = await events.resolveEventCode(request.body.eventCode);
+      return requests.mutate(
+        event.eventSessionId,
+        [event.eventSessionId, 'refresh', request.body.unitId],
         request.headers['idempotency-key'],
         request.body,
         async () => {
@@ -685,7 +678,8 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
             unitToken: refreshed.unitToken,
           };
         },
-      ),
+      );
+    },
   );
   app.get('/api/v1/event-session', async (request) =>
     safeEvent((await participant(request)).eventSession),

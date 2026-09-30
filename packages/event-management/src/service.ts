@@ -2,6 +2,7 @@ import {
   AuthenticationError,
   UnitTokenService,
   createEventCode,
+  normalizeEventCode,
   verifyEventCode,
 } from '@mission-control/auth';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
@@ -26,6 +27,8 @@ export interface EventUnitServiceOptions {
   readonly repository: EventUnitRepository;
   readonly unitTokens: UnitTokenService;
   readonly now?: () => Date;
+  readonly newEventSessionId?: () => string;
+  readonly eventCodeLookup?: (normalizedCode: string) => string;
 }
 
 const reconnectDigest = (secret: string): Buffer =>
@@ -56,11 +59,15 @@ export class EventUnitService {
   readonly #repository: EventUnitRepository;
   readonly #unitTokens: UnitTokenService;
   readonly #now: () => Date;
+  readonly #newEventSessionId: () => string;
+  readonly #eventCodeLookup: ((normalizedCode: string) => string) | undefined;
 
   public constructor(options: EventUnitServiceOptions) {
     this.#repository = options.repository;
     this.#unitTokens = options.unitTokens;
     this.#now = options.now ?? (() => new Date());
+    this.#newEventSessionId = options.newEventSessionId ?? uuidV7;
+    this.#eventCodeLookup = options.eventCodeLookup;
   }
 
   public async createEventSession(
@@ -76,7 +83,7 @@ export class EventUnitService {
     const { eventCode, verifier } = await createEventCode();
     const now = this.#now().toISOString();
     const eventSession: EventSession = {
-      eventSessionId: uuidV7(),
+      eventSessionId: this.#newEventSessionId(),
       campaignId: input.campaignId,
       campaignVersion: input.campaignVersion,
       defaultLocale: input.defaultLocale,
@@ -84,6 +91,13 @@ export class EventUnitService {
       status: 'draft',
       registrationEnabled: false,
       eventCodeVerifier: verifier,
+      ...(this.#eventCodeLookup === undefined
+        ? {}
+        : {
+            eventCodeLookup: this.#eventCodeLookup(
+              normalizeEventCode(eventCode),
+            ),
+          }),
       scenarioSeed: randomBytes(32).toString('base64url'),
       scoringPolicyVersion: input.scoringPolicyVersion,
       createdBy: actor.instructor.actorId,
@@ -135,7 +149,7 @@ export class EventUnitService {
   }
 
   public async joinEvent(input: JoinEventInput): Promise<JoinedUnit> {
-    const eventSession = await this.#findEventByCode(input.eventCode);
+    const eventSession = await this.resolveEventCode(input.eventCode);
     if (
       !eventSession.registrationEnabled ||
       (eventSession.status !== 'lobby' && eventSession.status !== 'active')
@@ -176,7 +190,7 @@ export class EventUnitService {
   public async reconnectUnit(
     input: ReconnectUnitInput,
   ): Promise<ReconnectedUnit> {
-    const eventSession = await this.#findEventByCode(input.eventCode);
+    const eventSession = await this.resolveEventCode(input.eventCode);
     if (
       eventSession.status !== 'lobby' &&
       eventSession.status !== 'active' &&
@@ -246,8 +260,14 @@ export class EventUnitService {
     }
   }
 
-  async #findEventByCode(eventCode: string): Promise<EventSession> {
-    const eventSessions = await this.#repository.listEventSessions();
+  public async resolveEventCode(eventCode: string): Promise<EventSession> {
+    const eventSessions =
+      this.#eventCodeLookup !== undefined &&
+      this.#repository.findEventSessionsByCodeLookup !== undefined
+        ? await this.#repository.findEventSessionsByCodeLookup(
+            this.#eventCodeLookup(normalizeEventCode(eventCode)),
+          )
+        : await this.#repository.listEventSessions();
     const matches = await Promise.all(
       eventSessions.map(async (eventSession) => ({
         eventSession,
@@ -257,8 +277,9 @@ export class EventUnitService {
         ),
       })),
     );
-    const match = matches.find((candidate) => candidate.matches);
-    if (!match) {
+    const eligible = matches.filter((candidate) => candidate.matches);
+    const match = eligible[0];
+    if (match === undefined || eligible.length !== 1) {
       throw new EventManagementError('event-code-invalid');
     }
     return match.eventSession;

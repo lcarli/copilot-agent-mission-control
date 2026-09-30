@@ -108,6 +108,8 @@ export interface WorkshopRuntime {
   readonly validationRepository: ValidationResultRepository;
   readonly hintRepository: HintUsageRepository;
   readonly unitTokens: UnitTokenService;
+  readonly newEventSessionId?: () => string;
+  readonly eventCodeLookup?: (normalizedCode: string) => string;
   readonly requests: WorkshopRequests;
   readonly state: WorkshopState;
   readonly readinessProbes: readonly HealthProbe[];

@@ -60,3 +60,11 @@ both themes, real keyboard navigation, visible focus, narrow-screen reflow and
 reduced-motion behavior. Public document language follows the selected locale.
 No axe rules are disabled to accommodate the app. This is bounded automated
 evidence, not a complete manual accessibility audit or certification.
+
+`durable-workshop.spec.ts` uses the operational hosted builder with synthetic
+identity and an atomic, file-backed transaction transport double. It reconstructs
+repositories after each mission and verifies stable participant signing,
+encrypted replays, failures before commit, lost acknowledgments, conditional
+concurrency, hint progression and preserved simulator/recovery state. The
+fixture writes only to a generated temporary directory and removes it afterward.
+This is offline durability evidence, not a live Cosmos/Entra/SignalR test.

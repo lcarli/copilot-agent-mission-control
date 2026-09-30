@@ -5,6 +5,40 @@ import {
 } from '../src/index.js';
 
 describe('scoped city simulator sessions', () => {
+  it('restores failure sequences without changing receipts and rejects inconsistent persisted history', () => {
+    const scope = {
+      eventSessionId: 'event-1',
+      unitId: 'unit-1',
+      missionId: 'connected-city',
+    };
+    const invocation = {
+      tool: 'weather',
+      operation: 'forecast',
+      arguments: {},
+    };
+    const original = new LighthouseSimulatorSession(scope);
+    const failed = original.invoke(invocation, 'first', '2026-09-29T12:00:00Z');
+    const restored = LighthouseSimulatorSession.restore(
+      scope,
+      original.observations(),
+    );
+    expect(restored.observations()).toEqual([failed]);
+    expect(
+      restored.invoke(invocation, 'second', '2026-09-29T12:00:01Z'),
+    ).toMatchObject({
+      sequence: 2,
+      result: { ok: true },
+    });
+    expect(() =>
+      LighthouseSimulatorSession.restore(scope, [{ ...failed, sequence: 2 }]),
+    ).toThrow();
+    expect(() =>
+      LighthouseSimulatorSession.restore({ ...scope, unitId: 'other' }, [
+        failed,
+      ]),
+    ).toThrow();
+  });
+
   it('keeps deterministic failures isolated and forbids out-of-mission operations', () => {
     const scope = {
       eventSessionId: 'event-1',

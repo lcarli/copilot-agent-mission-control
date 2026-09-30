@@ -193,6 +193,12 @@ importers:
 
   apps/api:
     dependencies:
+      '@azure/core-auth':
+        specifier: 1.11.0
+        version: 1.11.0
+      '@azure/cosmos':
+        specifier: 4.10.1
+        version: 4.10.1
       '@mission-control/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -217,6 +223,9 @@ importers:
       '@mission-control/validation-worker':
         specifier: workspace:*
         version: link:../../packages/validation-worker
+      '@sinclair/typebox':
+        specifier: 0.34.52
+        version: 0.34.52
       fastify:
         specifier: ^5.12.5
         version: 5.12.5
@@ -622,6 +631,54 @@ packages:
     resolution: {integrity: sha1-SCZGfJYi3ybw11tMF0fI2S7lmd4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@axe-core/playwright/-/playwright-4.13.0.tgz}
     peerDependencies:
       playwright-core: '>= 1.0.0'
+
+  '@azure-rest/core-client@2.9.0':
+    resolution: {integrity: sha1-4MLGSgtLNk1R/w7+0S74izbNYFo=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure-rest/core-client/-/core-client-2.9.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/abort-controller@2.2.0':
+    resolution: {integrity: sha1-k+DoKwGGLn6jtbaZWHGdPz/SyKw=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/abort-controller/-/abort-controller-2.2.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-auth@1.11.0':
+    resolution: {integrity: sha1-Ha7/32LRqHHSK4ZfnzFkpj6h9XU=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-auth/-/core-auth-1.11.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-lro@2.7.2':
+    resolution: {integrity: sha1-eHEFAnog5Fx3ZRqYsBpNOwG3Wgg=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-lro/-/core-lro-2.7.2.tgz}
+    engines: {node: '>=18.0.0'}
+
+  '@azure/core-paging@1.7.0':
+    resolution: {integrity: sha1-WVl6L1Q4ujxsh4n8hw9p4OeFMag=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-paging/-/core-paging-1.7.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-rest-pipeline@1.25.0':
+    resolution: {integrity: sha1-kupJEu27H3OV9IKaMAYxF0qoLwg=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-rest-pipeline/-/core-rest-pipeline-1.25.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-tracing@1.4.0':
+    resolution: {integrity: sha1-1lenAOJNJW0ZXmKKeV22qMxHXqs=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-tracing/-/core-tracing-1.4.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/core-util@1.14.0':
+    resolution: {integrity: sha1-fOn+V5WPEy3UIlc4VuWkXHIyuwQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/core-util/-/core-util-1.14.0.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/cosmos@4.10.1':
+    resolution: {integrity: sha1-MFPXckxNwtiOQXKXnQ1wCn93izY=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/cosmos/-/cosmos-4.10.1.tgz}
+    engines: {node: '>=22.0.0'}
+
+  '@azure/keyvault-common@2.1.0':
+    resolution: {integrity: sha1-Zw50FKK/aDcbCz0fmByboCeLd90=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/keyvault-common/-/keyvault-common-2.1.0.tgz}
+    engines: {node: '>=20.0.0'}
+
+  '@azure/keyvault-keys@4.10.2':
+    resolution: {integrity: sha1-RonuPX645uaBvtDtHwVJ1uwyq2E=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/keyvault-keys/-/keyvault-keys-4.10.2.tgz}
+    engines: {node: '>=20.0.0'}
+
+  '@azure/logger@1.4.0':
+    resolution: {integrity: sha1-PVpif+WaJ27OdIenndkq1cUIwzk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@azure/logger/-/logger-1.4.0.tgz}
+    engines: {node: '>=22.0.0'}
 
   '@cacheable/memory@2.2.0':
     resolution: {integrity: sha1-cq64sFH21ZfRCshZW5StgwK9Ijk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@cacheable/memory/-/memory-2.2.0.tgz}
@@ -1092,6 +1149,10 @@ packages:
     resolution: {integrity: sha1-tFHIrqdtyX/HaLjZ1/YQGb94lig=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@typescript-eslint/visitor-keys/-/visitor-keys-8.70.0.tgz}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@typespec/ts-http-runtime@0.3.9':
+    resolution: {integrity: sha1-MyhVu9cpqzbgd5st/CTtySDRJGE=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@typespec/ts-http-runtime/-/ts-http-runtime-0.3.9.tgz}
+    engines: {node: '>=22.0.0'}
+
   '@vitejs/plugin-react@6.0.1':
     resolution: {integrity: sha1-2RE7caClknFJE+r9nl5jvK/Q/xU=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/@vitejs/plugin-react/-/plugin-react-6.0.1.tgz}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -1131,6 +1192,10 @@ packages:
     resolution: {integrity: sha1-T68BstbTJr/u2XrqH1IiC19MGUA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/acorn/-/acorn-8.18.0.tgz}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  agent-base@7.1.4:
+    resolution: {integrity: sha1-48121MVI7oldPD/Y3B9sW5Ay56g=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/agent-base/-/agent-base-7.1.4.tgz}
+    engines: {node: '>= 14'}
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha1-PV3HYryhdnnDwup+kK1rdTIwlXg=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/ajv-formats/-/ajv-formats-3.0.1.tgz}
@@ -1341,6 +1406,14 @@ packages:
 
   hookified@2.2.0:
     resolution: {integrity: sha1-HQJKwWaJc91bzEqWq5zNt2Oe+NQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/hookified/-/hookified-2.2.0.tgz}
+
+  http-proxy-agent@7.0.2:
+    resolution: {integrity: sha1-mosfJGhmwChQlIZYX2K48sGMJw4=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/http-proxy-agent/-/http-proxy-agent-7.0.2.tgz}
+    engines: {node: '>= 14'}
+
+  https-proxy-agent@7.0.6:
+    resolution: {integrity: sha1-2o3+rH2hMLBcK6S1nJts1mYRprk=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz}
+    engines: {node: '>= 14'}
 
   ignore@5.3.2:
     resolution: {integrity: sha1-PNQOcp82Q/2HywTlC/DrcivFlvU=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/ignore/-/ignore-5.3.2.tgz}
@@ -1561,6 +1634,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  priorityqueuejs@2.0.0:
+    resolution: {integrity: sha1-lgZAQO3YR+6d0wE9jhYpc5mmvU8=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/priorityqueuejs/-/priorityqueuejs-2.0.0.tgz}
+
   process-warning@4.0.1:
     resolution: {integrity: sha1-XB22YAfGfHVuTgnrFwzezhXaMvs=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/process-warning/-/process-warning-4.0.1.tgz}
 
@@ -1632,6 +1708,10 @@ packages:
 
   secure-json-parse@4.1.0:
     resolution: {integrity: sha1-Txq0HGehNJfqG5Exu0GDoihlR3w=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/secure-json-parse/-/secure-json-parse-4.1.0.tgz}
+
+  semaphore@1.1.0:
+    resolution: {integrity: sha1-qq2LhrIP6OmzKxbcLuaCqM0mqKo=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/semaphore/-/semaphore-1.1.0.tgz}
+    engines: {node: '>=0.8.0'}
 
   semver@7.7.3:
     resolution: {integrity: sha1-S19BQ9AHYzqNxnHNCm75FHuLuUY=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/semver/-/semver-7.7.3.tgz}
@@ -1889,6 +1969,118 @@ snapshots:
     dependencies:
       axe-core: 4.13.0
       playwright-core: 1.63.0
+
+  '@azure-rest/core-client@2.9.0':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0
+      '@azure/core-rest-pipeline': 1.25.0
+      '@azure/core-tracing': 1.4.0
+      '@typespec/ts-http-runtime': 0.3.9
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/abort-controller@2.2.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@azure/core-auth@1.11.0':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-util': 1.14.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/core-lro@2.7.2':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-util': 1.14.0
+      '@azure/logger': 1.4.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/core-paging@1.7.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@azure/core-rest-pipeline@1.25.0':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0
+      '@azure/logger': 1.4.0
+      '@typespec/ts-http-runtime': 0.3.9
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/core-tracing@1.4.0':
+    dependencies:
+      tslib: 2.8.1
+
+  '@azure/core-util@1.14.0':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@typespec/ts-http-runtime': 0.3.9
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/cosmos@4.10.1':
+    dependencies:
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0
+      '@azure/core-rest-pipeline': 1.25.0
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0
+      '@azure/keyvault-keys': 4.10.2
+      '@azure/logger': 1.4.0
+      fast-json-stable-stringify: 2.1.0
+      priorityqueuejs: 2.0.0
+      semaphore: 1.1.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/keyvault-common@2.1.0':
+    dependencies:
+      '@azure-rest/core-client': 2.9.0
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0
+      '@azure/core-rest-pipeline': 1.25.0
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0
+      '@azure/logger': 1.4.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/keyvault-keys@4.10.2':
+    dependencies:
+      '@azure-rest/core-client': 2.9.0
+      '@azure/abort-controller': 2.2.0
+      '@azure/core-auth': 1.11.0
+      '@azure/core-lro': 2.7.2
+      '@azure/core-paging': 1.7.0
+      '@azure/core-rest-pipeline': 1.25.0
+      '@azure/core-tracing': 1.4.0
+      '@azure/core-util': 1.14.0
+      '@azure/keyvault-common': 2.1.0
+      '@azure/logger': 1.4.0
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/logger@1.4.0':
+    dependencies:
+      '@typespec/ts-http-runtime': 0.3.9
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@cacheable/memory@2.2.0':
     dependencies:
@@ -2279,6 +2471,14 @@ snapshots:
       '@typescript-eslint/types': 8.70.0
       eslint-visitor-keys: 5.0.1
 
+  '@typespec/ts-http-runtime@0.3.9':
+    dependencies:
+      http-proxy-agent: 7.0.2
+      https-proxy-agent: 7.0.6
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@vitejs/plugin-react@6.0.1(vite@8.0.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@24.13.5)(yaml@2.8.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.7
@@ -2311,6 +2511,8 @@ snapshots:
       acorn: 8.18.0
 
   acorn@8.18.0: {}
+
+  agent-base@7.1.4: {}
 
   ajv-formats@3.0.1(ajv@8.17.1):
     optionalDependencies:
@@ -2542,6 +2744,20 @@ snapshots:
 
   hookified@2.2.0: {}
 
+  http-proxy-agent@7.0.2:
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  https-proxy-agent@7.0.6:
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
   ignore@5.3.2: {}
 
   ignore@7.0.9: {}
@@ -2722,6 +2938,8 @@ snapshots:
 
   prettier@3.9.8: {}
 
+  priorityqueuejs@2.0.0: {}
+
   process-warning@4.0.1: {}
 
   process-warning@5.1.0: {}
@@ -2808,6 +3026,8 @@ snapshots:
 
   secure-json-parse@4.1.0: {}
 
+  semaphore@1.1.0: {}
+
   semver@7.7.3: {}
 
   semver@7.8.5: {}
@@ -2853,8 +3073,7 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  tslib@2.8.1:
-    optional: true
+  tslib@2.8.1: {}
 
   turbo@2.10.13:
     optionalDependencies:

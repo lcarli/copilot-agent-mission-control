@@ -90,6 +90,11 @@ export function handleRequestError(
   reply: FastifyReply,
 ): void {
   if (error instanceof ApiProblem) {
+    if (error.status >= 500)
+      request.log.error(
+        { correlationId: request.id, code: error.code, status: error.status },
+        'Workshop dependency or capacity failure',
+      );
     if (error.retryAfterSeconds !== undefined)
       void reply.header('retry-after', String(error.retryAfterSeconds));
     sendProblem(reply, request.id, error);
