@@ -114,14 +114,18 @@ still lists TASK-800 through TASK-810 as open.
 | TASK-803 | Complete the planned authorization, event isolation, rate-limit, payload-limit and secret-handling validation. |
 | TASK-804 | Complete keyboard, contrast, reduced-motion and screen-reader checks, plus applicable caption requirements. |
 
-`tests\e2e` now implements real browser/CLI and five-mission HTTP scenarios.
-`tests\load` implements a loopback scenario with exactly 50 units, 457 HTTP
-requests, concurrent submissions, reconnects, retries and instructor commands.
-The latest local run measured p95 **1,859 ms** against a local regression limit
-of 5,000 ms. This is not a deployed-service SLO or proof of Azure/SignalR capacity.
-The scenario also verifies exactly 50 decision contributions after retries and
-reconnects. It still uses Mission 1; it is not simulator-capacity evidence.
-TASK-800 through TASK-804 remain open for their full platform-wide scope.
+`tests\e2e` implements real browser/CLI and five-mission HTTP scenarios.
+The load command now runs the original 50-unit Mission 1 scenario and an
+expanded five-mission scenario with 50 logical HTTP units and one real public
+browser. The expanded run produced **250 core passes**, **550 scoped simulator
+observations**, **100 planned retryable failures**, and **250 recovery
+contributions**. Its **2,729 measured driver requests** exclude browser polling;
+the highest phase p95 was **2,670 ms**, below the 5,000 ms local regression
+limit. Phase-specific limits include registration and reconnects.
+
+This is not a deployed-service SLO or proof of Azure/SignalR capacity, 50 real
+browser clients or human authoring. TASK-800 through TASK-804 remain open for
+their full platform-wide scope.
 
 ## 6. Priority 4: Reconcile guides, rehearse and run a pilot
 
@@ -243,8 +247,8 @@ references are recorded in
 
 | Step | Status | Bounded deliverable |
 | --- | --- | --- |
-| S03 - Classroom-scale local scenarios | Next | Fifty logical participant units, actual simulator receipts and a real public browser; explicit latency, retry, isolation and privacy assertions. |
-| S04 - Operational guardrails | Pending | Bounded request handling and safe failures that preserve legitimate workshop traffic. |
+| S03 - Classroom-scale local scenarios | Complete locally | Fifty logical units complete all five missions alongside a real public browser. Actual scoped receipts, planned failures, phase latency, concurrent replays, borrowed-receipt rejection, reconnects, inventory preservation and public-data isolation are exercised. |
+| S04 - Operational guardrails | Next | Bounded request handling and safe failures that preserve legitimate workshop traffic. |
 | S05 - Accessibility | Pending | Automated accessibility/keyboard evidence, without claiming the human screen-reader/projector rehearsal is complete. |
 | S06 - Runtime composition | Pending | Share operational behavior through explicit runtime dependencies; do not expose the local rehearsal adapter publicly. |
 | S07 - Durable state | Pending | Prepare persistence, restart recovery and idempotent mutations against the accepted Azure data architecture. |

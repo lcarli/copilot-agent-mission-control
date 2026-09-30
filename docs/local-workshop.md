@@ -233,12 +233,22 @@ contributions, and checks that proposed allocations leave inventory unchanged.
 Browser traces, screenshots and videos are disabled to avoid retaining
 credentials from the private page.
 
-The load scenario uses 50 units and a local p95 regression threshold of five
-seconds, including submissions, reconnects, duplicate retries and instructor
-pause/resume. It also requires exactly 50 decision contributions after retries
-and reconnects, without inflating the 59% Mission 1 collective indicator.
-It does not prove deployed-service capacity, SignalR reconnect
-behavior or 50 classroom browsers.
+The load command runs two scenarios sequentially. The original Mission 1
+scenario requires exactly 50 contributions after concurrent retries and
+reconnects, without inflating its 59% collective indicator. The expanded
+scenario drives all five missions with 50 logical HTTP units and one real
+public browser: 250 core passes, 550 distinct simulator observations including
+post-plan inventory checks, 100 planned retryable failures and exactly 250
+decision contributions. Recovery progresses through **59, 63, 68, 72, 84%**.
+Borrowed receipts, paused tool calls and duplicate contribution attempts cannot
+bypass the existing boundaries.
+
+The local p95 regression threshold is five seconds, with ten-second request
+timeouts. The expanded scenario checks p95 separately for each measured phase,
+including registration and reconnects; a large number of fast requests cannot
+hide a slow phase. Driver request counts exclude the browser's independent
+polling traffic. Neither scenario proves deployed-service capacity, SignalR
+reconnect behavior, 50 separate classroom browsers or human authoring.
 
 ## Recovery and remaining gates
 

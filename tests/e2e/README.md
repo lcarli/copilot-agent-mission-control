@@ -24,7 +24,32 @@ replace placeholder IDs with server-generated receipts and submit those
 observations for provenance-aware evaluation. Decision text and approval
 fields remain synthetic, not proof of Copilot authoring or human authorization.
 
+A classroom-scale scenario runs the five missions with **50 logical HTTP
+participants and one real public browser**. It requires 250 core passes,
+550 distinct scoped simulator observations (500 mission receipts and 50
+post-plan inventory probes), 100 observed retryable weather failures, and
+exactly 250 recovery contributions. Identical tool/submission keys are reused
+across units and replayed concurrently, while fresh equivalent submissions
+must not add points or recovery. Borrowed receipts are rejected, paused tools
+cannot run, reconnects preserve all 50 identities, and an isolated event stays
+at its baseline. Public JSON and browser content must exclude credentials,
+private names, unit IDs and evidence receipts.
+
+Run that scenario independently after `pnpm build:local`:
+
+```powershell
+pnpm --filter @mission-control/tests-e2e exec playwright test local-workshop-scale.spec.ts
+```
+
+It asserts p95 below five seconds **in each measured phase**, not only across
+the combined request population. Each measured request has a ten-second
+timeout. Reported request counts exclude the browser's independent polling
+requests; the browser is nevertheless active throughout the workload.
+`pnpm test:workshop:load` runs both the original Mission 1 load scenario and
+this expanded browser/simulator scenario sequentially.
+
 These scenarios do not validate VS Code/Copilot generation, deployed Azure
-adapters, SignalR, a complete screen-reader audit or a human-led workshop.
+adapters, SignalR, 50 separate browser clients, a complete screen-reader audit
+or a human-led workshop.
 TASK-801 remains open for that intended-event coverage. No credentials,
 screenshots, videos or traces are retained by the test runner.

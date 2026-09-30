@@ -10,10 +10,14 @@ import {
   decodeMissionSubmissionFeedback,
   decodePublicPresentationProjection,
   decodeSimulatorObservation,
-  type SimulatorObservation,
 } from '@mission-control/event-contracts';
 import { test, expect } from '@playwright/test';
 import { createServer } from 'vite';
+
+import {
+  groundRehearsalEvidence,
+  readRehearsalEnvelopes,
+} from './support/workshop-fixtures.js';
 
 const repositoryRoot = fileURLToPath(new URL('../../..', import.meta.url));
 const cliPath = fileURLToPath(
@@ -375,43 +379,18 @@ test('all five missions drive public decision recovery without double-awarding o
     await expect(
       page.getByText('Finale threshold not reached', { exact: false }),
     ).toBeVisible();
-    const fixtures: unknown = JSON.parse(
-      await readFile(
-        join(
-          repositoryRoot,
-          'campaigns',
-          'operation-lighthouse',
-          'test',
-          'fixtures',
-          'rehearsal-submissions.json',
-        ),
-        'utf8',
-      ),
-    );
-    if (!Array.isArray(fixtures) || fixtures.length !== 5)
-      throw new Error('Expected five rehearsal envelopes.');
+    const fixtures = await readRehearsalEnvelopes();
     let totalPoints = 0;
     let contributionCount = 0;
-    for (let envelope of fixtures as unknown[]) {
-      const missionId = requiredString(envelope, 'missionId');
-      let inventoryBefore: SimulatorObservation['result'] | undefined;
+    for (const fixture of fixtures) {
+      const missionId = fixture.missionId;
       await command('mission.open', 1, { missionId });
       await request(`missions/${missionId}/start`, {}, token);
-      if (
-        missionId === 'connected-city' ||
-        missionId === 'restore-the-lighthouse'
-      ) {
-        const receipts: SimulatorObservation[] = [];
-        const invoke = async (
-          tool: string,
-          operation: string,
-          args: Record<string, unknown> = {},
-        ) => {
+      const { envelope, observations } = await groundRehearsalEvidence(
+        fixture,
+        async (invocation) => {
           const path = join(home, 'tool-request.json');
-          await writeFile(
-            path,
-            JSON.stringify({ tool, operation, arguments: args }),
-          );
+          await writeFile(path, JSON.stringify(invocation));
           const output = await runCli(
             home,
             ['mission', 'tool', missionId, '--request', path],
@@ -421,69 +400,9 @@ test('all five missions drive public decision recovery without double-awarding o
             JSON.parse(output.stdout) as unknown,
           );
           expect(output.code).toBe(receipt.result.ok ? 0 : 1);
-          receipts.push(receipt);
-          if (tool === 'resources' && operation === 'inventory')
-            inventoryBefore = receipt.result;
-          return receipt.evidenceId;
-        };
-        const ids: Record<string, string> = {};
-        await invoke('weather', 'forecast');
-        ids['fixture-forecast'] = await invoke('weather', 'forecast');
-        ids['fixture-shelter'] = await invoke('shelter', 'list');
-        ids['fixture-journey'] = await invoke('transport', 'journey', {
-          originDistrictId: 'harbor',
-          destinationDistrictId: 'north-hills',
-          mode: 'emergency',
-        });
-        if (missionId === 'restore-the-lighthouse') {
-          ids['fixture-grid'] = await invoke('grid', 'health');
-          ids['fixture-inventory'] = await invoke('resources', 'inventory');
-        }
-        const replaceIds = (value: unknown): unknown => {
-          if (typeof value === 'string') return ids[value] ?? value;
-          if (Array.isArray(value)) return value.map(replaceIds);
-          if (typeof value === 'object' && value !== null) {
-            return Object.fromEntries(
-              Object.entries(value).map(([key, entry]) => [
-                key,
-                replaceIds(entry),
-              ]),
-            );
-          }
-          return value;
-        };
-        const updated = replaceIds(envelope);
-        if (
-          typeof updated !== 'object' ||
-          updated === null ||
-          !('evidence' in updated) ||
-          typeof updated.evidence !== 'object' ||
-          updated.evidence === null
-        ) {
-          throw new Error('Invalid evidence fixture.');
-        }
-        const toolTrace = receipts.map(({ tool, evidenceId, result }) => ({
-          tool,
-          evidenceId,
-          status: result.ok ? 'success' : 'failed',
-        }));
-        envelope = {
-          ...updated,
-          evidence: {
-            ...updated.evidence,
-            toolTrace,
-            ...(missionId === 'restore-the-lighthouse'
-              ? {
-                  totalToolCalls: receipts.length,
-                  replan: {
-                    failedTool: 'weather',
-                    changedActionIds: ['evacuate-harbor'],
-                  },
-                }
-              : {}),
-          },
-        };
-      }
+          return receipt;
+        },
+      );
       const submitted = await request(
         `missions/${missionId}/submissions`,
         envelope,
@@ -525,6 +444,9 @@ test('all five missions drive public decision recovery without double-awarding o
         `${String(projection.collectiveRecoveryPercent)}%`,
       );
       if (missionId === 'restore-the-lighthouse') {
+        const inventoryBefore = observations.find(
+          ({ tool }) => tool === 'resources',
+        )?.result;
         expect(projection.collectiveRecoveryPercent).toBe(84);
         expect(projection.recovery?.finaleUnlocked).toBe(true);
         await expect(

@@ -1241,7 +1241,10 @@ Local implementation evidence (2026-09-29): the
 loopback API/CLI/browser round trip, five mission submissions with actual
 server-observed simulator calls for Missions 3 and 5, versioned pedagogical
 decision recovery by district with public finale readiness and late-join
-recalculation, and a 50-unit Mission 1 local concurrency scenario. Recovery is
+recalculation, a 50-unit Mission 1 local concurrency scenario, and an expanded
+50-unit five-mission scenario with actual simulator receipts and one real public
+browser. The expanded scenario enforces phase-specific latency limits, scoped
+receipts, retry safety and public-data isolation. Recovery is
 not a points conversion or execution of proposed allocations. The
 [participant guide](docs/participant-guide.md) and
 [local operating guide](docs/local-workshop.md) are available. These are partial

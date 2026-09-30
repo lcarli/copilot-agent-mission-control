@@ -151,7 +151,7 @@ deploying it; multi-replica high availability is not part of this pass.
 
 | Delivery | Outcome | Status |
 | --- | --- | --- |
-| Expanded local scenarios | Fifty logical units exercise actual simulator calls, evaluated submissions and public dashboard updates, including bounded retries and scope isolation. | Pending |
+| Expanded local scenarios | Fifty logical units exercise actual simulator calls, evaluated submissions and public dashboard updates, including bounded retries and scope isolation. | Complete locally: 250 core passes, 550 scoped simulator observations and a real public browser; no live Azure evidence claimed. |
 | Operational guardrails | Request budgets, safe failure handling and explicit operational limits preserve legitimate classroom traffic. | Pending |
 | Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Pending |
 | Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Design proposed below |
