@@ -24,6 +24,7 @@ export interface ApiProblemOptions {
   readonly messageKey: string;
   readonly status: number;
   readonly title: string;
+  readonly retryAfterSeconds?: number;
 }
 
 export class ApiProblem extends Error {
@@ -32,6 +33,7 @@ export class ApiProblem extends Error {
   public readonly messageKey: string;
   public readonly status: number;
   public readonly title: string;
+  public readonly retryAfterSeconds?: number;
 
   public constructor(options: ApiProblemOptions) {
     super(options.title);
@@ -41,6 +43,8 @@ export class ApiProblem extends Error {
     this.messageKey = options.messageKey;
     this.status = options.status;
     this.title = options.title;
+    if (options.retryAfterSeconds !== undefined)
+      this.retryAfterSeconds = options.retryAfterSeconds;
   }
 }
 
@@ -86,6 +90,8 @@ export function handleRequestError(
   reply: FastifyReply,
 ): void {
   if (error instanceof ApiProblem) {
+    if (error.retryAfterSeconds !== undefined)
+      void reply.header('retry-after', String(error.retryAfterSeconds));
     sendProblem(reply, request.id, error);
     return;
   }

@@ -5,6 +5,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import type { ApiConfig } from './config.js';
 import { runHealthProbes, type HealthProbe } from './health.js';
 import { handleRequestError, sendProblem } from './problems.js';
+import { RequestBudget, workshopRequestLimits } from './request-budget.js';
 
 const correlationHeader = 'x-correlation-id';
 const correlationIdPattern =
@@ -57,9 +58,30 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
     genReqId: requestCorrelationId,
     logger: options.logger ?? { level: config.logLevel },
   });
+  const budget = new RequestBudget();
 
   app.addHook('onRequest', (request, reply, done) => {
     void reply.header(correlationHeader, request.id);
+    void reply.header('x-content-type-options', 'nosniff');
+    const route = request.routeOptions.url ?? 'unmatched';
+    if (!route.startsWith('/api/v1/health/')) {
+      try {
+        budget.consume(['ip', request.ip], workshopRequestLimits.requestsPerIp);
+        if (
+          route === '/api/v1/registrations' ||
+          route === '/api/v1/auth/refresh'
+        )
+          budget.consume(
+            ['authentication', request.ip],
+            workshopRequestLimits.authenticationPerIp,
+          );
+      } catch (error) {
+        done(
+          error instanceof Error ? error : new Error('Request budget failed.'),
+        );
+        return;
+      }
+    }
     done();
   });
 

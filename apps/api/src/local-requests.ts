@@ -1,6 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 
 import { ApiProblem } from './problems.js';
+import { workshopRequestLimits } from './request-budget.js';
 
 export const workshopProblem = (code: string, status = 409): ApiProblem =>
   new ApiProblem({
@@ -12,6 +13,8 @@ export const workshopProblem = (code: string, status = 409): ApiProblem =>
 
 export class LocalRequests {
   readonly #pending = new Map<string, Promise<unknown>>();
+  readonly #queued = new Map<string, number>();
+  #totalQueued = 0;
   readonly #replays = new Map<
     string,
     {
@@ -21,11 +24,30 @@ export class LocalRequests {
   >();
 
   serialize<T>(resource: string, operation: () => Promise<T>): Promise<T> {
+    const queued = this.#queued.get(resource) ?? 0;
+    if (
+      queued >= workshopRequestLimits.pendingPerResource ||
+      this.#totalQueued >= workshopRequestLimits.pendingTotal
+    ) {
+      throw new ApiProblem({
+        code: 'request-queue-full',
+        status: 503,
+        title: 'Request queue is full; retry with the same idempotency key',
+        messageKey: 'errors.workshop.request-queue-full',
+        retryAfterSeconds: 1,
+      });
+    }
+    this.#queued.set(resource, queued + 1);
+    this.#totalQueued += 1;
     const previous = this.#pending.get(resource) ?? Promise.resolve();
     // A failed request must not prevent the next request from acquiring the lock.
     const result = previous.then(operation, operation);
     this.#pending.set(resource, result);
     const release = () => {
+      this.#totalQueued -= 1;
+      const remaining = (this.#queued.get(resource) ?? 1) - 1;
+      if (remaining === 0) this.#queued.delete(resource);
+      else this.#queued.set(resource, remaining);
       if (this.#pending.get(resource) === result)
         this.#pending.delete(resource);
     };

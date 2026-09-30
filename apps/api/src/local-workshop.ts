@@ -72,6 +72,7 @@ import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
 import { LocalRequests, workshopProblem } from './local-requests.js';
 import { handleRequestError } from './problems.js';
+import { RequestBudget, workshopRequestLimits } from './request-budget.js';
 
 const catalog: readonly {
   readonly content: MissionContent;
@@ -195,6 +196,7 @@ export function buildLocalWorkshopApp(
     },
   });
   const requests = new LocalRequests();
+  const budget = new RequestBudget();
   const cityRecovery = new LighthouseRecovery();
   const submissions = new Map<string, ResolvedValidationContext>();
   const simulatorSessions = new Map<string, LighthouseSimulatorSession>();
@@ -322,7 +324,7 @@ export function buildLocalWorkshopApp(
     ) {
       throw workshopProblem('instructor-authentication-required', 401);
     }
-    return authorizeInstructor(
+    const actor = authorizeInstructor(
       {
         subject: 'local-instructor',
         tenantId: 'local-rehearsal',
@@ -333,6 +335,11 @@ export function buildLocalWorkshopApp(
       action,
       eventSessionId,
     );
+    budget.consume(
+      ['instructor', actor.tenantId, actor.actorId],
+      workshopRequestLimits.requestsPerInstructor,
+    );
+    return actor;
   };
   const participant = async (
     request: FastifyRequest,
@@ -344,6 +351,24 @@ export function buildLocalWorkshopApp(
     const authenticated = await events.authenticateUnit(header.slice(7));
     if (['muted', 'withdrawn'].includes(authenticated.unit.status)) {
       throw workshopProblem('unit-scope-denied', 403);
+    }
+    budget.consume(
+      ['unit', authenticated.unit.eventSessionId, authenticated.unit.unitId],
+      workshopRequestLimits.requestsPerUnit,
+    );
+    budget.consume(
+      ['event', authenticated.unit.eventSessionId],
+      workshopRequestLimits.requestsPerEvent,
+    );
+    if (!['GET', 'HEAD'].includes(request.method)) {
+      budget.consume(
+        [
+          'mutation',
+          authenticated.unit.eventSessionId,
+          authenticated.unit.unitId,
+        ],
+        workshopRequestLimits.mutationsPerUnit,
+      );
     }
     activity.set(authenticated.unit.unitId, Date.now());
     return authenticated;
@@ -422,6 +447,7 @@ export function buildLocalWorkshopApp(
     persistence: 'memory',
     scoringMode: 'guided',
     transport: 'http-polling',
+    requestLimits: workshopRequestLimits,
   }));
   app.post<{ Body: CreateLocalEvent }>(
     '/api/v1/event-sessions',

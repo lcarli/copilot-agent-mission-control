@@ -147,6 +147,56 @@ function harness() {
 }
 
 describe('local workshop HTTP composition', () => {
+  it('rate limits authenticated units without blocking the instructor or health probes', async () => {
+    const h = harness();
+    const unit = await h.setup();
+    for (let index = 0; index < 240; index += 1) {
+      const response = await h.app.inject({
+        url: '/api/v1/unit',
+        headers: headers(unit.unitToken),
+      });
+      expect(response.statusCode).toBe(200);
+    }
+    const limited = await h.app.inject({
+      url: '/api/v1/unit',
+      headers: headers(unit.unitToken),
+    });
+    expect(limited.statusCode).toBe(429);
+    expect(Number(limited.headers['retry-after'])).toBeGreaterThan(0);
+    expect(limited.headers['content-type']).toContain(
+      'application/problem+json',
+    );
+    expect(limited.json()).toMatchObject({ code: 'request-rate-limited' });
+    expect(limited.body).not.toContain(unit.unitToken);
+    expect(
+      (await h.app.inject({ url: '/api/v1/health/live' })).statusCode,
+    ).toBe(200);
+    expect(
+      (await h.command(unit.id, 'mission.pause', 2, { missionId })).statusCode,
+    ).toBe(200);
+  });
+
+  it('limits unauthenticated entry before expensive event-code verification or body handling', async () => {
+    const h = harness();
+    for (let index = 0; index < 120; index += 1) {
+      const response = await h.app.inject({
+        method: 'POST',
+        url: '/api/v1/registrations',
+        payload: {},
+      });
+      expect(response.statusCode).toBe(422);
+    }
+    const limited = await h.app.inject({
+      method: 'POST',
+      url: '/api/v1/auth/refresh',
+      payload: {},
+    });
+    expect(limited.statusCode).toBe(429);
+    expect(limited.headers['retry-after']).toBeDefined();
+    expect(
+      (await h.app.inject({ url: '/api/v1/health/ready' })).statusCode,
+    ).toBe(200);
+  });
   it('records actual simulator calls once and rejects forged or foreign unit evidence', async () => {
     const h = harness();
     const first = await h.setup();

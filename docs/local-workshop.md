@@ -214,6 +214,44 @@ A second unit joining without contributions changes that collective value to
 **71%** and clears finale readiness. These are reproducible model outputs, not
 evidence of physical restoration or actual Copilot authoring.
 
+## Request budgets and backpressure
+
+The local and base API enforce bounded request handling. Limits use fixed
+60-second windows starting with the first request in each scope:
+
+| Scope | Maximum requests per window |
+| --- | --- |
+| Caller IP, excluding health probes | 12,000 |
+| Registration and reconnect combined, per IP | 120 |
+| Authenticated unit, across all routes | 240 |
+| Authenticated unit mutations | 120 |
+| Authenticated participant traffic per event | 6,000 |
+| Authenticated instructor | 240 |
+
+The generous shared-IP entry budget permits 50 registrations and 50 reconnects
+from the same classroom gateway. Authentication-entry limiting happens before
+schema parsing or event-code verification. Unit/event budgets use verified
+server-owned identity, not a claimed body field, idempotency key or refreshed
+token string. Requests, including transport replays, consume request budget.
+Expired budget scopes are reclaimed; the tracking table is bounded at 10,000
+scopes and fails explicitly rather than disabling limits when full.
+
+The serialized-work queue admits at most 128 pending operations per resource
+and 1,024 across the process. Replayed mutations share one pending operation.
+An overfull queue returns `503 request-queue-full` without recording an
+idempotency result, so it is safe to retry the same key after capacity returns.
+The existing 10,000-entry local idempotency limit is retained; records are not
+silently evicted to make old mutations executable again.
+
+HTTP `429 request-rate-limited` includes `Retry-After` in seconds. Temporary
+queue/tracking exhaustion also includes `Retry-After`. Wait, then reuse the
+same mutation key and body; do not register a new unit or loop aggressively.
+Health probes are not blocked by exhausted workshop budgets.
+
+These are process-local guardrails, not a distributed gateway, DDoS service,
+complete retention policy or event security certification. Multi-replica
+budgets need shared enforcement before that deployment profile is enabled.
+
 ## Reproducible local evidence
 
 ```powershell

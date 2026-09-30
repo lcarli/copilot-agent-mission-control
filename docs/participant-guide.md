@@ -256,6 +256,12 @@ If a mission is paused/closed or a prerequisite is incomplete, ask the facilitat
 to inspect event state and feedback. Do not bypass the server. A restarted local
 API has no saved event; the facilitator must create a new one.
 
+For HTTP `429 request-rate-limited` or `503 request-queue-full`, stop the retry
+loop and wait for the indicated `Retry-After` interval. Retry with the same
+idempotency key and unchanged evidence. Rejoining or refreshing tokens does not
+reset a unit's budget. The [local guide](local-workshop.md#request-budgets-and-backpressure)
+lists the classroom limits and their single-process scope.
+
 On the public screen, no scores means no evaluated scores, and a disconnected
 message means live results are unavailable. Do not substitute demonstration
 values or screenshots as if they were participant achievements.
