@@ -1,6 +1,6 @@
 # Operation Lighthouse - Workshop Readiness Handoff
 
-Snapshot: **2026-09-29, local integration complete; hosted adapters prepared and exercised offline**
+Snapshot: **2026-09-30, local integration complete; hosted adapters exercised offline and Linux images verified in CI**
 
 Next objective: **complete the approved local-quality and production-preparation deliveries, without Azure provisioning; keep human rehearsal explicit**.
 
@@ -255,7 +255,7 @@ references are recorded in
 | S06 - Runtime composition | Complete for the shared composition | Local and hosted builders share repository, state, asynchronous identity, transaction and health ports. Local access remains loopback-only; the hosted builder rejects a local runtime. S08 supplies normal-server hosted assembly. Existing HTTP/browser/CLI behavior is preserved. |
 | S07 - Durable state | Complete for adapter/offline scope | Cosmos SDK adapter and versioned per-event documents commit state, encrypted idempotency and pending publication with a head ETag. Five-mission reconstruction, lost acknowledgments, rollback and concurrent revisions are covered by an on-disk transaction double and SDK-boundary tests. Live Cosmos, retention/restore operations and Azure latency remain open. |
 | S08 - Identity and real time | Complete for adapter/offline scope | Single-tenant Entra ownership/roles, explicit memory-only MSAL sign-in, pinned Key Vault signing and Blob descriptor, scoped SignalR, conditional durable publication and exact uncertain-action retries. The real browser exercises synthetic identity and SignalR protocol frames; live Entra/MFA/consent/Cosmos/Blob/Key Vault/SignalR verification remains open. |
-| S08b - Hosted packaging | Prepared; image execution pending | Non-root Dockerfiles, an isolated production API package, compiled dashboard/static proxy, exact descriptor generation, typed single-replica/Serverless Bicep and guarded bootstrap/artifact/promotion stages are delivered and exercised offline. The local Docker engine was unavailable; the Linux image workflow must supply actual build evidence. No Azure deployment was performed. |
+| S08b - Hosted packaging | Complete for image/offline scope | Non-root API/dashboard Linux images, isolated production dependencies, compiled static proxy, exact descriptor generation, typed single-replica/Serverless Bicep and guarded bootstrap/artifact/promotion stages. [Container run 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593) passed for `a350020`; the lockfile correction preserves versions/integrities. No Azure publication or deployment was performed. |
 | S09 - Rehearsal operations | Pending | Reconcile the operating guides and make clean-setup authoring, full rehearsal and pilot steps executable by the facilitator. |
 | S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |
 

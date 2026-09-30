@@ -10,8 +10,8 @@ Vault signing material, the immutable Blob campaign descriptor, durable Cosmos
 repositories, Entra instructor authorization and public-only SignalR delivery.
 Missing configuration or unavailable startup dependencies fail closed; there is
 no memory or random-signing fallback. Application packaging and guarded promotion
-are prepared; actual image execution and live-service verification remain separate
-evidence gates. The file transport used by offline tests is not a
+are prepared, and both Linux images have build/runtime evidence. Live-service
+verification remains a separate gate. The file transport used by offline tests is not a
 production storage option.
 
 ## Build and packaging
@@ -59,10 +59,14 @@ The trusted-hop/admission policy and real classroom traffic remain live gates;
 these limits are not distributed perimeter protection.
 
 The Windows Linux Docker engine was unavailable during local preparation.
-The portable API package and compiled dashboard/proxy were exercised without
-containers. `Container validation` adds Linux image builds, non-root checks,
-isolated API imports, fail-closed startup and dashboard/outage smoke checks.
-An actual successful workflow run is required before claiming image-build evidence.
+The portable API package and compiled dashboard/proxy were exercised locally.
+GitHub Actions [run 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593)
+then passed on **2026-09-30** for commit `a350020`: both real Linux image builds,
+non-root checks, isolated API imports, fail-closed startup and dashboard/outage
+smoke checks. The initial run exposed environment-specific lockfile tarball
+URLs; the correction retained every dependency version and integrity hash.
+No registry publication, Azure authentication or deployment occurred in this
+workflow. It does not replace testing the configured API against live services.
 
 ## Future authorized publication and promotion
 
