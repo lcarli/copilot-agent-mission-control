@@ -56,6 +56,12 @@ server-side mission evaluation. The decks preserve that distinction.
 The instructor guide contains coaching and honest fallback procedures.
 This presentation work does not modify the application or resolve those gates.
 
+For current runtime operation, use the
+[private facilitator runbook](../../../docs/facilitator-runbook.md) alongside
+I01-I18. It reconciles historical mismatch/placeholder notes with the delivered
+local fixes, hosted preparation, actual CLI commands and remaining human gates.
+Keep it private. The approved slide files and their original notes are unchanged.
+
 ## Authoring and rebuilding
 
 | Source | Responsibility |

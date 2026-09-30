@@ -14,6 +14,11 @@ are prepared, and both Linux images have build/runtime evidence. Live-service
 verification remains a separate gate. The file transport used by offline tests is not a
 production storage option.
 
+The [private facilitator runbook](facilitator-runbook.md) supplies the clean
+authoring, token/retry/restart drills, full rehearsal and controlled-pilot
+procedure. Those human and live-service observations are not prefilled by the
+offline preparation evidence below.
+
 ## Build and packaging
 
 ```powershell

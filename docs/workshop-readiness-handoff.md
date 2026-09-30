@@ -78,9 +78,11 @@ public examples.
 
 ## 4. Priority 2: Consolidate the participant kit and demonstrations
 
-The [local participant guide](participant-guide.md) now consolidates the CLI,
-preflight tooling, progressive starters and recovery steps. Exercise it from a
-clean participant setup before treating it as the final event kit.
+The [participant guide](participant-guide.md) consolidates the source-backed CLI,
+preflight tooling, isolated starter workspace, progressive missions and
+mode-specific recovery. Hosted instructions require a separately verified
+environment. Exercise the actual delivery from a clean participant setup before
+treating it as the final event kit.
 
 The guide covers:
 
@@ -141,6 +143,12 @@ their full platform-wide scope.
 
 Do not mark roadmap items complete merely because presentation files exist.
 Conversely, do not disregard the facilitator material already delivered.
+
+The [private facilitator runbook](facilitator-runbook.md) now maps I01-I18 to
+current runtime behavior, preserves the 455-minute schedule and supplies clean
+authoring checkpoints, failure drills, restricted evidence fields, pilot steps
+and blocking go/no-go criteria. This completes S09's operating-document scope;
+it does not assert that the human rehearsal, distribution check or pilot occurred.
 
 The current handoff does not require a second campaign, a marketplace or other
 Phase 9 expansion work. Public release/versioning is a separate follow-up after
@@ -256,7 +264,7 @@ references are recorded in
 | S07 - Durable state | Complete for adapter/offline scope | Cosmos SDK adapter and versioned per-event documents commit state, encrypted idempotency and pending publication with a head ETag. Five-mission reconstruction, lost acknowledgments, rollback and concurrent revisions are covered by an on-disk transaction double and SDK-boundary tests. Live Cosmos, retention/restore operations and Azure latency remain open. |
 | S08 - Identity and real time | Complete for adapter/offline scope | Single-tenant Entra ownership/roles, explicit memory-only MSAL sign-in, pinned Key Vault signing and Blob descriptor, scoped SignalR, conditional durable publication and exact uncertain-action retries. The real browser exercises synthetic identity and SignalR protocol frames; live Entra/MFA/consent/Cosmos/Blob/Key Vault/SignalR verification remains open. |
 | S08b - Hosted packaging | Complete for image/offline scope | Non-root API/dashboard Linux images, isolated production dependencies, compiled static proxy, exact descriptor generation, typed single-replica/Serverless Bicep and guarded bootstrap/artifact/promotion stages. [Container run 36670155593](https://github.com/lcarli/copilot-agent-mission-control/actions/runs/36670155593) passed for `a350020`; the lockfile correction preserves versions/integrities. No Azure publication or deployment was performed. |
-| S09 - Rehearsal operations | Pending | Reconcile the operating guides and make clean-setup authoring, full rehearsal and pilot steps executable by the facilitator. |
+| S09 - Rehearsal operations | Complete for operating-document scope | Private runtime companion for I01-I18, source-backed participant setup with isolated paths, local/hosted recovery, unchanged full agenda, concrete authoring/failure/pilot steps and safe evidence/go-no-go criteria. Actual human execution and intended-environment approval remain pending. |
 | S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |
 
 These technical deliveries do not replace R08/L08. The S02 commit has already

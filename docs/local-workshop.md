@@ -5,6 +5,10 @@ It connects the existing event, mission, validation, hint and scoring services
 to real HTTP clients. It is not a production deployment or a public-event
 readiness sign-off.
 
+Use the [private facilitator runbook](facilitator-runbook.md) to sequence clean
+VS Code authoring, the complete agenda, failure drills and pilot evidence.
+This guide supplies local startup and contracts, not a record of human rehearsal.
+
 ## Boundaries
 
 - The API binds to `127.0.0.1` and rejects non-loopback callers. Do not expose
