@@ -34,6 +34,9 @@ to the checkout. The dashboard image contains built browser assets and a
 dependency-free Node server. Both images use Node 24, run as `node`, and have
 no embedded Azure credentials. The build context excludes local configuration,
 Git metadata, dependencies, recordings and approved presentation/certificate assets.
+Locked dependency versions and integrity hashes are registry-independent; do not
+commit machine-specific mirror tarball URLs or disable pnpm's supply-chain
+verification to make a clean image build pass.
 
 | Workload | Port | Startup/liveness | Readiness |
 | --- | --- | --- | --- |
