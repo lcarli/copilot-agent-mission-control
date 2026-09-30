@@ -7,6 +7,7 @@ import {
   type DashboardPollingScheduler,
   type DashboardRealtimeAdapter,
   type DashboardRealtimeMessage,
+  type DashboardProjectionSnapshot,
   type DashboardReplay,
 } from '../src/index.js';
 
@@ -38,6 +39,9 @@ function createHarness(options?: {
   readonly connectError?: Error;
   readonly replay?: DashboardReplay<Payload>;
   readonly storedCursor?: string;
+  readonly fetchSnapshot?: () => Promise<
+    DashboardProjectionSnapshot<Projection>
+  >;
 }) {
   let onDisconnect: (() => void) | undefined;
   let onMessage:
@@ -66,6 +70,7 @@ function createHarness(options?: {
     },
     fetchSnapshot() {
       fetchSnapshotCount += 1;
+      if (options?.fetchSnapshot !== undefined) return options.fetchSnapshot();
       return Promise.resolve({
         cursor: 'snapshot-cursor',
         projection: { value: 4 },
@@ -133,11 +138,7 @@ describe('DashboardRealtimeController', () => {
       { projection: { value: 4 }, version: 4 },
       { projection: { value: 5 }, version: 5 },
     ]);
-    expect(harness.savedCursors).toEqual([
-      'snapshot-cursor',
-      'cursor-5',
-      'cursor-3',
-    ]);
+    expect(harness.savedCursors).toEqual(['snapshot-cursor', 'cursor-5']);
     expect(harness.statuses).toEqual(['connecting', 'connected']);
   });
 
@@ -198,4 +199,97 @@ describe('DashboardRealtimeController', () => {
       expect(harness.connectCount()).toBe(2);
     });
   });
+
+  it('never regresses projection or cursor when an older snapshot arrives after a live message', async () => {
+    const snapshot =
+      Promise.withResolvers<DashboardProjectionSnapshot<Projection>>();
+    const harness = createHarness({ fetchSnapshot: () => snapshot.promise });
+    const starting = harness.controller.start();
+    await vi.waitFor(() => {
+      expect(harness.fetchSnapshotCount()).toBe(1);
+    });
+    harness.emitMessage(message('newer', 9, 9));
+    snapshot.resolve({
+      cursor: 'stale',
+      projection: { value: 4 },
+      projectionVersion: 4,
+    });
+    await starting;
+    expect(harness.projections).toEqual([
+      { projection: { value: 9 }, version: 9 },
+    ]);
+    expect(harness.savedCursors).toEqual(['cursor-9']);
+    await harness.controller.refreshNow();
+    expect(harness.savedCursors).toEqual(['cursor-9']);
+    harness.controller.stop();
+  });
+
+  it('keeps reconciliation bounded while connected and ignores late results after stop', async () => {
+    const pending =
+      Promise.withResolvers<DashboardProjectionSnapshot<Projection>>();
+    let slow = false;
+    const harness = createHarness({
+      fetchSnapshot: () =>
+        slow
+          ? pending.promise
+          : Promise.resolve({
+              cursor: 'initial',
+              projection: { value: 4 },
+              projectionVersion: 4,
+            }),
+    });
+    await harness.controller.start();
+    slow = true;
+    harness.runPoll();
+    harness.runPoll();
+    const refresh = harness.controller.refreshNow();
+    expect(harness.fetchSnapshotCount()).toBe(2);
+    harness.controller.stop();
+    pending.resolve({
+      cursor: 'late',
+      projection: { value: 10 },
+      projectionVersion: 10,
+    });
+    await refresh;
+    harness.emitMessage(message('late-frame', 11, 11));
+    expect(harness.projections).toEqual([
+      { projection: { value: 4 }, version: 4 },
+    ]);
+    expect(harness.statuses.at(-1)).toBe('stopped');
+  });
+});
+
+it('can restart a stopped controller without an old connection or snapshot replacing its new lifetime', async () => {
+  const old = Promise.withResolvers<DashboardProjectionSnapshot<Projection>>();
+  let requests = 0;
+  const harness = createHarness({
+    fetchSnapshot: () => {
+      requests += 1;
+      return requests === 1
+        ? old.promise
+        : Promise.resolve({
+            projection: { value: 10 },
+            projectionVersion: 10,
+            cursor: 'new-lifetime',
+          });
+    },
+  });
+  const starting = harness.controller.start();
+  await vi.waitFor(() => {
+    expect(requests).toBe(1);
+  });
+  harness.controller.stop();
+  await harness.controller.start();
+  old.resolve({
+    projection: { value: 4 },
+    projectionVersion: 4,
+    cursor: 'old-lifetime',
+  });
+  await starting;
+  expect(harness.projections).toEqual([
+    { projection: { value: 10 }, version: 10 },
+  ]);
+  expect(harness.savedCursors).toEqual(['new-lifetime']);
+  expect(harness.statuses.at(-1)).toBe('connected');
+  harness.controller.stop();
 });

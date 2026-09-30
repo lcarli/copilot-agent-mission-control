@@ -333,6 +333,14 @@ test('overlapping runtime instances create one event and preserve idempotency ac
     ]);
     expect(
       responses.every(({ statusCode }) => [201, 503].includes(statusCode)),
+      JSON.stringify(
+        responses
+          .filter(({ statusCode }) => statusCode !== 201)
+          .map((response) => ({
+            status: response.statusCode,
+            problem: response.json<unknown>(),
+          })),
+      ),
     ).toBe(true);
     const replay = await second.create(key);
     expect(replay.statusCode, replay.body).toBe(201);

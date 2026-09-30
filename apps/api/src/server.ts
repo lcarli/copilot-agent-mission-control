@@ -1,15 +1,14 @@
-import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
+import { loadHostedConfig } from './hosted-config.js';
+import { createHostedWorkshopRuntime } from './hosted-runtime.js';
+import { buildHostedWorkshopApp } from './hosted-workshop.js';
 
 const config = loadConfig();
-const app = buildApp({
+const runtime = await createHostedWorkshopRuntime(loadHostedConfig());
+const app = buildHostedWorkshopApp({
   config,
-  readinessProbes: [
-    { name: 'workshop-runtime-not-configured', check: () => 'down' },
-  ],
-  eventProbes: [
-    { name: 'workshop-runtime-not-configured', check: () => 'down' },
-  ],
+  runtime,
+  logger: true,
 });
 
 async function shutdown(signal: NodeJS.Signals): Promise<void> {
@@ -19,8 +18,12 @@ async function shutdown(signal: NodeJS.Signals): Promise<void> {
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
-    void shutdown(signal).finally(() => {
-      process.exitCode = 0;
+    void shutdown(signal).catch(() => {
+      app.log.error(
+        { code: 'shutdown-failed' },
+        'Mission Control API shutdown failed',
+      );
+      process.exitCode = 1;
     });
   });
 }
@@ -30,7 +33,11 @@ try {
     host: config.host,
     port: config.port,
   });
-} catch (error) {
-  app.log.fatal({ err: error }, 'Mission Control API failed to start');
+} catch {
+  app.log.fatal(
+    { code: 'startup-failed' },
+    'Mission Control API failed to start',
+  );
+  await app.close();
   process.exitCode = 1;
 }

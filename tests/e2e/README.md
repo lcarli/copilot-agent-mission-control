@@ -49,7 +49,7 @@ requests; the browser is nevertheless active throughout the workload.
 this expanded browser/simulator scenario sequentially.
 
 These scenarios do not validate VS Code/Copilot generation, deployed Azure
-adapters, SignalR, 50 separate browser clients, a complete screen-reader audit
+adapters, the live SignalR service, 50 separate browser clients, a complete screen-reader audit
 or a human-led workshop.
 TASK-801 remains open for that intended-event coverage. No credentials,
 screenshots, videos or traces are retained by the test runner.
@@ -68,3 +68,17 @@ encrypted replays, failures before commit, lost acknowledgments, conditional
 concurrency, hint progression and preserved simulator/recovery state. The
 fixture writes only to a generated temporary directory and removes it afterward.
 This is offline durability evidence, not a live Cosmos/Entra/SignalR test.
+Physical file reads and replacements are serialized to avoid Windows read-handle
+rename failures. Logical transactions still interleave across API instances,
+including the deterministic head-conflict and coherent-snapshot scenarios.
+
+`hosted-workshop.spec.ts` runs the hosted browser UI against those durable
+transport doubles. A synthetic identity provider stands in for Microsoft login;
+the browser, operational HTTP API, encrypted replay and JavaScript SignalR
+client are real. A deliberately lost creation response is retried with the
+exact body/key and creates only one event. Intercepted negotiation/WebSocket
+protocol frames exercise actual client push delivery while HTTP snapshots are
+held behind, reject cross-event frames and recover from an HTTP outage.
+The public page never initializes instructor identity or sends its token.
+Sign-out removes private controls, and axe checks the hosted instructor view.
+These are clearly bounded service doubles, not an Entra/SignalR deployment.

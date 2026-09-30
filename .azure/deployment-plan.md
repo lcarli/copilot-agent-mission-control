@@ -136,13 +136,14 @@ deploying it; multi-replica high availability is not part of this pass.
 
 - The local workshop has complete simulator observations and a versioned
   pedagogical decision-recovery model.
-- Operational routes now have shared runtime ports and separate local/hosted
-  builders. The normal entry point fails readiness until the hosted adapters
-  are assembled; it does not expose the memory adapter publicly.
+- Operational routes have shared runtime ports and separate local/hosted
+  builders. The normal entry point now assembles hosted identity, storage,
+  campaign and real-time adapters; it fails closed on missing configuration
+  or unavailable startup dependencies and never exposes the memory adapter.
 - Local mode remains in memory. The durable adapters now store separately
   versioned state, observations, idempotency and recovery documents in the
   accepted Cosmos partition, with atomic ETag-guarded batches. Hosted assembly
-  and live-service validation remain pending.
+  is implemented; live-service validation remains pending.
 - ADR 0001 selects Container Apps, Cosmos DB, Blob Storage, Key Vault,
   managed identity and Azure SignalR. Do not replace these choices with an
   unrelated stack or initialize the existing project from a template.
@@ -157,9 +158,10 @@ deploying it; multi-replica high availability is not part of this pass.
 | Expanded local scenarios | Fifty logical units exercise actual simulator calls, evaluated submissions and public dashboard updates, including bounded retries and scope isolation. | Complete locally: 250 core passes, 550 scoped simulator observations and a real public browser; no live Azure evidence claimed. |
 | Operational guardrails | Request budgets, safe failure handling and explicit operational limits preserve legitimate classroom traffic. | Complete locally: scoped fixed windows, bounded queues, explicit Retry-After and 50-unit workload evidence. Distributed limits remain outside the single-replica profile. |
 | Accessibility | Automated browser coverage plus a recorded boundary for the remaining human keyboard, projector and screen-reader rehearsal. | Complete for local automated scope: three locales, both themes, keyboard/focus, narrow public viewport, reduced motion and unfiltered WCAG A/AA scans. Human checks remain open. |
-| Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Shared composition complete; injected identity/repositories/probes and existing HTTP/browser/CLI paths verified locally. Hosted adapter assembly remains pending. |
+| Production runtime | Share domain behavior through explicit runtime ports instead of exposing the loopback rehearsal server publicly. | Shared composition complete; hosted assembly is supplied by the identity/real-time delivery. Existing local behavior is preserved. |
 | Durable state | Prepare the accepted persistence adapters, restart/idempotency behavior and retention boundaries. | Adapter and offline scope complete: atomic Cosmos batches, encrypted replies, coherent snapshots and preserved evidence. File-transport restart/concurrency and SDK-boundary checks pass; live Cosmos and retention/restore operations remain open. |
-| Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Design proposed below |
+| Identity and real-time delivery | Prepare instructor identity and redacted, scoped real-time/reconnect integration without a deployment. | Complete for adapter/offline scope: Entra ownership/role checks, memory-only MSAL, pinned Key Vault/Blob loading, scoped SignalR and conditional publication acknowledgment. Real browser coverage uses synthetic identity and SignalR protocol frames. Popup sign-in is an assumption for review, not an additional user approval. Live services remain unverified. |
+| Hosted packaging | Build real images, immutable campaign descriptors and single-replica configuration, without provisioning. | Pending; separate commit after identity and real-time integration. |
 | Rehearsal kit and final validation | Reconcile operating guides, prepare reproducible clean-setup rehearsal steps and run applicable offline validation. Keep human and live-service gates open. | Pending |
 
 ### Proposed implementation design
@@ -179,8 +181,14 @@ The current SignalR template uses `Default` mode and the `SignalR App Server`
 role. Official service documentation confirms that Default mode requires a
 connected hub server; a standalone Node REST publisher does not supply that
 server connection. The proposed Node-compatible Serverless negotiation path
-requires authentication and REST permissions, documented under the
-resource-scoped `SignalR Service Owner` data-plane role.
+requires authentication and REST permissions. The current built-in-role
+definition for resource-scoped `SignalR REST API Owner`
+(`fd53cd77-2268-407a-8f46-7e7863d0f521`) explicitly includes
+`Microsoft.SignalRService/SignalR/auth/clientToken/action`, as well as hub
+publication. Use that narrower role for `:generateToken` and `:send`.
+This corrects the earlier Service Owner proposal, which followed the older
+managed-identity overview. Actual token generation/publication under the
+assigned role remains a live-service gate.
 
 Alternatives considered: add an ASP.NET hub relay to retain Default mode
 (another language/workload), or replace SignalR with another real-time service
@@ -194,6 +202,11 @@ Official references reviewed for the design:
 - [SignalR service modes](https://learn.microsoft.com/en-us/azure/azure-signalr/concept-service-mode)
 - [SignalR managed-identity permissions](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-howto-authorize-managed-identity)
 - [SignalR data-plane REST API](https://learn.microsoft.com/en-us/azure/azure-signalr/signalr-reference-data-plane-rest-api)
+- [Current SignalR REST API Owner actions](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles/web-and-mobile#signalr-rest-api-owner)
+- [SignalR 2024-12-01 specification](https://learn.microsoft.com/en-us/azure/azure-signalr/swagger/signalr-data-plane-rest-v20241201)
+- [Entra claims validation](https://learn.microsoft.com/en-us/entra/identity-platform/claims-validation)
+- [MSAL browser initialization and redirect bridge](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/initialization)
+- [MSAL browser memory cache](https://learn.microsoft.com/en-us/entra/msal/javascript/browser/caching)
 - [Cosmos transactional batches](https://learn.microsoft.com/en-us/azure/cosmos-db/transactional-batch)
 - [Cosmos JavaScript batch API](https://learn.microsoft.com/en-us/javascript/api/@azure/cosmos/items?view=azure-node-latest)
 - [Cosmos conditional replacement](https://learn.microsoft.com/en-us/javascript/api/@azure/cosmos/replaceoperationinput?view=azure-node-latest)
@@ -205,7 +218,7 @@ Official references reviewed for the design:
 - [x] Inspect existing runtime interfaces and finish the implementation design.
 - [x] Confirm the bounded implementation plan before production integration.
 - [x] Research official Cosmos SDK batch, ETag, token-credential and limit guidance before generating the storage adapter.
-- [ ] Finish identity/SignalR SDK and permission research before generating the remaining adapters.
+- [x] Finish identity/SignalR SDK and permission research before generating the remaining adapters.
 
 ### Validation boundary
 

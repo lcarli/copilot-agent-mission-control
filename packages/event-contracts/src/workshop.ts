@@ -85,9 +85,26 @@ export const PublicPresentationProjectionSchema = Type.Object(
     registeredUnitCount: Type.Optional(count()),
     activityWindowSeconds: Type.Optional(Type.Integer({ minimum: 1 })),
     updatedAt: Type.Optional(text()),
+    revision: Type.Optional(count()),
   },
   closed,
 );
+
+const uuidPattern =
+  '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+export const WorkshopIdentitySchema = Type.Object(
+  {
+    tenantId: Type.String({ pattern: `^${uuidPattern}$` }),
+    clientId: Type.String({ pattern: `^${uuidPattern}$` }),
+    scope: Type.String({ pattern: `^api://${uuidPattern}/Workshop\\.Access$` }),
+    redirectUri: Type.String({ minLength: 1, maxLength: 1000 }),
+  },
+  closed,
+);
+
+export type WorkshopIdentity = Static<typeof WorkshopIdentitySchema>;
+export const decodeWorkshopIdentity = (value: unknown): WorkshopIdentity =>
+  Value.Decode(WorkshopIdentitySchema, value);
 
 const RuleSchema = Type.Object(
   {

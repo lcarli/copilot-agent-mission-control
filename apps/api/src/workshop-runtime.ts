@@ -11,6 +11,8 @@ import type {
   MissionSubmissionFeedback,
   SimulatorInvocation,
   SimulatorObservation,
+  PublicPresentationProjection,
+  WorkshopIdentity,
 } from '@mission-control/event-contracts';
 import type { EventUnitRepository } from '@mission-control/event-management';
 import type { HintUsageRepository } from '@mission-control/hint-system';
@@ -74,6 +76,7 @@ export interface WorkshopState {
 }
 
 export interface WorkshopRequests {
+  revision?(): number;
   serialize<T>(resource: string, operation: () => Promise<T>): Promise<T>;
   mutate(
     resource: string,
@@ -101,6 +104,21 @@ export type WorkshopProfile =
     };
 
 export interface WorkshopRuntime {
+  readonly campaignArtifactSha256?: string;
+  assertOperational?(): void;
+  readonly identity?: WorkshopIdentity;
+  readonly missionContent?: readonly import('@mission-control/campaign-operation-lighthouse').MissionContent[];
+  readonly realtime?: {
+    negotiate(
+      eventSessionId: string,
+    ): Promise<{ url: string; accessToken: string }>;
+    start(
+      projection: (
+        eventSessionId: string,
+      ) => Promise<PublicPresentationProjection>,
+      onError: () => void,
+    ): void;
+  };
   readonly profile: WorkshopProfile;
   readonly eventRepository: EventUnitRepository;
   readonly missionRepository: MissionRepository;

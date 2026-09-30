@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { decodeWorkshopIdentity } from '@mission-control/event-contracts';
 import type { SupportedLocale } from '@mission-control/localization';
+import type { InstructorIdentity } from './instructor-identity.js';
+import { InstructorRequests } from './instructor-requests.js';
 
 import {
   MissionControlPanel,
@@ -94,36 +97,79 @@ export function LocalWorkshopView({
   const [snapshot, setSnapshot] = useState<EventSnapshot>();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
+  const [runtimeError, setRuntimeError] = useState(false);
   const [confirmation, setConfirmation] = useState('');
   const [reason, setReason] = useState('');
+  const [mode, setMode] = useState<'local-rehearsal' | 'hosted'>();
+  const [identity, setIdentity] = useState<InstructorIdentity>();
+  const [account, setAccount] = useState<string>();
+  const [pending, setPending] = useState(false);
+  const [sending, setSending] = useState(false);
+  const access = useRef<() => Promise<string>>(() =>
+    Promise.reject(new Error('Workshop identity is not ready.')),
+  );
+  const [client] = useState(
+    () =>
+      new InstructorRequests(
+        () => access.current(),
+        (isPending, isSending) => {
+          setPending(isPending);
+          setSending(isSending);
+        },
+      ),
+  );
+  const hosted = mode === 'hosted';
+  const authorized = hosted
+    ? account !== undefined
+    : mode === 'local-rehearsal' && token.length >= 32;
+  const closePhrase = hosted ? 'CLOSE EVENT' : 'CLOSE LOCAL EVENT';
+  access.current = hosted
+    ? () =>
+        identity === undefined
+          ? Promise.reject(new Error('Microsoft sign-in is not ready.'))
+          : identity.token()
+    : () => Promise.resolve(token);
 
-  const request = async (path: string, body?: unknown): Promise<unknown> => {
-    const response = await fetch(`/api/v1/${path}`, {
-      method: body === undefined ? 'GET' : 'POST',
-      headers: {
-        authorization: `Bearer ${token}`,
-        ...(body === undefined
-          ? {}
-          : {
-              'content-type': 'application/json',
-              'idempotency-key': crypto.randomUUID(),
-            }),
-      },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!response.ok) {
-      const problem: unknown = await response.json();
-      throw new Error(
-        record(problem) &&
-          typeof problem.code === 'string' &&
-          /^[a-z][a-z0-9-]{0,119}$/u.test(problem.code)
-          ? `HTTP ${String(response.status)} ${problem.code}`
-          : `HTTP ${String(response.status)}`,
-      );
-    }
-    return response.json() as Promise<unknown>;
-  };
+  useEffect(() => {
+    const lifetime = new AbortController();
+    void (async () => {
+      try {
+        const response = await fetch('/api/v1/workshop', {
+          cache: 'no-store',
+          signal: AbortSignal.any([
+            lifetime.signal,
+            AbortSignal.timeout(5_000),
+          ]),
+        });
+        if (!response.ok) throw new Error('Workshop runtime is unavailable.');
+        const value: unknown = await response.json();
+        if (
+          !record(value) ||
+          (value.mode !== 'local-rehearsal' && value.mode !== 'hosted')
+        )
+          throw new Error('Unsupported workshop runtime.');
+        if (value.mode === 'hosted') {
+          const { createInstructorIdentity } =
+            await import('./instructor-identity.js');
+          const loaded = await createInstructorIdentity(
+            decodeWorkshopIdentity(value.authentication),
+          );
+          if (lifetime.signal.aborted) return;
+          setIdentity(loaded);
+        }
+        if (!lifetime.signal.aborted) setMode(value.mode);
+      } catch {
+        if (!lifetime.signal.aborted) setRuntimeError(true);
+      }
+    })();
+    return () => {
+      lifetime.abort();
+      client.reset();
+    };
+  }, [client]);
+
+  const request = (path: string, body?: unknown) =>
+    body === undefined ? client.read(path) : client.mutate(path, body);
   const run = async (operation: () => Promise<void>) => {
     setBusy(true);
     setError(undefined);
@@ -131,7 +177,11 @@ export function LocalWorkshopView({
       await operation();
     } catch (failure) {
       setError(
-        failure instanceof Error ? failure.message : t('setup.error.operation'),
+        record(failure) && typeof failure.errorCode === 'string'
+          ? t('hosted.signInRequired')
+          : failure instanceof Error
+            ? failure.message
+            : t('setup.error.operation'),
       );
     } finally {
       setBusy(false);
@@ -146,6 +196,25 @@ export function LocalWorkshopView({
     setSnapshot(current);
     setEventId(id);
     return current;
+  };
+  const resetIdentity = () => {
+    client.reset();
+    setSnapshot(undefined);
+    setEventCode(undefined);
+    setConfirmation('');
+    setReason('');
+  };
+  const acceptCreation = async (created: unknown) => {
+    if (
+      !record(created) ||
+      !record(created.eventSession) ||
+      typeof created.eventSession.eventSessionId !== 'string' ||
+      typeof created.eventCode !== 'string'
+    )
+      throw new Error('Invalid event creation response.');
+    setEventCode(created.eventCode);
+    setEventId(created.eventSession.eventSessionId);
+    await load(created.eventSession.eventSessionId);
   };
   const command = async (
     type: string,
@@ -198,20 +267,68 @@ export function LocalWorkshopView({
   };
   return (
     <section aria-labelledby="local-workshop-title">
-      <h2 id="local-workshop-title">{t('local.title')}</h2>
-      <p className="runtime-notice">{t('local.notice')}</p>
+      <h2 id="local-workshop-title">
+        {t(hosted ? 'hosted.title' : 'local.title')}
+      </h2>
+      <p className="runtime-notice">
+        {t(
+          mode === undefined
+            ? 'hosted.loading'
+            : hosted
+              ? 'hosted.notice'
+              : 'local.notice',
+        )}
+      </p>
       <div className="local-connection panel">
-        <label>
-          <span>{t('local.token')}</span>
-          <input
-            type="password"
-            autoComplete="off"
-            value={token}
-            onChange={(event) => {
-              setToken(event.target.value);
-            }}
-          />
-        </label>
+        {runtimeError ? <p role="alert">{t('hosted.unavailable')}</p> : null}
+        {hosted ? (
+          <div className="mission-actions">
+            <button
+              type="button"
+              className="primary-button"
+              disabled={busy || sending || identity === undefined}
+              onClick={() => {
+                void run(async () => {
+                  const selected = await identity?.signIn();
+                  if (selected !== account) resetIdentity();
+                  setAccount(selected);
+                });
+              }}
+            >
+              {t('hosted.signIn')}
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              disabled={busy || sending || account === undefined}
+              onClick={() => {
+                void run(async () => {
+                  resetIdentity();
+                  setAccount(undefined);
+                  await identity?.signOut();
+                });
+              }}
+            >
+              {t('hosted.signOut')}
+            </button>
+            {account === undefined ? null : (
+              <span role="status">{t('hosted.signedIn')}</span>
+            )}
+          </div>
+        ) : mode === undefined ? null : (
+          <label>
+            <span>{t('local.token')}</span>
+            <input
+              type="password"
+              autoComplete="off"
+              value={token}
+              onChange={(event) => {
+                resetIdentity();
+                setToken(event.target.value);
+              }}
+            />
+          </label>
+        )}
         <label>
           <span>{t('local.eventId')}</span>
           <input
@@ -225,7 +342,7 @@ export function LocalWorkshopView({
           <button
             type="button"
             className="primary-button"
-            disabled={busy || token.length < 32}
+            disabled={busy || pending || !authorized}
             onClick={() => {
               void run(async () => {
                 const created = await request('event-sessions', {
@@ -233,26 +350,16 @@ export function LocalWorkshopView({
                   defaultLocale: locale,
                   supportedLocales: ['en', 'fr', 'pt-BR'],
                 });
-                if (
-                  !record(created) ||
-                  !record(created.eventSession) ||
-                  typeof created.eventSession.eventSessionId !== 'string' ||
-                  typeof created.eventCode !== 'string'
-                ) {
-                  throw new Error('Invalid event creation response.');
-                }
-                setEventCode(created.eventCode);
-                setEventId(created.eventSession.eventSessionId);
-                await load(created.eventSession.eventSessionId);
+                await acceptCreation(created);
               });
             }}
           >
-            {t('local.create')}
+            {t(hosted ? 'hosted.create' : 'local.create')}
           </button>
           <button
             type="button"
             className="secondary-button"
-            disabled={busy || token.length < 32 || eventId === ''}
+            disabled={busy || pending || !authorized || eventId === ''}
             onClick={() => {
               void run(async () => {
                 if (snapshot?.eventSession.eventSessionId !== eventId)
@@ -264,6 +371,34 @@ export function LocalWorkshopView({
             {t('local.refresh')}
           </button>
         </div>
+        {pending && !sending ? (
+          <div role="status">
+            <p>{t('hosted.pending')}</p>
+            <button
+              type="button"
+              className="secondary-button"
+              disabled={busy || !authorized}
+              onClick={() => {
+                void run(async () => {
+                  const result = await client.retry();
+                  if (result.path === 'event-sessions')
+                    await acceptCreation(result.value);
+                  else {
+                    const current = decodeLocalSnapshot(result.value);
+                    if (
+                      result.path !==
+                      `event-sessions/${encodeURIComponent(current.eventSession.eventSessionId)}/commands`
+                    )
+                      throw new Error('Event scope mismatch.');
+                    setSnapshot(current);
+                  }
+                });
+              }}
+            >
+              {t('hosted.retry')}
+            </button>
+          </div>
+        ) : null}
         {error === undefined ? null : <p role="alert">{error}</p>}
         {eventCode === undefined ? null : (
           <p>
@@ -285,86 +420,92 @@ export function LocalWorkshopView({
               {t('local.publicLink')}
             </a>
           </p>
-          <div className="mission-actions">
-            {snapshot.eventSession.status === 'draft' ||
-            snapshot.eventSession.status === 'lobby' ? (
-              <button
-                type="button"
-                className="primary-button"
-                disabled={busy}
-                onClick={() => {
-                  void run(async () => {
-                    await command(
-                      snapshot.eventSession.status === 'draft'
-                        ? 'event-session.open-lobby'
-                        : 'event-session.start',
-                      snapshot.eventSession.version,
-                    );
-                  });
-                }}
-              >
-                {t(
-                  snapshot.eventSession.status === 'draft'
-                    ? 'setup.openLobby'
-                    : 'local.start',
-                )}
-              </button>
+          <fieldset
+            className="workshop-controls"
+            disabled={busy || pending || !authorized}
+          >
+            <legend className="visually-hidden">{t('nav.missions')}</legend>
+            <div className="mission-actions">
+              {snapshot.eventSession.status === 'draft' ||
+              snapshot.eventSession.status === 'lobby' ? (
+                <button
+                  type="button"
+                  className="primary-button"
+                  disabled={busy}
+                  onClick={() => {
+                    void run(async () => {
+                      await command(
+                        snapshot.eventSession.status === 'draft'
+                          ? 'event-session.open-lobby'
+                          : 'event-session.start',
+                        snapshot.eventSession.version,
+                      );
+                    });
+                  }}
+                >
+                  {t(
+                    snapshot.eventSession.status === 'draft'
+                      ? 'setup.openLobby'
+                      : 'local.start',
+                  )}
+                </button>
+              ) : null}
+            </div>
+            {snapshot.eventSession.status === 'active' ? (
+              <MissionControlPanel
+                key={snapshot.eventSession.eventSessionId}
+                adapter={adapter}
+                missions={snapshot.missions}
+                modifiers={[]}
+                showGuidanceControls={false}
+                translate={t}
+              />
             ) : null}
-          </div>
-          {snapshot.eventSession.status === 'active' ? (
-            <MissionControlPanel
-              key={snapshot.eventSession.eventSessionId}
-              adapter={adapter}
-              missions={snapshot.missions}
-              modifiers={[]}
-              showGuidanceControls={false}
-              translate={t}
-            />
-          ) : null}
-          {['lobby', 'active', 'paused'].includes(
-            snapshot.eventSession.status,
-          ) ? (
-            <fieldset className="local-connection panel">
-              <legend>{t('local.close')}</legend>
-              <label>
-                <span>{t('local.reason')}</span>
-                <input
-                  value={reason}
-                  onChange={(event) => {
-                    setReason(event.target.value);
+            {['lobby', 'active', 'paused'].includes(
+              snapshot.eventSession.status,
+            ) ? (
+              <fieldset className="local-connection panel">
+                <legend>{t(hosted ? 'hosted.close' : 'local.close')}</legend>
+                <label>
+                  <span>{t('local.reason')}</span>
+                  <input
+                    value={reason}
+                    onChange={(event) => {
+                      setReason(event.target.value);
+                    }}
+                  />
+                </label>
+                <label>
+                  <span>
+                    {t('local.confirmation')} {closePhrase}
+                  </span>
+                  <input
+                    value={confirmation}
+                    onChange={(event) => {
+                      setConfirmation(event.target.value);
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  disabled={
+                    busy || confirmation !== closePhrase || reason.trim() === ''
+                  }
+                  onClick={() => {
+                    void run(async () => {
+                      await command(
+                        'event-session.close',
+                        snapshot.eventSession.version,
+                      );
+                    });
                   }}
-                />
-              </label>
-              <label>
-                <span>{t('local.confirmation')} CLOSE LOCAL EVENT</span>
-                <input
-                  value={confirmation}
-                  onChange={(event) => {
-                    setConfirmation(event.target.value);
-                  }}
-                />
-              </label>
-              <button
-                type="button"
-                className="secondary-button"
-                disabled={
-                  busy ||
-                  confirmation !== 'CLOSE LOCAL EVENT' ||
-                  reason.trim() === ''
-                }
-                onClick={() => {
-                  void run(async () => {
-                    await command(
-                      'event-session.close',
-                      snapshot.eventSession.version,
-                    );
-                  });
-                }}
-              >
-                {t('local.close')}
-              </button>
-            </fieldset>
-          ) : null}
+                >
+                  {t(hosted ? 'hosted.close' : 'local.close')}
+                </button>
+              </fieldset>
+            ) : null}
+          </fieldset>
         </>
       )}
     </section>

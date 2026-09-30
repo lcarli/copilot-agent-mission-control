@@ -33,7 +33,8 @@ describe('CommandCenterApp', () => {
 
     expect(markup).toContain('Local workshop rehearsal');
     expect(markup).toContain('Create local event');
-    expect(markup).toContain('type="password"');
+    expect(markup).toContain('Connecting to the workshop runtime...');
+    expect(markup).not.toContain('type="password"');
     expect(markup).not.toContain('24 / 25');
   });
 

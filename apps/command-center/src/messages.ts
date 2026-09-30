@@ -229,8 +229,31 @@ const messages = {
     'presentation.activityWindow': 'Activity window:',
     'presentation.noScores': 'No evaluated scores yet.',
     'shell.demoNotice':
-      'Component demonstration only. These example values and controls are not connected to the local event. Use Event setup for live local operations.',
+      'Component demonstration only. These example values and controls are not connected to the event. Use Event setup for live operations.',
     'local.title': 'Local workshop rehearsal',
+    'hosted.title': 'Hosted workshop',
+    'hosted.loading': 'Connecting to the workshop runtime...',
+    'hosted.unavailable':
+      'Workshop runtime or sign-in configuration is unavailable.',
+    'hosted.notice':
+      'Private instructor screen. Microsoft sign-in, durable state and public-only real-time updates. One API replica; service and human rehearsal gates still apply.',
+    'hosted.signIn': 'Sign in / renew with Microsoft',
+    'hosted.signOut': 'Sign out of this dashboard',
+    'hosted.signedIn': 'Signed in with Microsoft',
+    'hosted.create': 'Create hosted event',
+    'hosted.close': 'Close hosted event',
+    'hosted.pending':
+      'The last action has no confirmed response. Retry it unchanged before another action. Do not reload, change views or sign out until it is resolved.',
+    'hosted.retry': 'Retry the same action',
+    'hosted.signInRequired':
+      'Sign in with Microsoft again to renew this session.',
+    'hosted.connection.connecting': 'Connecting public updates...',
+    'hosted.connection.connected':
+      'Live updates with periodic snapshot reconciliation',
+    'hosted.connection.reconnecting': 'Reconnecting public updates...',
+    'hosted.connection.polling':
+      'Real-time updates degraded; using HTTP snapshots',
+    'hosted.connection.stopped': 'Public updates stopped',
     'local.notice':
       'Private instructor screen. Loopback only, in-memory state, guided scoring and HTTP polling. Restarting the API clears the event. No cloud or SignalR certification.',
     'local.token': 'Local instructor token (kept in this tab only)',
@@ -483,8 +506,32 @@ const messages = {
     'presentation.activityWindow': 'Fenêtre d’activité :',
     'presentation.noScores': 'Aucun score évalué.',
     'shell.demoNotice':
-      'Démonstration de composants uniquement. Ces exemples ne sont pas connectés à l’événement local. Utilisez Configuration pour les opérations réelles.',
+      'Démonstration de composants uniquement. Ces exemples ne sont pas connectés à l’événement. Utilisez Configuration pour les opérations réelles.',
     'local.title': 'Répétition locale de l’atelier',
+    'hosted.title': 'Atelier hébergé',
+    'hosted.loading': 'Connexion au service de l’atelier...',
+    'hosted.unavailable':
+      'Le service de l’atelier ou la configuration de connexion est indisponible.',
+    'hosted.notice':
+      'Écran privé de l’instructeur. Connexion Microsoft, état persistant et mises à jour publiques en temps réel. Une réplique API ; les vérifications des services et la répétition humaine restent nécessaires.',
+    'hosted.signIn': 'Se connecter / renouveler avec Microsoft',
+    'hosted.signOut': 'Se déconnecter de ce tableau de bord',
+    'hosted.signedIn': 'Connecté avec Microsoft',
+    'hosted.create': 'Créer un événement hébergé',
+    'hosted.close': 'Fermer l’événement hébergé',
+    'hosted.pending':
+      'La dernière action n’a pas de réponse confirmée. Réessayez sans la modifier avant une autre action. Ne rechargez pas la page, ne changez pas de vue et ne vous déconnectez pas avant sa résolution.',
+    'hosted.retry': 'Réessayer la même action',
+    'hosted.signInRequired':
+      'Reconnectez-vous avec Microsoft pour renouveler cette session.',
+    'hosted.connection.connecting': 'Connexion aux mises à jour publiques...',
+    'hosted.connection.connected':
+      'Mises à jour en direct avec synchronisation périodique',
+    'hosted.connection.reconnecting':
+      'Reconnexion aux mises à jour publiques...',
+    'hosted.connection.polling':
+      'Temps réel dégradé ; utilisation des instantanés HTTP',
+    'hosted.connection.stopped': 'Mises à jour publiques arrêtées',
     'local.notice':
       'Écran privé instructeur. Accès local, données en mémoire, score guidé et actualisation HTTP. Un redémarrage efface l’événement. Aucune certification cloud ou SignalR.',
     'local.token': 'Jeton instructeur local (dans cet onglet uniquement)',
@@ -735,8 +782,31 @@ const messages = {
     'presentation.activityWindow': 'Janela de atividade:',
     'presentation.noScores': 'Nenhuma pontuação avaliada.',
     'shell.demoNotice':
-      'Demonstração de componentes. Os exemplos e controles não estão conectados ao evento local. Use Configuração para operações reais.',
+      'Demonstração de componentes. Os exemplos e controles não estão conectados ao evento. Use Configuração para operações reais.',
     'local.title': 'Ensaio local do workshop',
+    'hosted.title': 'Workshop hospedado',
+    'hosted.loading': 'Conectando ao serviço do workshop...',
+    'hosted.unavailable':
+      'O serviço do workshop ou a configuração de login está indisponível.',
+    'hosted.notice':
+      'Tela privada do instrutor. Login Microsoft, estado persistente e atualizações públicas em tempo real. Uma réplica da API; as verificações dos serviços e o ensaio humano continuam necessários.',
+    'hosted.signIn': 'Entrar / renovar com Microsoft',
+    'hosted.signOut': 'Sair deste painel',
+    'hosted.signedIn': 'Conectado com Microsoft',
+    'hosted.create': 'Criar evento hospedado',
+    'hosted.close': 'Encerrar evento hospedado',
+    'hosted.pending':
+      'A última ação está sem resposta confirmada. Repita-a sem alterações antes de outra ação. Não recarregue a página, não troque de tela nem saia antes de resolvê-la.',
+    'hosted.retry': 'Repetir a mesma ação',
+    'hosted.signInRequired':
+      'Entre novamente com Microsoft para renovar esta sessão.',
+    'hosted.connection.connecting': 'Conectando as atualizações públicas...',
+    'hosted.connection.connected':
+      'Atualizações ao vivo com sincronização periódica',
+    'hosted.connection.reconnecting':
+      'Reconectando as atualizações públicas...',
+    'hosted.connection.polling': 'Tempo real degradado; usando consultas HTTP',
+    'hosted.connection.stopped': 'Atualizações públicas interrompidas',
     'local.notice':
       'Tela privada do instrutor. Acesso local, dados em memória, pontuação guiada e atualização HTTP. Reiniciar a API apaga o evento. Sem certificação de nuvem ou SignalR.',
     'local.token': 'Token local do instrutor (somente nesta aba)',

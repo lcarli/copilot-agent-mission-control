@@ -56,7 +56,7 @@ export function buildApp(options: BuildAppOptions): FastifyInstance {
   const app = Fastify({
     ajv: { customOptions: { removeAdditional: false, coerceTypes: false } },
     genReqId: requestCorrelationId,
-    logger: options.logger ?? { level: config.logLevel },
+    logger: options.logger === false ? false : { level: config.logLevel },
   });
   const budget = new RequestBudget();
 

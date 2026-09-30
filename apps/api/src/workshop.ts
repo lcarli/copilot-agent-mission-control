@@ -65,14 +65,6 @@ const catalog: readonly {
   },
 ];
 
-const requiredMission = (missionId: string) => {
-  const mission = catalog.find(
-    ({ content }) => content.missionId === missionId,
-  );
-  if (mission === undefined) throw workshopProblem('mission-not-found', 404);
-  return mission;
-};
-
 const textSchema = { type: 'string', minLength: 1, maxLength: 200 } as const;
 const localeSchema = { type: 'string', enum: ['en', 'fr', 'pt-BR'] } as const;
 const emptySchema = { type: 'object', additionalProperties: false } as const;
@@ -138,6 +130,29 @@ const safeEvent = (event: EventSession) => ({
 
 export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
   const { runtime } = options;
+  const activeCatalog = catalog.map((item) => {
+    if (runtime.missionContent === undefined) return item;
+    const content = runtime.missionContent.find(
+      (candidate) => candidate.missionId === item.content.missionId,
+    );
+    if (
+      content === undefined ||
+      content.version !== item.content.version ||
+      content.validatorId !== item.content.validatorId ||
+      content.validatorVersion !== item.content.validatorVersion
+    )
+      throw new Error(
+        'Campaign descriptor does not match the installed mission/validator catalog.',
+      );
+    return { content, validator: item.validator };
+  });
+  const requiredMission = (missionId: string) => {
+    const mission = activeCatalog.find(
+      ({ content }) => content.missionId === missionId,
+    );
+    if (mission === undefined) throw workshopProblem('mission-not-found', 404);
+    return mission;
+  };
   const {
     eventRepository,
     missionRepository,
@@ -172,7 +187,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
   const activity = new Map<string, number>();
   const validators = new ValidationWorker({
     registry: new InMemoryValidatorRegistry(
-      catalog.map(({ validator }) => validator),
+      activeCatalog.map(({ validator }) => validator),
     ),
     repository: runtime.validationRepository,
     contextResolver: {
@@ -187,9 +202,17 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
       },
     },
   });
+  const assertCampaign = (event: EventSession) => {
+    if (
+      runtime.campaignArtifactSha256 !== undefined &&
+      event.campaignArtifactSha256 !== runtime.campaignArtifactSha256
+    )
+      throw workshopProblem('campaign-artifact-mismatch', 503);
+  };
   const requiredEvent = async (id: string) => {
     const event = await eventRepository.getEventSession(id);
     if (event === undefined) throw workshopProblem('event-not-found', 404);
+    assertCampaign(event);
     return event;
   };
   const hints = new HintService({
@@ -242,6 +265,8 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
   });
 
   app.addHook('onRequest', async (request, reply) => {
+    if (!request.url.startsWith('/api/v1/health/'))
+      runtime.assertOperational?.();
     if (
       profile.mode === 'local-rehearsal' &&
       !['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(request.ip)
@@ -275,6 +300,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
       throw workshopProblem('unit-token-required', 401);
     }
     const authenticated = await events.authenticateUnit(header.slice(7));
+    assertCampaign(authenticated.eventSession);
     if (['muted', 'withdrawn'].includes(authenticated.unit.status)) {
       throw workshopProblem('unit-scope-denied', 403);
     }
@@ -383,6 +409,9 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
     transport: profile.transport,
     closeConfirmationPhrase: profile.closeConfirmationPhrase,
     requestLimits: workshopRequestLimits,
+    ...(runtime.identity === undefined
+      ? {}
+      : { authentication: runtime.identity }),
   });
   app.get('/api/v1/workshop', runtimeDescription);
   if (profile.mode === 'local-rehearsal')
@@ -421,13 +450,18 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
             {
               ...request.body,
               campaignVersion: '1.0.0',
+              ...(runtime.campaignArtifactSha256 === undefined
+                ? {}
+                : {
+                    campaignArtifactSha256: runtime.campaignArtifactSha256,
+                  }),
               scoringPolicyVersion: '1.0.0',
             },
             { instructor: actor },
           );
           await missions.initializeMissions({
             eventSessionId: created.eventSession.eventSessionId,
-            missions: catalog.map(({ content }, index) => ({
+            missions: activeCatalog.map(({ content }, index) => ({
               id: content.missionId,
               version: content.version,
               prerequisiteMissions: catalog
@@ -628,6 +662,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
     async (request, reply) => {
       void reply.code(201);
       const event = await events.resolveEventCode(request.body.eventCode);
+      assertCampaign(event);
       return requests.mutate(
         event.eventSessionId,
         [event.eventSessionId, 'registration'],
@@ -664,6 +699,7 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
     },
     async (request) => {
       const event = await events.resolveEventCode(request.body.eventCode);
+      assertCampaign(event);
       return requests.mutate(
         event.eventSessionId,
         [event.eventSessionId, 'refresh', request.body.unitId],
@@ -983,6 +1019,98 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
         };
       }),
   );
+  const publicProjection = (eventSessionId: string) =>
+    requests.serialize(
+      eventSessionId,
+      async (): Promise<PublicPresentationProjection> => {
+        const snapshot = await eventSnapshot(eventSessionId);
+        const units = await eventRepository.listUnits(eventSessionId);
+        const ranked = scoring.rank(
+          await Promise.all(
+            units.map(async (unit) => ({
+              unitId: unit.unitId,
+              unitStatus: unit.status,
+              level3Hints: 0,
+              projection: await scoring.project(
+                unit.eventSessionId,
+                unit.unitId,
+              ),
+            })),
+          ),
+        );
+        const active =
+          snapshot.eventSession.status === 'active'
+            ? snapshot.missions.find(
+                (mission) =>
+                  mission.status === 'open' || mission.status === 'paused',
+              )
+            : undefined;
+        const districtNames = {
+          harbor: 'Harbor',
+          'old-town': 'Old Town',
+          'north-hills': 'North Hills',
+          'east-bank': 'East Bank',
+          'civic-center': 'Civic Center',
+        };
+        const recovery = await state.projectRecovery(
+          eventSessionId,
+          ranked.map(({ unitId }) => unitId),
+        );
+        return {
+          schemaVersion: '1.0',
+          eventSessionId,
+          ...(requests.revision === undefined
+            ? {}
+            : { revision: requests.revision() }),
+          source: profile.source,
+          eventName: 'Operation Lighthouse',
+          updatedAt: new Date().toISOString(),
+          registeredUnitCount: units.length,
+          activityWindowSeconds: 90,
+          connectedUnitCount: units.filter(
+            (unit) => (activity.get(unit.unitId) ?? 0) >= Date.now() - 90_000,
+          ).length,
+          activeMission:
+            active === undefined
+              ? {
+                  title: 'No open mission',
+                  phase: snapshot.eventSession.status,
+                  progressPercent: 0,
+                }
+              : {
+                  title: active.title,
+                  phase: active.status,
+                  progressPercent: active.completionPercent,
+                },
+          recoverySource: recovery.source,
+          recovery: {
+            policyVersion: recovery.policyVersion,
+            baselinePercent: recovery.baselinePercent,
+            eligibleUnitCount: recovery.eligibleUnitCount,
+            contributionCount: recovery.contributionCount,
+            finaleThreshold: recovery.finaleThreshold,
+            finaleUnlocked: recovery.finaleUnlocked,
+          },
+          collectiveRecoveryPercent: recovery.collectiveRecoveryPercent,
+          districts: recovery.districts.map((district) => ({
+            districtId: district.districtId,
+            displayName: districtNames[district.districtId],
+            recoveryPercent: district.recoveryPercent,
+            baselinePercent: district.baselinePercent,
+            contributionCount: district.contributionCount,
+            status: district.status,
+          })),
+          rankings: ranked
+            .filter(({ projection }) => projection.totalPoints > 0)
+            .map((candidate) => ({
+              rank: candidate.rank,
+              moderatedUnitName: `Unit ${String(units.findIndex((unit) => unit.unitId === candidate.unitId) + 1).padStart(3, '0')}`,
+              score: candidate.projection.totalPoints,
+            })),
+          recognitions: [],
+        };
+      },
+    );
   app.get<{ Querystring: { eventSessionId: string } }>(
     '/api/v1/public/event-session',
     {
@@ -991,97 +1119,28 @@ export function buildWorkshopApp(options: WorkshopOptions): FastifyInstance {
         response: { 200: PublicPresentationProjectionSchema },
       },
     },
-    async (request) =>
-      requests.serialize(
-        request.query.eventSessionId,
-        async (): Promise<PublicPresentationProjection> => {
-          const snapshot = await eventSnapshot(request.query.eventSessionId);
-          const units = await eventRepository.listUnits(
-            request.query.eventSessionId,
-          );
-          const ranked = scoring.rank(
-            await Promise.all(
-              units.map(async (unit) => ({
-                unitId: unit.unitId,
-                unitStatus: unit.status,
-                level3Hints: 0,
-                projection: await scoring.project(
-                  unit.eventSessionId,
-                  unit.unitId,
-                ),
-              })),
-            ),
-          );
-          const active =
-            snapshot.eventSession.status === 'active'
-              ? snapshot.missions.find(
-                  (mission) =>
-                    mission.status === 'open' || mission.status === 'paused',
-                )
-              : undefined;
-          const districtNames = {
-            harbor: 'Harbor',
-            'old-town': 'Old Town',
-            'north-hills': 'North Hills',
-            'east-bank': 'East Bank',
-            'civic-center': 'Civic Center',
-          };
-          const recovery = await state.projectRecovery(
-            request.query.eventSessionId,
-            ranked.map(({ unitId }) => unitId),
-          );
-          return {
-            schemaVersion: '1.0',
-            eventSessionId: request.query.eventSessionId,
-            source: profile.source,
-            eventName: 'Operation Lighthouse',
-            updatedAt: new Date().toISOString(),
-            registeredUnitCount: units.length,
-            activityWindowSeconds: 90,
-            connectedUnitCount: units.filter(
-              (unit) => (activity.get(unit.unitId) ?? 0) >= Date.now() - 90_000,
-            ).length,
-            activeMission:
-              active === undefined
-                ? {
-                    title: 'No open mission',
-                    phase: snapshot.eventSession.status,
-                    progressPercent: 0,
-                  }
-                : {
-                    title: active.title,
-                    phase: active.status,
-                    progressPercent: active.completionPercent,
-                  },
-            recoverySource: recovery.source,
-            recovery: {
-              policyVersion: recovery.policyVersion,
-              baselinePercent: recovery.baselinePercent,
-              eligibleUnitCount: recovery.eligibleUnitCount,
-              contributionCount: recovery.contributionCount,
-              finaleThreshold: recovery.finaleThreshold,
-              finaleUnlocked: recovery.finaleUnlocked,
-            },
-            collectiveRecoveryPercent: recovery.collectiveRecoveryPercent,
-            districts: recovery.districts.map((district) => ({
-              districtId: district.districtId,
-              displayName: districtNames[district.districtId],
-              recoveryPercent: district.recoveryPercent,
-              baselinePercent: district.baselinePercent,
-              contributionCount: district.contributionCount,
-              status: district.status,
-            })),
-            rankings: ranked
-              .filter(({ projection }) => projection.totalPoints > 0)
-              .map((candidate) => ({
-                rank: candidate.rank,
-                moderatedUnitName: `Unit ${String(units.findIndex((unit) => unit.unitId === candidate.unitId) + 1).padStart(3, '0')}`,
-                score: candidate.projection.totalPoints,
-              })),
-            recognitions: [],
-          };
-        },
-      ),
+    (request) => publicProjection(request.query.eventSessionId),
   );
+  if (runtime.realtime !== undefined) {
+    const realtime = runtime.realtime;
+    app.post<{ Params: { eventSessionId: string } }>(
+      '/api/v1/public/events/:eventSessionId/hub/negotiate',
+      { schema: { params: eventParams } },
+      async (request) => {
+        budget.consume(['public-negotiation', request.ip], 120);
+        await requiredEvent(request.params.eventSessionId);
+        return realtime.negotiate(request.params.eventSessionId);
+      },
+    );
+    app.addHook('onReady', (_done) => {
+      realtime.start(publicProjection, () => {
+        app.log.warn(
+          { code: 'public-publication-pending' },
+          'Public publication failed; durable state remains pending.',
+        );
+      });
+      _done();
+    });
+  }
   return app;
 }

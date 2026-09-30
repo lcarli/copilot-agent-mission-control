@@ -18,6 +18,7 @@ export interface EventSession {
   readonly eventSessionId: string;
   readonly campaignId: string;
   readonly campaignVersion: string;
+  readonly campaignArtifactSha256?: string;
   readonly defaultLocale: SupportedLocale;
   readonly supportedLocales: readonly SupportedLocale[];
   readonly status: EventSessionStatus;
@@ -27,6 +28,7 @@ export interface EventSession {
   readonly scenarioSeed: string;
   readonly scoringPolicyVersion: string;
   readonly createdBy: string;
+  readonly createdInTenant?: string;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly version: number;
@@ -51,6 +53,7 @@ export interface Unit {
 export interface CreateEventSessionInput {
   readonly campaignId: string;
   readonly campaignVersion: string;
+  readonly campaignArtifactSha256?: string;
   readonly defaultLocale: SupportedLocale;
   readonly supportedLocales: readonly SupportedLocale[];
   readonly scoringPolicyVersion: string;

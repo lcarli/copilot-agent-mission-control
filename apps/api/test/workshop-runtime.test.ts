@@ -16,6 +16,17 @@ afterEach(async () => {
   await Promise.all(apps.splice(0).map((app) => app.close()));
 });
 
+it('honors configured log levels when operational logging is explicitly enabled', async () => {
+  const app = buildWorkshopApp({
+    config: loadConfig({ LOG_LEVEL: 'silent' }),
+    runtime: createLocalWorkshopRuntime(randomBytes(32).toString('hex')),
+    logger: true,
+  });
+  apps.push(app);
+  expect(app.log.level).toBe('silent');
+  expect((await app.inject('/api/v1/workshop')).statusCode).toBe(200);
+});
+
 it('does not accept the rehearsal runtime as a hosted runtime', () => {
   expect(() =>
     buildHostedWorkshopApp({

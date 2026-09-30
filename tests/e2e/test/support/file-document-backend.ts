@@ -31,7 +31,7 @@ const matches = (
 
 /** Atomic file transport double for offline restart tests, never a hosted adapter. */
 export class FileDocumentBackend implements DocumentBackend {
-  static readonly #writers = new Map<string, Promise<unknown>>();
+  static readonly #accesses = new Map<string, Promise<unknown>>();
   readonly batches: (readonly DocumentWrite[])[] = [];
   failBeforeKind: DocumentKind | undefined;
   failAfterKind: DocumentKind | undefined;
@@ -39,6 +39,21 @@ export class FileDocumentBackend implements DocumentBackend {
     ((writes: readonly DocumentWrite[]) => Promise<void>) | undefined;
 
   constructor(private readonly path: string) {}
+
+  async #access<T>(operation: () => Promise<T>): Promise<T> {
+    // Windows cannot replace a file while another operation still holds its read handle.
+    // Lock individual file operations, not the application's multi-operation transactions.
+    const previous =
+      FileDocumentBackend.#accesses.get(this.path) ?? Promise.resolve();
+    const result = previous.then(operation, operation);
+    FileDocumentBackend.#accesses.set(this.path, result);
+    try {
+      return await result;
+    } finally {
+      if (FileDocumentBackend.#accesses.get(this.path) === result)
+        FileDocumentBackend.#accesses.delete(this.path);
+    }
+  }
 
   async #load(): Promise<DiskState> {
     try {
@@ -51,32 +66,34 @@ export class FileDocumentBackend implements DocumentBackend {
     }
   }
 
-  async read(partition: string, id: string) {
-    return (await this.#load()).rows.find(
-      ({ document }) =>
-        document.eventSessionId === partition && document.id === id,
+  read(partition: string, id: string) {
+    return this.#access(async () =>
+      (await this.#load()).rows.find(
+        ({ document }) =>
+          document.eventSessionId === partition && document.id === id,
+      ),
     );
   }
 
-  async query(
+  query(
     kind: DocumentKind,
     partition?: string,
     filters: readonly DocumentFilter[] = [],
   ) {
-    return (await this.#load()).rows.filter(
-      (row) =>
-        row.document.kind === kind &&
-        (partition === undefined ||
-          row.document.eventSessionId === partition) &&
-        matches(row, filters),
+    return this.#access(async () =>
+      (await this.#load()).rows.filter(
+        (row) =>
+          row.document.kind === kind &&
+          (partition === undefined ||
+            row.document.eventSessionId === partition) &&
+          matches(row, filters),
+      ),
     );
   }
 
   async batch(partition: string, writes: readonly DocumentWrite[]) {
     await this.beforeBatch?.(writes);
-    const previous =
-      FileDocumentBackend.#writers.get(this.path) ?? Promise.resolve();
-    const operation = async () => {
+    return this.#access(async () => {
       if (writes.some(({ document }) => document.eventSessionId !== partition))
         throw new Error('A transaction crossed event partitions.');
       if (
@@ -116,15 +133,7 @@ export class FileDocumentBackend implements DocumentBackend {
         this.failAfterKind = undefined;
         throw this.#failure();
       }
-    };
-    const result = previous.then(operation, operation);
-    FileDocumentBackend.#writers.set(this.path, result);
-    try {
-      await result;
-    } finally {
-      if (FileDocumentBackend.#writers.get(this.path) === result)
-        FileDocumentBackend.#writers.delete(this.path);
-    }
+    });
   }
 
   #failure() {

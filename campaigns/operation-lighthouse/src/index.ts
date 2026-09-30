@@ -1,4 +1,8 @@
 export {
+  lighthouseRuntimeDescriptor,
+  decodeLighthouseRuntime,
+} from './runtime.js';
+export {
   districtIds,
   gridSectorIds,
   portAzureWorld,

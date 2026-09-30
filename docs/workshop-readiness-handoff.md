@@ -1,6 +1,7 @@
 # Operation Lighthouse - Workshop Readiness Handoff
 
-Snapshot: **2026-09-29, local integration, simulator evidence and decision recovery complete**  
+Snapshot: **2026-09-29, local integration complete; hosted adapters prepared and exercised offline**
+
 Next objective: **complete the approved local-quality and production-preparation deliveries, without Azure provisioning; keep human rehearsal explicit**.
 
 The main visual and presentation deliverables are complete. That does not mean
@@ -60,9 +61,9 @@ plan. Update its status when a gate is actually resolved and demonstrated.
 | R01 - Mission 1 | **Resolved locally.** Starter and runtime use `signal-in-the-storm`; the contract includes location/services and optional advanced fields. A public worked example passes schema and server evaluation. | Preserve the contract regression and real CLI/browser round trip. |
 | R02 - Mission 3 | **Resolved locally.** Canonical `weather`, `shelter`, `transport` operations are callable from the CLI. Validator 1.1.0 verifies scoped receipts, the actual shelter/route and bounded failure recovery. | Rehearse the chosen VS Code agent and its approved tool permissions. |
 | R03 - Mission 5 | **Contract and provenance demonstrated locally.** The full schema and CLI/HTTP journey use actual simulator receipts. Validator 1.1.0 checks nested citations and aggregate proposed resource quantities against observed inventory. | Proposed allocations are not executed. Specialist and human-approval claims are not independently verified authorization. |
-| R04 - Public projection | **Resolved locally; intended transport pending.** Canonical district recovery now follows versioned, validated-decision coverage, separately from points. The public browser identifies the pedagogical source, roster denominator and 80% finale threshold; disconnected state hides results. | Rehearse the projector view and implement the intended event transport. Do not present decision coverage as executed city operations. |
+| R04 - Public projection | **Resolved locally; hosted transport prepared offline.** Canonical recovery remains separate from points. The SignalR browser client rejects foreign/stale frames and reconciles HTTP snapshots; HTTP failure hides results. | Rehearse the projector and verify actual SignalR permissions, CORS and delivery. Do not present decision coverage as executed city operations. |
 | R05 - Validation language | **Resolved locally.** CLI output distinguishes envelope checks, submission and evaluated server feedback; failed required rules produce a nonzero exit. | Preserve this distinction in live facilitation. |
-| R06 - End-to-end integration | **Partial.** The five-mission HTTP journey uses actual CLI simulator receipts and drives the public browser through district recovery, finale readiness and late-join recalculation. Retries, replanning, reconnects, scope isolation and unchanged inventory are covered. | Rehearse actual Copilot/specialist authoring and the intended deployed event. Persistence and the intended real-time transport remain pending. |
+| R06 - End-to-end integration | **Partial.** The five-mission HTTP journey uses actual CLI receipts and drives public recovery/finale/late-join behavior. Durable reconstruction and the hosted browser path are exercised with external-service doubles. | Rehearse actual Copilot/specialist authoring and verify persistence, identity and real-time delivery against the intended deployment. |
 | R07 - Mission 2 evidence | **Reproducible local scenario delivered.** Reports `incident-004`/`incident-005` and `bulletin-03` replace the placeholder, with source-quality, contradiction and untrusted-instruction teaching outcomes. | Exercise the scenario with participants and confirm learning outcomes. |
 | R08 - Copilot authoring workflow | **Documentation checked; hands-on confirmation pending.** The participant guide references current official VS Code setup, custom-agent and MCP documentation. | Confirm the actual account, harness, approved tools and clean participant setup before screenshots or event sign-off. |
 
@@ -214,8 +215,8 @@ checking off the broader event-readiness criteria.
 
 Use `pnpm build:local`, `pnpm start:local`, `pnpm test:workshop` and
 `pnpm test:workshop:load` as documented in the local guide. The normal server
-now reports operational readiness as unavailable until its hosted adapters are
-wired; do not deploy the local in-memory entry point.
+now assembles the hosted adapters and requires explicit configuration plus
+usable startup dependencies; do not deploy the local in-memory entry point.
 
 ## 10. Next technical tasks
 
@@ -251,9 +252,10 @@ references are recorded in
 | S03 - Classroom-scale local scenarios | Complete locally | Fifty logical units complete all five missions alongside a real public browser. Actual scoped receipts, planned failures, phase latency, concurrent replays, borrowed-receipt rejection, reconnects, inventory preservation and public-data isolation are exercised. |
 | S04 - Operational guardrails | Complete locally | Fixed-window budgets by IP, authentication entry, verified unit/event and instructor; bounded queues and tracking tables; explicit 429/503 with Retry-After. The 50-unit five-mission workload remains within budget. These are single-process controls, not distributed protection. |
 | S05 - Accessibility | Complete for the local automated scope | Axe WCAG A/AA rules cover real setup/mission/public/error states in three locales and both themes. Keyboard, focus, narrow reflow and reduced motion are exercised; language metadata, progress labels and contrast were corrected using existing theme tokens. Manual screen-reader/projector and full-event checks remain open. |
-| S06 - Runtime composition | Complete for the shared composition | Local and hosted builders share routes through explicit repository, state, asynchronous identity, transaction and health ports. Local access remains loopback-only; the hosted builder rejects a local runtime. The normal server fails operational readiness until hosted assembly is delivered. Existing HTTP/browser/CLI behavior is preserved. |
+| S06 - Runtime composition | Complete for the shared composition | Local and hosted builders share repository, state, asynchronous identity, transaction and health ports. Local access remains loopback-only; the hosted builder rejects a local runtime. S08 supplies normal-server hosted assembly. Existing HTTP/browser/CLI behavior is preserved. |
 | S07 - Durable state | Complete for adapter/offline scope | Cosmos SDK adapter and versioned per-event documents commit state, encrypted idempotency and pending publication with a head ETag. Five-mission reconstruction, lost acknowledgments, rollback and concurrent revisions are covered by an on-disk transaction double and SDK-boundary tests. Live Cosmos, retention/restore operations and Azure latency remain open. |
-| S08 - Identity and real time | Next | Prepare scoped instructor identity and redacted real-time/reconnect behavior, without a deployment. |
+| S08 - Identity and real time | Complete for adapter/offline scope | Single-tenant Entra ownership/roles, explicit memory-only MSAL sign-in, pinned Key Vault signing and Blob descriptor, scoped SignalR, conditional durable publication and exact uncertain-action retries. The real browser exercises synthetic identity and SignalR protocol frames; live Entra/MFA/consent/Cosmos/Blob/Key Vault/SignalR verification remains open. |
+| S08b - Hosted packaging | Next | Real non-root application images, immutable campaign artifact generation and single-replica Bicep/promotion configuration, without deploying. The local Docker CLI is installed but its Linux engine was unavailable; an actual image build is not yet evidenced. |
 | S09 - Rehearsal operations | Pending | Reconcile the operating guides and make clean-setup authoring, full rehearsal and pilot steps executable by the facilitator. |
 | S10 - Preparation validation | Pending | Record applicable offline evidence and keep live-service and human gates open. |
 
@@ -279,6 +281,6 @@ pnpm build:local
 
 Follow `docs\local-workshop.md` to generate a new local instructor token, start
 the API and dashboard, and create a fresh rehearsal event. Credentials and event
-state are deliberately not transferred between computers. For browser scenarios,
+state in local rehearsal are deliberately not transferred between computers. For browser scenarios,
 install Chromium using the command in that guide. S01 and S02 are complete
 locally; resume at the clean authoring rehearsal, not at L01.

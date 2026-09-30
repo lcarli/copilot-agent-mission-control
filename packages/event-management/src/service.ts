@@ -86,6 +86,11 @@ export class EventUnitService {
       eventSessionId: this.#newEventSessionId(),
       campaignId: input.campaignId,
       campaignVersion: input.campaignVersion,
+      ...(input.campaignArtifactSha256 === undefined
+        ? {}
+        : {
+            campaignArtifactSha256: input.campaignArtifactSha256,
+          }),
       defaultLocale: input.defaultLocale,
       supportedLocales: [...new Set(input.supportedLocales)],
       status: 'draft',
@@ -101,6 +106,7 @@ export class EventUnitService {
       scenarioSeed: randomBytes(32).toString('base64url'),
       scoringPolicyVersion: input.scoringPolicyVersion,
       createdBy: actor.instructor.actorId,
+      createdInTenant: actor.instructor.tenantId,
       createdAt: now,
       updatedAt: now,
       version: 1,

@@ -31,6 +31,9 @@ export {
 } from './validation.js';
 export {
   PublicPresentationProjectionSchema,
+  WorkshopIdentitySchema,
+  decodeWorkshopIdentity,
+  type WorkshopIdentity,
   PublicRecoverySummarySchema,
   MissionSubmissionFeedbackSchema,
   MissionRecoveryFeedbackSchema,

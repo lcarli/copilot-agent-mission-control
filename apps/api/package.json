@@ -26,6 +26,9 @@
   "dependencies": {
     "@azure/cosmos": "4.10.1",
     "@azure/core-auth": "1.11.0",
+    "@azure/identity": "4.13.3",
+    "@azure/keyvault-secrets": "4.11.2",
+    "@azure/storage-blob": "12.34.0",
     "@mission-control/auth": "workspace:*",
     "@mission-control/campaign-operation-lighthouse": "workspace:*",
     "@mission-control/event-contracts": "workspace:*",
@@ -36,6 +39,7 @@
     "@mission-control/validation-worker": "workspace:*",
     "@sinclair/typebox": "0.34.52",
     "fastify": "^5.12.5",
+    "jose": "6.2.12",
     "uuid": "14.0.2"
   }
 }

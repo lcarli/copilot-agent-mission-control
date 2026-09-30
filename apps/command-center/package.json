@@ -11,6 +11,8 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@azure/msal-browser": "5.23.0",
+    "@microsoft/signalr": "10.0.11",
     "@mission-control/event-contracts": "workspace:*",
     "@mission-control/localization": "workspace:*",
     "react": "19.2.4",

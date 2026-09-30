@@ -40,6 +40,9 @@ export const documentSchemas = {
       ...eventScope,
       campaignId: text(),
       campaignVersion: text(),
+      campaignArtifactSha256: Type.Optional(
+        Type.String({ pattern: '^[a-f0-9]{64}$' }),
+      ),
       defaultLocale: locale,
       supportedLocales: Type.Array(locale, { minItems: 1, maxItems: 3 }),
       status: literals([
@@ -56,6 +59,7 @@ export const documentSchemas = {
       scenarioSeed: text(),
       scoringPolicyVersion: text(),
       createdBy: text(),
+      createdInTenant: Type.Optional(text()),
       createdAt: text(),
       updatedAt: text(),
       version: version(),
